@@ -1,0 +1,26 @@
+<%
+t_client_nets = Array(@client_nets).flatten
+t_allow_all = !t_client_nets.select{|x| x =~ /^any|nil|ALL$/ }.empty?
+icmp_type =~ /^any|nil|ALL$/ and t_icmp_type_any = true or t_icmp_type_any = false
+
+t_output = []
+
+if t_icmp_type_any && !t_allow_all then
+  t_client_nets.each do |n|
+    t_output << "-p icmp -s #{n} -j ACCEPT"
+  end
+elsif !t_icmp_type_any && t_allow_all then
+  icmp_type.each do |ict|
+    t_output << "-p icmp --icmp-type #{ict} -j ACCEPT"
+  end
+elsif t_icmp_type_any && t_allow_all then
+  t_output << "-p icmp -j ACCEPT"
+else
+  t_client_nets.each do |n|
+    icmp_type.each do |ict|
+      t_output << "-p icmp -s #{n} --icmp-type #{ict} -j ACCEPT"
+    end
+  end
+end
+-%>
+<%= t_output.join("\n") %>

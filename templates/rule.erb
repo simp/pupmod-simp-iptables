@@ -1,0 +1,20 @@
+<%
+t_output = []
+
+if !@comment.empty? then
+  t_output << "# #{@comment}"
+end
+
+if @header then
+  Array(@content).flatten.each do |i|
+    if !i.eql?("nil") then
+      if (i !~ /^\s*$/) then
+        t_output << "-A LOCAL-INPUT #{i}"
+      else
+        t_output << i
+      end
+    end
+  end
+end
+-%>
+<%= output.join("\n") %>

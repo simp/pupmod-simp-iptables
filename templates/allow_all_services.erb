@@ -1,0 +1,14 @@
+<%
+t_output = []
+t_client_nets = Array(@client_nets).flatten
+
+if Array(@client_nets).flatten.select{|x| x.strip =~ /^any|ALL$/ }.empty? then
+  t_client_nets.each do |n|
+    t_output << "-s #{n} -j ACCEPT"
+  end
+else
+    t_output << "# Allowing EVERYONE based on 'any' or 'ALL' being passed to iptables::allow_all_services."
+    t_output << "-j ACCEPT"
+end
+-%>
+<%= t_output.join("\n") %>
