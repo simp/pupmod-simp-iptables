@@ -1,7 +1,7 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 10
+Release: 11
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -17,7 +17,7 @@ Provides: pupmod-ip6tables
 Obsoletes: pupmod-ip6tables
 Obsoletes: pupmod-iptables-test
 
-Prefix:"/etc/puppet/environments/simp/modules"
+Prefix: /etc/puppet/environments/simp/modules
 
 %description
 This Puppet module provides the capability to configure IPTables rules for your
@@ -49,13 +49,13 @@ mkdir -p %{buildroot}/%{prefix}/iptables
 
 %files
 %defattr(0640,root,puppet,0750)
-/etc/puppet/environments/simp/modules/iptables
+%{prefix}/iptables
 
 %post
 #!/bin/sh
 
-if [ -d /etc/puppet/environments/simp/modules/iptables/plugins ]; then
-  /bin/mv /etc/puppet/environments/simp/modules/iptables/plugins /etc/puppet/environments/simp/modules/iptables/plugins.bak
+if [ -d %{prefix}/iptables/plugins ]; then
+  /bin/mv %{prefix}/iptables/plugins %{prefix}/iptables/plugins.bak
 fi
 
 if [ $1 -gt 1 ]; then
@@ -71,6 +71,11 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Mon Apr 27 2015 Michael Riddle <mriddle@onyxpoint.com> - 4.1.0-11
+- Implemented a workaround for ports being read in as valid ipv6 addresses on
+  iptables lines that don't contain any ipaddress. Any iptables lines
+  containing a port with no ipaddress would only validate as an ipv6 rule.
+
 * Thu Apr 02 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-10
 - Fixed DNS resolution in the IPTables provider. Unfortunately, this never
   actually worked as implemented.
@@ -90,7 +95,7 @@ fi
 * Tue Jul 15 2014 Kendall Moore <kmoore@keywcorp.com> - 4.1.0-7
 - Added CentOS as a supported OS as part of CentOS 7 upgrade.
 
-* Mon Jun 26 2014 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-6
+* Thu Jun 26 2014 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-6
 - Provide for RHEL7 compatiblity.
 - Added an iptables::disable option that will disable our IPTables
   enforcement by way of telling optimize to effectively noop.

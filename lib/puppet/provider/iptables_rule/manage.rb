@@ -243,7 +243,10 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     line.split.each do |i|
       ip_check = ipaddr?(i)
       if ip_check
-        if ip_check.ipv6?
+        #TODO: Clean this up when we move to puppet4
+        #Had to check for 0 or more digits followed by a colon
+        #to account for bad ipv6 formation in ruby 1.8.7
+        if ip_check.ipv6? and i =~ /\d*:+/
           retval = [:ip6tables]
         else
           retval = [:iptables]
