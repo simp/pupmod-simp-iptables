@@ -1,0 +1,7 @@
+---
+fixtures:
+  repositories:
+    common: "git://github.com/simp/pupmod-simp-common"
+    stdlib: "git://github.com/simp/puppetlabs-stdlib"
+  symlinks:
+    iptables: "#{source_dir}"

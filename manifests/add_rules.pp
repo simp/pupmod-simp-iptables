@@ -76,12 +76,12 @@ define iptables::add_rules (
     $apply_to = 'auto'
   ) {
   iptables_rule { $name:
-    table     => $table,
-    absolute  => $absolute,
-    first     => $first,
-    order     => $order,
-    header    => $header,
-    content   => $content,
-    apply_to  => $apply_to
+    table    => $table,
+    absolute => $absolute,
+    first    => $first,
+    order    => $order,
+    header   => $header,
+    content  => $content,
+    apply_to => $apply_to
   }
 }

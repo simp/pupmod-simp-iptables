@@ -77,11 +77,11 @@ define iptables::add_udp_listen (
   $l_protocol = 'udp'
 
   iptables_rule { "udp_${name}":
-    first     => $first,
-    absolute  => $absolute,
-    order     => $order,
-    apply_to  => $apply_to,
-    content   => template('iptables/allow_tcp_udp_services.erb')
+    first    => $first,
+    absolute => $absolute,
+    order    => $order,
+    apply_to => $apply_to,
+    content  => template('iptables/allow_tcp_udp_services.erb')
   }
 
   validate_net_list($client_nets,'^(any|ALL)$')
