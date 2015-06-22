@@ -130,10 +130,10 @@ class iptables::scanblock (
 
   if str2bool($enable) {
     iptables_rule{'scanblock':
-      order     => '28',
-      header    => false,
-      apply_to  => 'all',
-      content   => "-A LOCAL-INPUT -m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP
+      order    => '28',
+      header   => false,
+      apply_to => 'all',
+      content  => "-A LOCAL-INPUT -m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP
 -A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK
 -A ATTACKED -m limit --limit ${logs_per_minute}/min -j LOG --log-prefix \"IPT: (Rule ATTACKED): \"
 -A ATTACKED -m recent --set --name BANNED --rsource -j DROP
