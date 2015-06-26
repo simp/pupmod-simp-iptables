@@ -102,12 +102,12 @@ class iptables (
   }
 
   file { '/etc/sysconfig/iptables':
-    ensure    => 'present',
-    owner     => 'root',
-    group     => 'root',
-    mode      => '0640',
-    audit     => 'content',
-    require   => [
+    ensure  => 'present',
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0640',
+    audit   => 'content',
+    require => [
       Package['iptables'],
       Iptables_optimize['/etc/sysconfig/iptables']
     ]
@@ -117,12 +117,12 @@ class iptables (
 
   # This has magic voodoo from the optimize segment.
   service { 'iptables':
-    ensure      => 'running',
-    enable      => true,
-    hasrestart  => false,
-    restart     => '/sbin/iptables-restore /etc/sysconfig/iptables || ( /sbin/iptables-restore /etc/sysconfig/iptables.bak && exit 3 )',
-    hasstatus   => true,
-    require     => [
+    ensure     => 'running',
+    enable     => true,
+    hasrestart => false,
+    restart    => '/sbin/iptables-restore /etc/sysconfig/iptables || ( /sbin/iptables-restore /etc/sysconfig/iptables.bak && exit 3 )',
+    hasstatus  => true,
+    require    => [
       File['/etc/init.d/iptables'],
       Package['iptables']
     ]
@@ -140,41 +140,41 @@ class iptables (
 
     # IPV6-only stuff
     file { '/etc/init.d/ip6tables':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0744',
-      source  => 'puppet:///modules/iptables/ip6tables'
+      ensure => 'file',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0744',
+      source => 'puppet:///modules/iptables/ip6tables'
     }
 
     file { '/etc/init.d/ip6tables-retry':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0744',
-      source  => 'puppet:///modules/iptables/ip6tables-retry'
+      ensure => 'file',
+      owner  => 'root',
+      group  => 'root',
+      mode   => '0744',
+      source => 'puppet:///modules/iptables/ip6tables-retry'
     }
 
     file { '/etc/sysconfig/ip6tables':
-      ensure    => 'present',
-      owner     => 'root',
-      group     => 'root',
-      mode      => '0640',
-      audit     => 'content',
-      require   => [
+      ensure  => 'present',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0640',
+      audit   => 'content',
+      require => [
         Ip6tables_optimize['/etc/sysconfig/ip6tables']
       ]
     }
 
     # This has magic voodoo from the optimize segment.
     service { 'ip6tables':
-      ensure      => 'running',
-      enable      => true,
-      hasrestart  => false,
-      restart     => '/sbin/ip6tables-restore /etc/sysconfig/ip6tables || ( /sbin/ip6tables-restore /etc/sysconfig/ip6tables.bak && exit 3 )',
-      hasstatus   => true,
-      require     => File['/etc/init.d/ip6tables'],
-      subscribe   => Ip6tables_optimize['/etc/sysconfig/ip6tables']
+      ensure     => 'running',
+      enable     => true,
+      hasrestart => false,
+      restart    => '/sbin/ip6tables-restore /etc/sysconfig/ip6tables || ( /sbin/ip6tables-restore /etc/sysconfig/ip6tables.bak && exit 3 )',
+      hasstatus  => true,
+      require    => File['/etc/init.d/ip6tables'],
+      subscribe  => Ip6tables_optimize['/etc/sysconfig/ip6tables']
     }
 
     service { 'ip6tables-retry':

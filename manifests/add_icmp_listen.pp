@@ -76,11 +76,11 @@ define iptables::add_icmp_listen (
 ) {
 
   iptables_rule { "icmp_${name}":
-    first     => $first,
-    absolute  => $absolute,
-    order     => $order,
-    apply_to  => $apply_to,
-    content   => template('iptables/allow_icmp_services.erb')
+    first    => $first,
+    absolute => $absolute,
+    order    => $order,
+    apply_to => $apply_to,
+    content  => template('iptables/allow_icmp_services.erb')
   }
 
   validate_net_list($client_nets,'^(any|ALL)$')

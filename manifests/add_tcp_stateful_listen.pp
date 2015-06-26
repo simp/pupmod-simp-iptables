@@ -77,11 +77,11 @@ define iptables::add_tcp_stateful_listen (
   $l_protocol = 'tcp'
 
   iptables_rule { "tcp_${name}":
-    first     => $first,
-    absolute  => $absolute,
-    order     => $order,
-    apply_to  => $apply_to,
-    content   => template('iptables/allow_tcp_udp_services.erb')
+    first    => $first,
+    absolute => $absolute,
+    order    => $order,
+    apply_to => $apply_to,
+    content  => template('iptables/allow_tcp_udp_services.erb')
   }
 
 #  validate_net_list($client_nets,'^(any|ALL)$')
