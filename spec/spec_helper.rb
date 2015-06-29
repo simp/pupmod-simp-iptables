@@ -2,6 +2,9 @@ require 'pathname'
 require 'rspec-puppet'
 require 'puppetlabs_spec_helper/module_spec_helper'
 
+require 'simp/rspec-puppet-facts'
+include Simp::RspecPuppetFacts
+
 # RSpec Material
 
 def mod_site_pp(content)
@@ -49,6 +52,7 @@ Dir.chdir(File.join(fixture_path,'modules',module_name)) do
   end
 end
 
+
 RSpec.configure do |c|
   c.mock_framework = :rspec
   c.mock_with :mocha
@@ -59,13 +63,6 @@ RSpec.configure do |c|
   c.hiera_config = File.join(fixture_path,'hieradata','hiera.yaml')
 
   c.before(:all) do
-# Add fixture lib dirs to LOAD_PATH. Work-around for PUP-3336
-if Puppet.version < "4.0.0"
-  Dir["#{fixture_path}/modules/*/lib"].entries.each do |lib_dir|
-    $LOAD_PATH << lib_dir
-  end
-end
-
     data = YAML.load(default_hiera_config)
     data[:yaml][:datadir] = File.join(fixture_path, 'hieradata').to_s
     File.open(c.hiera_config, 'w') do |f|

@@ -75,6 +75,13 @@ class iptables (
   $enable_scanblock = false,
   $disable = false
 ) {
+  validate_bool($authoritative)
+  validate_bool($class_debug)
+  validate_bool($optimize_rules)
+  validate_array($ignore)
+  validate_bool($enable_default_rules)
+  validate_bool($enable_scanblock)
+  validate_bool($disable)
 
   if $enable_default_rules { include 'iptables::base_rules' }
   if $enable_scanblock { include 'iptables::scanblock' }
@@ -224,12 +231,4 @@ class iptables (
   if $authoritative {
     Iptables_optimize['/etc/sysconfig/iptables'] ~> Service['iptables']
   }
-
-  validate_bool($authoritative)
-  validate_bool($class_debug)
-  validate_bool($optimize_rules)
-  validate_array($ignore)
-  validate_bool($enable_default_rules)
-  validate_bool($enable_scanblock)
-  validate_bool($disable)
 }
