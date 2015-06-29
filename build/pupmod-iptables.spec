@@ -1,7 +1,7 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 11
+Release: 12
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -71,6 +71,10 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Wed Jul 08 2015 Chris Tessmer <chris.tessmer@onyxpoint.com> - 4.1.0-12
+- Updated iptables::disable's default to look up 'use_iptables' from hiera.
+- Fixed iptables::disable to disable management of IPv4 rules.
+
 * Mon Apr 27 2015 Michael Riddle <mriddle@onyxpoint.com> - 4.1.0-11
 - Implemented a workaround for ports being read in as valid ipv6 addresses on
   iptables lines that don't contain any ipaddress. Any iptables lines
@@ -120,7 +124,7 @@ fi
 * Thu Feb 13 2014 Kendall Moore <kmoore@keywcorp.com> - 4.1.0-3
 - Updated all string booleans to native booleans in manifests and templates.
 
-* Mon Dec 11 2013 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-2
+* Wed Dec 11 2013 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-2
 - Updated the rule comparison code in iptables_rule to properly compare the new
   and old rules.
 - Properly handle blank lines in the /etc/sysconfig/ip*tables files.
