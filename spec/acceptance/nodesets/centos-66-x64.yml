@@ -1,0 +1,11 @@
+HOSTS:
+  centos-66-64-foss-default:
+    roles:
+      - agent
+      - default
+    platform: el-6-x86_64
+    box :     centos-66-x64-nocm
+    box_url : https://atlas.hashicorp.com/puppetlabs/boxes/centos-6.6-64-nocm/versions/1.0.1/providers/virtualbox.box
+    hypervisor : vagrant
+CONFIG:
+  type: foss
