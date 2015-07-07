@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad9bd40_4ca51052",
+        "filename": "README.md",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2015-07-07T20:17:01Z",
+      "side": 1,
+      "message": "Fix FIXMEs",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 96
+      },
+      "revId": "cdc1f80970046a7fc310a8ec515bf93d3c711cfb",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
