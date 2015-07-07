@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad9bd40_b6927055",
+        "filename": "manifests/init.pp",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1004834
+      },
+      "writtenOn": "2015-07-07T02:58:29Z",
+      "side": 1,
+      "message": "This needs to follow 3)a. in the module refactor guide https://simp-project.atlassian.net/wiki/display/SD/The+New+Layout+for+all+SIMP+Modules.",
+      "revId": "b9ab7d1e85c7164795be24f7607e022db78e6054",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
