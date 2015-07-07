@@ -16,6 +16,24 @@
       "revId": "b9ab7d1e85c7164795be24f7607e022db78e6054",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9ad9bd40_c2b9ee2f",
+        "filename": "manifests/init.pp",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2015-07-07T14:38:47Z",
+      "side": 1,
+      "message": "Not yet.\n\n\nLast Wednesday, we decided to keep the current structure for existing modules in order to release 4.2.X and 5.1.X without adding to our growing list of potential upgrade complications.\n\n\nFor instance: In order for the SIMP to support $enable_firewall (in lieu of $use_iptables), it will be necessary to simultaneously update rubygems-simp-cli, simp-bootstrap\u0027s simp_def.yaml, and many modules (e.g, openldap, pupmod, simp, ssh, ntpd, stunnel).\n\n\nRefactoring SIMP to honor the new hiera variables described in #3a is a non-trivial undertaking, and is currently targeted for release 6.X (in concert with the New Module Layout refactor) via epic SIMP-212.",
+      "parentUuid": "9ad9bd40_b6927055",
+      "revId": "b9ab7d1e85c7164795be24f7607e022db78e6054",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
     }
   ]
 }
