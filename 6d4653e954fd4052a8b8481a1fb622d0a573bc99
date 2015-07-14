@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9ad9bd40_ab9d825b",
+        "filename": ".travis.yml",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 1005194
+      },
+      "writtenOn": "2015-07-14T15:48:55Z",
+      "side": 1,
+      "message": "Are we going to comment these out instead of allowing failures? Just curious - the skeleton does not use this format.",
+      "revId": "6d4653e954fd4052a8b8481a1fb622d0a573bc99",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
