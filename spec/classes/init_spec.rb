@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe 'iptables' do
-
   context  'supported operating systems' do
     on_supported_os.each do |os, facts|
       let(:facts) do
@@ -13,8 +12,15 @@ describe 'iptables' do
           let(:params) {{ }}
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_disable(false) }
-          it { is_expected.to create_iptables_rule('global') }
+          it { is_expected.to contain_package('iptables').with_ensure('latest') }
+          it { is_expected.to contain_service('iptables').with_ensure('running') }
+          it { is_expected.to contain_service('iptables-retry').with_enable(true) }
+          it { is_expected.to create_class('iptables::base_rules').with_allow_ping(true) }
           it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(false) }
+          it { is_expected.to create_file('/etc/init.d/iptables').with_ensure('file') }
+          it { is_expected.to create_file('/etc/init.d/iptables-retry').with_ensure('file') }
+          it { is_expected.to create_file('/etc/sysconfig/iptables').with_ensure('file') }
+          it { is_expected.to contain_service('firewalld').with_ensure('stopped') }
         end
 
         context "iptables class with firewall disabled from hiera via 'use_iptables: false'" do
@@ -27,9 +33,5 @@ describe 'iptables' do
         end
       end
     end
-  end
-
-  it 'implements rules correctly' do
-    skip 'TODO: WRITE TESTS FOR IPTABLES RULES!'
   end
 end
