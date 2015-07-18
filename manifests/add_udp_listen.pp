@@ -74,6 +74,8 @@ define iptables::add_udp_listen (
 #     'any' to allow all networks
   $client_nets = '127.0.0.1'
 ) {
+  validate_net_list($client_nets,'^(any|ALL)$')
+
   $l_protocol = 'udp'
 
   iptables_rule { "udp_${name}":
@@ -83,6 +85,4 @@ define iptables::add_udp_listen (
     apply_to => $apply_to,
     content  => template('iptables/allow_tcp_udp_services.erb')
   }
-
-  validate_net_list($client_nets,'^(any|ALL)$')
 }

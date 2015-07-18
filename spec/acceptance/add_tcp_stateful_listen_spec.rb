@@ -17,7 +17,7 @@ describe 'iptables' do
 
 
       iptables::add_tcp_stateful_listen { 'test_tcp_on_both':
-        client_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
+        client_nets => ['10.0.2.0/16', 'fe80::/64'],  # Standard Beaker/Vagrant subnet
         dports      => '2222',
         apply_to    => 'all',
       }
@@ -28,11 +28,11 @@ describe 'iptables' do
         apply_to    => 'ipv4',
       }
 
-      ### iptables::add_tcp_stateful_listen { 'test_tcp_on_ipv6':
-      ###   client_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
-      ###   dports      => '6666',
-      ###   apply_to    => 'ipv6',
-      ### }
+      iptables::add_tcp_stateful_listen { 'test_tcp_on_ipv6':
+        client_nets => ['fe80::/64'],  # Standard Beaker/Vagrant subnet
+        dports      => '6666',
+        apply_to    => 'ipv6',
+      }
     EOS
   }
 
@@ -44,16 +44,16 @@ describe 'iptables' do
     shell("iptables-save   | grep ' -p tcp' | grep -w 2222", :acceptable_exit_codes => 0)
   end
 
-  ### it 'should allow port 2222 for IPv6' do
-  ###   shell("ip6tables-save  | grep ' -p tcp' | grep -w 2222", :acceptable_exit_codes => 0)
-  ### end
+  it 'should allow port 2222 for IPv6' do
+    shell("ip6tables-save  | grep ' -p tcp' | grep -w 2222", :acceptable_exit_codes => 0)
+  end
 
   it 'should allow port 4444 for IPv4' do
     shell("iptables-save   | grep ' -p tcp' | grep -w 4444", :acceptable_exit_codes => 0)
   end
 
-  ### it 'should allow port 6666 for IPv6' do
-  ###   shell("ip6tables-save  | grep ' -p tcp' | grep -w 6666", :acceptable_exit_codes => 0)
-  ### end
+  it 'should allow port 6666 for IPv6' do
+    shell("ip6tables-save  | grep ' -p tcp' | grep -w 6666", :acceptable_exit_codes => 0)
+  end
 end
 
