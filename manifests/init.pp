@@ -110,7 +110,7 @@ class iptables (
   }
 
   file { '/etc/sysconfig/iptables':
-    ensure  => 'present',
+    ensure  => 'file',
     owner   => 'root',
     group   => 'root',
     mode    => '0640',
