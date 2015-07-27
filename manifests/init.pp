@@ -57,6 +57,12 @@
 #   block anyone connecting to the system for an hour after connection to a
 #   forbidden port.
 #
+# [*prevent_localhost_spoofing*]
+# Type: Boolean
+# Default: true
+#   If true, add rules to PREROUTING that will prevent spoofed packets from
+#   localhost addresses from reaching your system.
+#
 # [*disable*]
 # Type: Boolean
 # Default: false
@@ -74,7 +80,8 @@ class iptables (
   $ignore               = [],
   $enable_default_rules = true,
   $enable_scanblock     = false,
-  $disable              = !hiera( 'use_iptables', true )
+  $prevent_localhost_spoofing = true,
+  $disable              = !hiera('use_iptables', true)
 ) {
   validate_bool($authoritative)
   validate_bool($class_debug)
@@ -82,10 +89,12 @@ class iptables (
   validate_array($ignore)
   validate_bool($enable_default_rules)
   validate_bool($enable_scanblock)
+  validate_bool($prevent_localhost_spoofing)
   validate_bool($disable)
 
-  if $enable_default_rules { include 'iptables::base_rules' }
-  if $enable_scanblock { include 'iptables::scanblock' }
+  if $enable_default_rules { include '::iptables::base_rules' }
+  if $enable_scanblock { include '::iptables::scanblock' }
+  if $prevent_localhost_spoofing { include '::iptables::prevent_localhost_spoofing' }
 
   # IPV4-only stuff
   file { '/etc/init.d/iptables':

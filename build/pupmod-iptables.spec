@@ -1,7 +1,7 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 12
+Release: 13
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -71,6 +71,10 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Mon Jul 27 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-13
+- Added an iptables::prevent_localhost_spoofing class to handle IPv6 spoofed
+  communication.
+
 * Wed Jul 08 2015 Chris Tessmer <chris.tessmer@onyxpoint.com> - 4.1.0-12
 - Updated iptables::disable's default to look up 'use_iptables' from hiera.
 - Fixed iptables::disable to disable management of IPv4 rules.
