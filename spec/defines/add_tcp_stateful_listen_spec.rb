@@ -25,6 +25,21 @@ describe "iptables::add_tcp_stateful_listen", :type => :define do
           it { is_expected.to create_iptables__add_tcp_stateful_listen('allow_tcp_1234').with_dports('1234') }
           it { is_expected.to create_iptables_rule('tcp_allow_tcp_1234') }
         end
+
+        # This tests for the bug reported in SIMP-263
+        context "with more than 10 ports" do
+          let( :title  ){ 'allow_tcp_more_than_10_ports' }
+          let( :params ){{
+            :client_nets => ['10.0.2.0/24'],
+            :dports      => ('101'..'111').to_a
+          }}
+          # does the catalog accept it?
+          it { is_expected.to create_iptables__add_tcp_stateful_listen('allow_tcp_more_than_10_ports').with_dports(('101'..'111').to_a)
+          }
+
+          # does it create the correct rule?
+          it { is_expected.to create_iptables_rule('tcp_allow_tcp_more_than_10_ports').with_content(/ --dports 101,102,103,104,105,106,107,108,109,110,111 -j ACCEPT/) }
+        end
       end
     end
   end
