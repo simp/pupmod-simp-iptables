@@ -1,4 +1,5 @@
 ---
 fixtures:
   symlinks:
+    simplib: "#{source_dir}/../simplib"
     iptables: "#{source_dir}"

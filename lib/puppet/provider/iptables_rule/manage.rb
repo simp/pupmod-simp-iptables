@@ -32,7 +32,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
   }
 
   def initialize(*args)
-    require 'puppetx/simp/common'
+    require 'puppetx/simp/simplib'
     require 'puppetx/simp/iptables'
 
     super(*args)

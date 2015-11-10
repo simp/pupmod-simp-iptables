@@ -238,8 +238,8 @@ class iptables (
     'RedHat','CentOS': {
       if $::operatingsystemmajrelease > '6' {
         service{ 'firewalld':
-          enable => false,
           ensure => 'stopped',
+          enable => false,
         } -> Service['iptables']
       }
     }
