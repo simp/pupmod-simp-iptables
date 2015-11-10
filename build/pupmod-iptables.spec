@@ -1,15 +1,16 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 13
+Release: 14
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
 Buildroot: %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 Requires: pupmod-auditd >= 2.0.0-0
 Requires: pupmod-common >= 4.0.0-0
+Requires: pupmod-simplib >= 1.0.0-0
 Requires: pupmod-rsyslog >= 2.0.0-0
-Requires: pupmod-concat >= 2.0.0-0
+Requires: pupmod-simpcat >= 2.0.0-0
 Requires: puppet >= 3.3.0
 Buildarch: noarch
 Requires: simp-bootstrap >= 4.2.0
@@ -17,7 +18,7 @@ Provides: pupmod-ip6tables
 Obsoletes: pupmod-ip6tables
 Obsoletes: pupmod-iptables-test
 
-Prefix: /etc/puppet/environments/simp/modules
+Prefix: %{_sysconfdir}/puppet/environments/simp/modules
 
 %description
 This Puppet module provides the capability to configure IPTables rules for your
@@ -71,6 +72,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-14
+- migration to simplib and simpcat (lib/ only)
+
 * Mon Jul 27 2015 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.0-13
 - Added an iptables::prevent_localhost_spoofing class to handle IPv6 spoofed
   communication.
