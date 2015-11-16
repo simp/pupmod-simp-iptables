@@ -321,7 +321,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
 
       # Properly sort our rules.
       output << $iptables_rule_classvars[rule_type][:new_content][table][:rules].keys.sort_by { |x|
-        PuppetX::SIMP::Common.human_sort(x)
+        PuppetX::SIMP::Simplib.human_sort(x)
       }.collect { |x|
         $iptables_rule_classvars[rule_type][:new_content][table][:rules][x]
       }.join("\n")
