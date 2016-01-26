@@ -74,6 +74,7 @@ define iptables::add_icmp_listen (
 #     'any' to allow all networks
   $client_nets = '127.0.0.1'
 ) {
+  validate_net_list($client_nets,'^(any|ALL)$')
 
   iptables_rule { "icmp_${name}":
     first    => $first,
@@ -82,6 +83,4 @@ define iptables::add_icmp_listen (
     apply_to => $apply_to,
     content  => template('iptables/allow_icmp_services.erb')
   }
-
-  validate_net_list($client_nets,'^(any|ALL)$')
 }

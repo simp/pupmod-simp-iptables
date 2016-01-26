@@ -9,3 +9,4 @@ HOSTS:
     hypervisor : vagrant
 CONFIG:
   type: foss
+  vagrant_memsize: 256
