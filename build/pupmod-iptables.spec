@@ -1,7 +1,7 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 14
+Release: 15
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -72,6 +72,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Tue Jan 26 2016 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-15
+- Normalized common static module assets
+
 * Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-14
 - migration to simplib and simpcat (lib/ only)
 

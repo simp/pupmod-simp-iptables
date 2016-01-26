@@ -67,13 +67,13 @@ define iptables::add_all_listen (
 #     Set the string to 'any' to allow all networks
     $client_nets = '127.0.0.1')
 {
-  iptables_rule { "all_$name":
+  validate_net_list($client_nets,'^(any|ALL)$')
+
+  iptables_rule { "all_${name}":
     first    => $first,
     absolute => $absolute,
     order    => $order,
     apply_to => $apply_to,
     content  => template('iptables/allow_all_services.erb')
   }
-
-  validate_net_list($client_nets,'^(any|ALL)$')
 }

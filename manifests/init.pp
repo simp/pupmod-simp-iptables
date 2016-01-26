@@ -227,7 +227,7 @@ class iptables (
         }
       }
       default: {
-        fail("$::operatingsystem is not yet supported by $module_name")
+        fail("${::operatingsystem} is not yet supported by ${module_name}")
       }
     }
   }
@@ -244,7 +244,7 @@ class iptables (
       }
     }
     default: {
-      fail("$::operatingsystem is not yet supported by $module_name")
+      fail("${::operatingsystem} is not yet supported by ${module_name}")
     }
   }
 

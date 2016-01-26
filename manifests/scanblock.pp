@@ -119,6 +119,13 @@ class iptables::scanblock (
   $ip_list_uid = hiera('iptables::xt_recent::ip_list_uid','0'),
   $ip_list_gid = hiera('iptables::xt_recent::ip_list_gid','0')
 ) {
+  validate_bool($enable)
+  validate_bool($set_rttl)
+  validate_integer($update_interval)
+  validate_integer($logs_per_minute)
+  validate_integer($seconds)
+  validate_integer($hitcount)
+
   include 'iptables'
 
   if str2bool($set_rttl) {
@@ -151,11 +158,4 @@ class iptables::scanblock (
     ip_list_gid       => $ip_list_gid,
     notify_iptables   => true
   }
-
-  validate_bool($enable)
-  validate_bool($set_rttl)
-  validate_integer($update_interval)
-  validate_integer($logs_per_minute)
-  validate_integer($seconds)
-  validate_integer($hitcount)
 }
