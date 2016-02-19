@@ -17,6 +17,7 @@ Requires: simp-bootstrap >= 4.2.0
 Provides: pupmod-ip6tables
 Obsoletes: pupmod-ip6tables
 Obsoletes: pupmod-iptables-test
+Requires: pupmod-onyxpoint-compliance_markup
 
 Prefix: %{_sysconfdir}/puppet/environments/simp/modules
 
@@ -72,6 +73,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Fri Feb 19 2016 Ralph Wright <ralph.wright@onyxpoint.com> - 4.1.0-16
+- Added compliance function support
+
 * Tue Jan 26 2016 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-15
 - Normalized common static module assets
 
