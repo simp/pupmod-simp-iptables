@@ -1,7 +1,7 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 14
+Release: 15
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -17,6 +17,7 @@ Requires: simp-bootstrap >= 4.2.0
 Provides: pupmod-ip6tables
 Obsoletes: pupmod-ip6tables
 Obsoletes: pupmod-iptables-test
+Requires: pupmod-onyxpoint-compliance_markup
 
 Prefix: %{_sysconfdir}/puppet/environments/simp/modules
 
@@ -72,6 +73,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Fri Feb 19 2016 Ralph Wright <ralph.wright@onyxpoint.com> - 4.1.0-15
+- Added compliance function support
+
 * Mon Nov 09 2015 Chris Tessmer <chris.tessmer@onypoint.com> - 4.1.0-14
 - migration to simplib and simpcat (lib/ only)
 
