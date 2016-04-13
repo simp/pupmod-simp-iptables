@@ -1,7 +1,7 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
 Version: 4.1.0
-Release: 15
+Release: 17
 License: Apache License, Version 2.0
 Group: Applications/System
 Source: %{name}-%{version}-%{release}.tar.gz
@@ -73,6 +73,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Wed Apr 13 2016 Kendall Moore <kendall.moore@onyxpoint.com> - 4.1.0-17
+- Changed default provider of services to redhat
+
 * Fri Feb 19 2016 Ralph Wright <ralph.wright@onyxpoint.com> - 4.1.0-16
 - Added compliance function support
 
@@ -150,11 +153,6 @@ fi
 - Made several changes to the iptables_rule custom type to:
   * Now resolves all hostnames in the rules by default. This can be
     disabled but may cause issues with the autodiscovery between ipv4
-    and ipv6 rules.
-  * Handle blank lines
-  * Account for all table declarations
-  * Compare while ignoring the table declarations since those are
-    allowed to vary.
   * Ensure that the -A header is not prepended to a rule if it already
     has a header value.
   * Ensure that no rules attempt to be added if they belong to a table

@@ -144,15 +144,17 @@ class iptables (
     require    => [
       File['/etc/init.d/iptables'],
       Package['iptables']
-    ]
+    ],
+    provider   => 'redhat'
   }
 
   service { 'iptables-retry':
-    enable  => true,
-    require => [
+    enable   => true,
+    require  => [
       File['/etc/init.d/iptables-retry'],
       Package['iptables']
-    ]
+    ],
+    provider => 'redhat'
   }
 
   if $::ipv6_enabled {
@@ -193,12 +195,14 @@ class iptables (
       restart    => '/sbin/ip6tables-restore /etc/sysconfig/ip6tables || ( /sbin/ip6tables-restore /etc/sysconfig/ip6tables.bak && exit 3 )',
       hasstatus  => true,
       require    => File['/etc/init.d/ip6tables'],
-      subscribe  => Ip6tables_optimize['/etc/sysconfig/ip6tables']
+      subscribe  => Ip6tables_optimize['/etc/sysconfig/ip6tables'],
+      provider   => 'redhat'
     }
 
     service { 'ip6tables-retry':
-      enable  => true,
-      require => File['/etc/init.d/ip6tables-retry']
+      enable   => true,
+      require  => File['/etc/init.d/ip6tables-retry'],
+      provider => 'redhat'
     }
 
     # A rule optimizer (required)
