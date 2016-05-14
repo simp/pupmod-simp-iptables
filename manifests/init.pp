@@ -157,7 +157,7 @@ class iptables (
     provider => 'redhat'
   }
 
-  if $::ipv6_enabled {
+  if ( defined('$::ipv6_enabled') and getvar('::ipv6_enabled') ) {
 
     # IPV6-only stuff
     file { '/etc/init.d/ip6tables':
