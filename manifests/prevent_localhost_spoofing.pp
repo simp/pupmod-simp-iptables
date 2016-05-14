@@ -11,7 +11,7 @@
 class iptables::prevent_localhost_spoofing {
   include '::iptables'
 
-  if $::ipv6_enabled {
+  if ( defined('$::ipv6_enabled') and getvar('::ipv6_enabled') ) {
     iptables_rule{ 'prevent_ipv6_localhost_spoofing':
       table    => 'raw',
       comment  => 'Prevent Spoofing of Localhost Addresses',

@@ -1,3 +1,5 @@
+require 'spec_helper.rb'
+
 describe "iptables::add_tcp_stateful_listen", :type => :define do
   context  'supported operating systems' do
     on_supported_os.each do |os, facts|

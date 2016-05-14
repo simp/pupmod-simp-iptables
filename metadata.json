@@ -1,13 +1,17 @@
 {
-  "name":    "simp-iptables",
-  "version": "4.1.1",
-  "author":  "simp",
+  "name": "simp-iptables",
+  "version": "4.1.2",
+  "author": "simp",
   "summary": "Safely manages IPTables firewall rules",
   "license": "Apache-2.0",
-  "source":  "https://github.com/simp/pupmod-simp-iptables",
+  "source": "https://github.com/simp/pupmod-simp-iptables",
   "project_page": "https://github.com/simp/pupmod-simp-iptables",
-  "issues_url":   "https://simp-project.atlassian.net",
-  "tags": [ "simp", "iptables", "firewall" ],
+  "issues_url": "https://simp-project.atlassian.net",
+  "tags": [
+    "simp",
+    "iptables",
+    "firewall"
+  ],
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",

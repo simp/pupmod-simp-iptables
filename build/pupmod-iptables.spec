@@ -1,6 +1,6 @@
 Summary: IPTables Puppet Module
 Name: pupmod-iptables
-Version: 4.1.1
+Version: 4.1.2
 Release: 0
 License: Apache License, Version 2.0
 Group: Applications/System
@@ -73,6 +73,9 @@ fi
 # Post uninstall stuff
 
 %changelog
+* Mon May 16 2016 Chris Tessmer <chris.tessmer@onyxpoint.com> - 4.1.2-0
+- Sanitized fact references to run under `STRICT_VARIABLES=yes`
+
 * Wed Apr 13 2016 Kendall Moore <kendall.moore@onyxpoint.com> - 4.1.1-0
 - Changed default provider of services to redhat
 

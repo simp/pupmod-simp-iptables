@@ -52,7 +52,7 @@ class iptables::base_rules (
       apply_to => 'ipv4'
     }
 
-    if $::ipv6_enabled {
+    if ( defined('$::ipv6_enabled') and getvar('::ipv6_enabled') ) {
       iptables_rule { 'allow_v6_echo_request':
         table    => 'filter',
         order    => '11',
