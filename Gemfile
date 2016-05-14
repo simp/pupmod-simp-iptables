@@ -20,6 +20,9 @@ group :test do
   gem "metadata-json-lint"
   gem "simp-rspec-puppet-facts", "~> 1.3"
 
+  gem 'puppet-lint-empty_string-check',   :require => false
+  gem 'puppet-lint-trailing_comma-check', :require => false
+
 
   # simp-rake-helpers does not suport puppet 2.7.X
   if "#{ENV['PUPPET_VERSION']}".scan(/\d+/).first != '2' &&
