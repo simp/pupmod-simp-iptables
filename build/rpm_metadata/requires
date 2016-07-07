@@ -1,0 +1,9 @@
+Requires: pupmod-auditd >= 2.0.0-0
+Requires: pupmod-simplib >= 1.0.0-0
+Requires: pupmod-rsyslog >= 2.0.0-0
+Requires: pupmod-simpcat >= 2.0.0-0
+Requires: pupmod-onyxpoint-compliance_markup
+Requires: puppet >= 3.3.0
+Provides: pupmod-ip6tables
+Obsoletes: pupmod-ip6tables >= 0.0.1
+Obsoletes: pupmod-iptables-test >= 0.0.1
