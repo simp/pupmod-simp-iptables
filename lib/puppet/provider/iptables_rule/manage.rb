@@ -85,10 +85,10 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       if resource[:resolve] == :true
         if content_line =~ /(.*(?:-s|--source|-d|--destination)\s+)(.*?)(\s+.*)/
           prefix = $1
-          check_list = $2.split(',')
+          check_list = $2
           suffix = $3
 
-
+          check_list = check_list.split(',')
           check_list.each do |to_check|
             if not ipaddr?(to_check)
               require 'resolv'
