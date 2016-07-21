@@ -1,16 +1,11 @@
-require 'pathname'
-require 'rspec-puppet'
 require 'puppetlabs_spec_helper/module_spec_helper'
-
+require 'rspec-puppet'
 require 'simp/rspec-puppet-facts'
 include Simp::RspecPuppetFacts
 
+require 'pathname'
+
 # RSpec Material
-
-def mod_site_pp(content)
-  File.open(@orig_site_pp,'w'){|f| f.write(content) }
-end
-
 fixture_path = File.expand_path(File.join(__FILE__, '..', 'fixtures'))
 module_name = File.basename(File.expand_path(File.join(__FILE__,'../..')))
 
@@ -21,16 +16,19 @@ if Puppet.version < "4.0.0"
   end
 end
 
+
+if !ENV.key?( 'TRUSTED_NODE_DATA' )
+  warn '== WARNING: TRUSTED_NODE_DATA is unset, using TRUSTED_NODE_DATA=yes'
+  ENV['TRUSTED_NODE_DATA']='yes'
+end
+
 default_hiera_config =<<-EOM
 ---
 :backends:
-  - "rspec"
   - "yaml"
 :yaml:
   :datadir: "stub"
 :hierarchy:
-  # This is a variable that you can set in your test classes to ensure that the
-  # targeted YAML file gets loaded in the fixtures.
   - "%{custom_hiera}"
   - "%{module_name}"
   - "default"
@@ -47,7 +45,7 @@ EOM
 # end
 #
 def set_environment(environment = :production)
-    RSpec.configure { |c| c.default_facts['environment'] = environment.to_s }
+  RSpec.configure { |c| c.default_facts['environment'] = environment.to_s }
 end
 
 # This can be used from inside your spec tests to load custom hieradata within
@@ -69,9 +67,8 @@ end
 #
 # Note: Any colons (:) are replaced with underscores (_) in the class name.
 def set_hieradata(hieradata)
-    RSpec.configure { |c| c.default_facts['custom_hiera'] = hieradata }
+  RSpec.configure { |c| c.default_facts['custom_hiera'] = hieradata }
 end
-
 
 if not File.directory?(File.join(fixture_path,'hieradata')) then
   FileUtils.mkdir_p(File.join(fixture_path,'hieradata'))
@@ -82,11 +79,13 @@ if not File.directory?(File.join(fixture_path,'modules',module_name)) then
 end
 
 RSpec.configure do |c|
-  # ENC-style environment facts
+  # If nothing else...
   c.default_facts = {
-#    :fqdn           => 'production.rspec.test.localdomain',
-    :path           => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin',
-    :concat_basedir => '/tmp'
+    :production => {
+      #:fqdn           => 'production.rspec.test.localdomain',
+      :path           => '/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin',
+      :concat_basedir => '/tmp'
+    }
   }
 
   c.mock_framework = :rspec
@@ -97,23 +96,18 @@ RSpec.configure do |c|
 
   c.hiera_config = File.join(fixture_path,'hieradata','hiera.yaml')
 
-  if true
-    # Supress useless backtrace noise
-    # START BKGRND
-    backtrace_exclusion_patterns = [
-      /spec_helper/,
-      /gems/
-    ]
+  # Useless backtrace noise
+  backtrace_exclusion_patterns = [
+    /spec_helper/,
+    /gems/
+  ]
 
-    if c.respond_to?(:backtrace_exclusion_patterns)
-      c.backtrace_exclusion_patterns = backtrace_exclusion_patterns
-    elsif c.respond_to?(:backtrace_clean_patterns)
-      c.backtrace_clean_patterns = backtrace_exclusion_patterns
-    end
-    # END BKGRND
+  if c.respond_to?(:backtrace_exclusion_patterns)
+    c.backtrace_exclusion_patterns = backtrace_exclusion_patterns
+  elsif c.respond_to?(:backtrace_clean_patterns)
+    c.backtrace_clean_patterns = backtrace_exclusion_patterns
   end
 
-  # create the default hierarchy file
   c.before(:all) do
     data = YAML.load(default_hiera_config)
     data[:yaml][:datadir] = File.join(fixture_path, 'hieradata')
@@ -124,15 +118,30 @@ RSpec.configure do |c|
   end
 
   c.before(:each) do
+    @spec_global_env_temp = Dir.mktmpdir('simpspec')
+
     if defined?(environment)
       set_environment(environment)
+      FileUtils.mkdir_p(File.join(@spec_global_env_temp,environment.to_s))
     end
 
+    # ensure the user running these tests has an accessible environmentpath
+    Puppet[:environmentpath] = @spec_global_env_temp
+    Puppet[:user] = Etc.getpwuid(Process.uid).name
+    Puppet[:group] = Etc.getgrgid(Process.gid).name
+
+    # sanitize hieradata
     if defined?(hieradata)
       set_hieradata(hieradata.gsub(':','_'))
     elsif defined?(class_name)
       set_hieradata(class_name.gsub(':','_'))
     end
+  end
+
+  c.after(:each) do
+    # clean up the mocked environmentpath
+    FileUtils.rm_rf(@spec_global_env_temp)
+    @spec_global_env_temp = nil
   end
 end
 
