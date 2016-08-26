@@ -105,6 +105,7 @@ class iptables (
     group   => 'root',
     mode    => '0744',
     source  => 'puppet:///modules/iptables/iptables',
+    seltype => 'iptables_initrc_exec_t',
     require => Package['iptables']
   }
 
@@ -117,6 +118,7 @@ class iptables (
     group   => 'root',
     mode    => '0744',
     source  => 'puppet:///modules/iptables/iptables-retry',
+    seltype => 'iptables_initrc_exec_t',
     require => Package['iptables']
   }
 
@@ -161,19 +163,21 @@ class iptables (
 
     # IPV6-only stuff
     file { '/etc/init.d/ip6tables':
-      ensure => 'file',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0744',
-      source => 'puppet:///modules/iptables/ip6tables'
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0744',
+      seltype => 'iptables_initrc_exec_t',
+      source  => 'puppet:///modules/iptables/ip6tables'
     }
 
     file { '/etc/init.d/ip6tables-retry':
-      ensure => 'file',
-      owner  => 'root',
-      group  => 'root',
-      mode   => '0744',
-      source => 'puppet:///modules/iptables/ip6tables-retry'
+      ensure  => 'file',
+      owner   => 'root',
+      group   => 'root',
+      mode    => '0744',
+      seltype => 'iptables_initrc_exec_t',
+      source  => 'puppet:///modules/iptables/ip6tables-retry'
     }
 
     file { '/etc/sysconfig/ip6tables':
