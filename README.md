@@ -1,11 +1,5 @@
 [![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-iptables.svg)](https://travis-ci.org/simp/pupmod-simp-iptables) [![SIMP compatibility](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)
 
-## Work in Progress
-
-Please excuse us as we transition this code into the public domain.
-
-Downloads, discussion, and patches are still welcome!
-
 #### Table of Contents
 
 1. [Overview](#overview)
@@ -67,11 +61,86 @@ On systems containing the `firewalld` service, it is ensured to be stopped.
 
 ### Beginning with iptables
 
-**NOTE** simp-iptables is not yet on Puppet Forge
+#### I want a basic secure iptables setup
 
-Ensure simp-iptables is installed somewhere within your modulepath as `iptables`.
+A basic setup with iptables will allow the following:
+
+* ICMP
+* Loopback
+* SSH
+* Estabilished and Related traffic (Return Traffic)
+
+```puppet
+# Set up iptables with the default settings
+
+include '::iptables'
+```
+Output (to /`etc/sysconfig/iptables`)
+
+```bash
+*filter
+:INPUT DROP [0:0]
+:FORWARD DROP [0:0]
+:OUTPUT ACCEPT [0:0]
+:LOCAL-INPUT - [0:0]
+-A INPUT -j LOCAL-INPUT
+-A FORWARD -j LOCAL-INPUT
+-A LOCAL-INPUT -p icmp --icmp-type 8 -j ACCEPT
+-A LOCAL-INPUT -i lo -j ACCEPT
+-A LOCAL-INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+-A LOCAL-INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A LOCAL-INPUT -j LOG --log-prefix "IPT:"
+-A LOCAL-INPUT -j DROP
+COMMIT
+```
 
 ## Usage
+
+#### I want to open a specific port or allow access
+
+The IPtables module has a set of defined types for adding in new firewall rules. This code can be utilized in a role or profile.
+
+```puppet
+#open TCP port 443 (HTTPS) and a custom 8443 from any IP Address
+
+iptables::add_tcp_stateful_listen { 'webserver':
+  client_nets => ['any'],
+  dports => ['443','8443']
+}
+
+#open UDP port 53 (DNS) from two specific IP addresses
+
+iptables::add_udp_stateful_listen {'DNS':
+  client_nets => ['192.168.56.55','192.168.56.147'],
+  dports      => ['53']
+}
+
+#Allow a specific machine full access to this node
+
+iptables::add_all_listen { 'Central Management':
+  client_nets => ['10.10.35.100'],
+}
+
+#Allow a range of ports to be accessible from a specific IP
+iptables::add_tcp_stateful_listen { 'myapp':
+  client_nets => ['10.10.45.100'],
+  dports => ['1024:60000']
+}
+
+```
+
+#### This module doesn't cover my specific iptables rule
+
+In the case you need a rule not covered properly by the module, you can use the iptables::add_rules type to place the exact rule into /etc/sysconfig/iptables.
+
+```puppet
+# Inserts a custom rule into IPtables
+
+iptables::add_rules { 'example':
+  content => '-A LOCAL-INPUT -m state --state NEW -m tcp -p tcp\
+  -s 1.2.3.4 --dport 1024:65535 -j ACCEPT'
+}
+```
 
 ## Reference
 
