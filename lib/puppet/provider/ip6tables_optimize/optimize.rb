@@ -1,5 +1,4 @@
-require 'puppet/type/iptables_optimize'
-require 'puppet/provider/iptables_optimize/optimize'
+require File.join(File.dirname(__FILE__), '..', 'iptables_optimize', 'optimize')
 Puppet::Type.type(:ip6tables_optimize).provide(:optimize, :parent => Puppet::Type::Iptables_optimize::ProviderOptimize) do
   commands :ip6tables => 'ip6tables'
   commands :ip6tables_restore => 'ip6tables-restore'
