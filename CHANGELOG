@@ -1,3 +1,6 @@
+* Fri Sep 30 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.5-0
+- Updated the ip6tables_optimize provider so that it works in Puppet 4
+
 * Fri Aug 26 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.4-0
 - Ensure that the SELinux context on the init scripts is correct so that the
   runs are idempotent
