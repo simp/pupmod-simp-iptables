@@ -1,7 +1,10 @@
-Requires: pupmod-simp-auditd >= 2.0.0-0
-Requires: pupmod-simp-compliance_markup
-Requires: pupmod-simp-rsyslog >= 2.0.0-0
-Requires: pupmod-simp-simpcat >= 2.0.0-0
-Provides: pupmod-simp-ip6tables
 Obsoletes: pupmod-ip6tables >= 0.0.1
 Obsoletes: pupmod-iptables-test >= 0.0.1
+Provides: pupmod-simp-ip6tables
+Requires: pupmod-puppetlabs-stdlib < 5.0.0-0
+Requires: pupmod-puppetlabs-stdlib >= 4.9.0-0
+Requires: pupmod-simp-compliance_markup < 2.0.0-0
+Requires: pupmod-simp-compliance_markup >= 1.0.1-0
+Requires: pupmod-simp-simpcat >= 2.0.0-0
+Requires: pupmod-simp-simplib < 2.0.0-0
+Requires: pupmod-simp-simplib >= 1.3.1-0
