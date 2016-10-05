@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "baa041b7_e10d0041",
+        "filename": "build/rpm_metadata/requires",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2016-10-05T20:25:36Z",
+      "side": 1,
+      "message": "The script doesn\u0027t modify Provides or any dep not in the metadata.json",
+      "parentUuid": "baa041b7_617d70b1",
+      "revId": "6bb7f7a79f1d6c95517cccf83d4ab5e4e589f71a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa041b7_417a6cbb",
         "filename": "build/rpm_metadata/requires",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2016-10-05T20:14:56Z",
       "side": 1,
       "message": "No",
+      "revId": "6bb7f7a79f1d6c95517cccf83d4ab5e4e589f71a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_41282c97",
+        "filename": "build/rpm_metadata/requires",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2016-10-05T20:25:36Z",
+      "side": 1,
+      "message": "No what?",
+      "parentUuid": "baa041b7_417a6cbb",
       "revId": "6bb7f7a79f1d6c95517cccf83d4ab5e4e589f71a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "baa041b7_21188883",
+        "filename": "build/rpm_metadata/requires",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2016-10-05T20:25:36Z",
+      "side": 1,
+      "message": "No why?",
+      "parentUuid": "baa041b7_214ac883",
+      "revId": "6bb7f7a79f1d6c95517cccf83d4ab5e4e589f71a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "baa041b7_014fc492",
         "filename": "build/rpm_metadata/requires",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2016-10-05T20:14:56Z",
       "side": 1,
       "message": "No",
+      "revId": "6bb7f7a79f1d6c95517cccf83d4ab5e4e589f71a",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_011d8472",
+        "filename": "build/rpm_metadata/requires",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 1005143
+      },
+      "writtenOn": "2016-10-05T20:25:36Z",
+      "side": 1,
+      "message": "Nofx?",
+      "parentUuid": "baa041b7_014fc492",
       "revId": "6bb7f7a79f1d6c95517cccf83d4ab5e4e589f71a",
       "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
       "unresolved": false
