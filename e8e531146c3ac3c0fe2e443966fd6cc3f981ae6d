@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_bbcc2b8b",
+        "filename": "metadata.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-11-10T18:28:06Z",
+      "side": 1,
+      "message": "Bump to 5 for removing compliance_markup",
+      "range": {
+        "startLine": 3,
+        "startChar": 14,
+        "endLine": 3,
+        "endChar": 19
+      },
+      "revId": "e8e531146c3ac3c0fe2e443966fd6cc3f981ae6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "baa041b7_dbb48ff2",
+        "filename": "metadata.json",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-11-10T18:28:06Z",
+      "side": 1,
+      "message": "You can remove this dep",
+      "range": {
+        "startLine": 24,
+        "startChar": 0,
+        "endLine": 27,
+        "endChar": 5
+      },
+      "revId": "e8e531146c3ac3c0fe2e443966fd6cc3f981ae6d",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
