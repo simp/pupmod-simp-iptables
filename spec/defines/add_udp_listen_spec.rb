@@ -45,11 +45,9 @@ describe "iptables::add_udp_listen", :type => :define do
             :apply_to    => 'ipv6'
           }}
           it{
-            skip( 'FIXME: validate_net_list() fails *any* IPv6 CIDR (but accepts IPv4)' )
             is_expected.to create_iptables__add_udp_listen('allow_udp_1234').with_dports('1234')
           }
           it{
-            skip( 'FIXME: validate_net_list() fails *any* IPv6 CIDR (but accepts IPv4)' )
             is_expected.to create_iptables_rule('udp_allow_udp_1234')
           }
         end
