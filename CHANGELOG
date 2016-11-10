@@ -1,3 +1,13 @@
+* Wed Nov 09 2016 Liz Nemsick <lnemsick.simp@gmail.com> - 5.0.0-0
+- Fixed bug in the set provider for the xt_recent type that required manual
+  modifications to the permissions for the /sys/module/xt_recent/parameters/*
+  files, in order for the scanblock capability to be enabled.
+- Fixed bugs in the xt_recent type and its set provider that caused
+  Puppet to believe /sys/module/xt_recent/parameters/ip_list_perms
+  file content had changed when it had not.
+- Eliminated use of deprecated Puppet.newtype
+- Updated to compliance_markup version 2
+
 * Fri Sep 30 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.5-0
 - Updated the ip6tables_optimize provider so that it works in Puppet 4
 

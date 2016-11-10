@@ -84,8 +84,7 @@
 # [*ip_list_hash_size*]
 #   Integer:
 #   Default: 0
-#     Hash table size. 0 means to calculate it based on ip_list_tot,
-#     default: 512.
+#     Hash table size. 0 means to calculate it based on ip_list_tot.
 #
 # [*ip_list_perms*]
 #   Integer:

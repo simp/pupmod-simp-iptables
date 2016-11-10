@@ -1,12 +1,17 @@
 HOSTS:
-  default:
+  server7:
     roles:
-      - agent
+      - server7
       - default
     platform: el-7-x86_64
-    box :     centos-70-x64-nocm
-    box_url : https://atlas.hashicorp.com/puppetlabs/boxes/centos-7.0-64-nocm/versions/1.0.1/providers/virtualbox.box
+    box :     centos/7
+    hypervisor : vagrant
+  server6:
+    roles:
+      - server6
+    platform: el-6-x86_64
+    box :     centos/6
     hypervisor : vagrant
 CONFIG:
-  type: foss
+  type: aio
   vagrant_memsize: 256

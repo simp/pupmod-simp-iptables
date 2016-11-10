@@ -92,8 +92,6 @@ class iptables (
   validate_bool($prevent_localhost_spoofing)
   validate_bool($disable)
 
-  compliance_map()
-
   if $enable_default_rules { include '::iptables::base_rules' }
   if $enable_scanblock { include '::iptables::scanblock' }
   if $prevent_localhost_spoofing { include '::iptables::prevent_localhost_spoofing' }

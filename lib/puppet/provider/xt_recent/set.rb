@@ -10,9 +10,10 @@ Puppet::Type.type(:xt_recent).provide(:set) do
       modprobe "xt_recent"
     end
 
-    # All of our little friends need to be writable
+    # All parameter files need to be writable
     Dir.glob("#{resource[:name]}/*").each do |file|
-      File.chmod(0600,file) unless File.writable?(file)
+      # can't use File.writeable? as it always returns true for root
+      File.chmod(0600,file) unless ((File.stat(file).mode & 0200) != 0)
     end
   end
 
@@ -47,13 +48,15 @@ Puppet::Type.type(:xt_recent).provide(:set) do
   end
 
   def ip_list_perms
-    File.read("#{resource[:name]}/#{__method__}").chomp
+    # Have to convert back to octal here, so the comparison of the decimal value
+    # stored in the file with the octal string configured via parameters makes sense.
+    sprintf("%#o",File.read("#{resource[:name]}/#{__method__}").chomp.to_i)
   end
 
   def ip_list_perms=(should)
-    # Have to un-munge the field here.
-    should = should.to_i(10).to_s(8)
-    File.open("#{resource[:name]}/#{__method__.to_s.chop}",'w'){|fh| fh.puts should }
+    # Can't use munge in xt_recent type, as screws up comparison when checking for
+    # changes in resource catalog.  So, convert from octal string to decimal string here.
+    File.open("#{resource[:name]}/#{__method__.to_s.chop}",'w'){|fh| fh.puts should.to_i(8).to_s(10) }
   end
 
   def ip_list_uid
