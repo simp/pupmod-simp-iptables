@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "baa041b7_78f0e991",
+        "filename": "spec/defines/add_udp_listen_spec.rb",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1005361
+      },
+      "writtenOn": "2016-11-10T18:55:09Z",
+      "side": 0,
+      "message": "nice to get rid of these",
+      "revId": "7c237304c287c7f81ed4ef1b8fc40253d9be5c2e",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
