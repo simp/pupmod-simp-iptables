@@ -1,3 +1,7 @@
+* Mon Nov 14 2016 Nick Miller <nick.miller@onyxpoint.com> - 5.0.0-1
+- Updated for compliance mapper 2
+- Added a feature to add resources via hiera
+
 * Fri Sep 30 2016 Trevor Vaughan <tvaughan@onyxpoint.com> - 4.1.5-0
 - Updated the ip6tables_optimize provider so that it works in Puppet 4
 
