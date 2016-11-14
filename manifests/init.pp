@@ -69,6 +69,21 @@
 #   If true, disable iptables management completely. The build will
 #   still happen but nothing will be enforced.
 #
+# [*ports*]
+# Type: Hash
+# Default: {}
+#   A hash with structure as defined below that will open ports based on the structure of the hash
+#   An example section of hieradata:
+#     ---
+#     iptables::ports:
+#       defaults:
+#         apply_to: ipv4
+#       80:
+#       53:
+#         proto: udp
+#       443:
+#         apply_to: ipv6
+#
 # == Authors:
 #   * Trevor Vaughan <tvaughan@onyxpoint.com>
 #   * Chris Tessmer  <chris.tessmer@onyxpoint.com>
@@ -81,7 +96,8 @@ class iptables (
   $enable_default_rules = true,
   $enable_scanblock     = false,
   $prevent_localhost_spoofing = true,
-  $disable              = !hiera('use_iptables', true)
+  $disable              = !hiera('use_iptables', true),
+  Hash $ports           = {},
 ) {
   validate_bool($authoritative)
   validate_bool($class_debug)
@@ -267,4 +283,43 @@ class iptables (
   if $authoritative {
     Iptables_optimize['/etc/sysconfig/iptables'] ~> Service['iptables']
   }
+
+  if ! empty($ports) {
+    # extract defaults and remove that hash from iteration
+    $defaults  = $ports['defaults']
+    $raw_ports = $ports - 'defaults'
+
+    # https://docs.puppet.com/puppet/4.8/reference/lang_resources_advanced.html#implementing-the-createresources-function
+    $raw_ports.each |$port, $options| {
+      $attributes = {
+        'dports' => [$port],
+      }
+
+      if is_hash($options) {
+        $proto = $options['proto']
+        $args  = ($options - 'proto') + $attributes
+      }
+      else {
+        $proto = 'tcp'
+        $args  = $attributes
+      }
+
+      case $proto {
+        default: {
+          iptables::add_tcp_stateful_listen {
+            default:        * => $defaults;
+            "port_${port}": * => $args;
+          }
+        }
+        'udp': {
+          iptables::add_udp_listen {
+            default:        * => $defaults;
+            "port_${port}": * => $args;
+          }
+        }
+      }
+    }
+
+  }
+
 }

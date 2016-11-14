@@ -8,6 +8,7 @@ describe 'iptables' do
       end
 
       context "on #{os}" do
+
         context "iptables class without any parameters" do
           let(:params) {{ }}
           it { is_expected.to compile.with_all_deps }
@@ -32,6 +33,17 @@ describe 'iptables' do
           # iptables rules are only applied if the iptables_optimize resource is not disabled
           it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(true) }
         end
+
+        context 'creating iptables resources with iterators' do
+          context 'iptables_ports_hash in hiera with defaults ' do
+            let(:hieradata){ 'iptables__ports' }
+            it { is_expected.to create_iptables__add_tcp_stateful_listen('port_80').with({ :apply_to => 'ipv4'}) }
+            it { is_expected.to create_iptables__add_udp_listen('port_53').with({ :apply_to => 'ipv4'}) }
+            it { is_expected.to create_iptables__add_tcp_stateful_listen('port_443').with({ :apply_to => 'ipv6'}) }
+          end
+
+        end
+
       end
     end
   end
