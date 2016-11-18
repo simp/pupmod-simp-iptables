@@ -1,7 +1,7 @@
 {
   "name": "simp-iptables",
   "version": "5.0.0",
-  "author": "simp",
+  "author": "SIMP Team",
   "summary": "Safely manages IPTables firewall rules",
   "license": "Apache-2.0",
   "source": "https://github.com/simp/pupmod-simp-iptables",
