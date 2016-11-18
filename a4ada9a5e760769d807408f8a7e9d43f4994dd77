@@ -1,0 +1,164 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9aa53dc9_c26ce40a",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "What are the defaults for the default key, or how does it decide the defaults?  TCP, `-m state` opts, etc.",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 36
+      },
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_c5f2ae06",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "`apply` is a verb running counter to Puppet\u0027s declarative model.  IMO, this needs to be fixed before this feature can proceed.",
+      "range": {
+        "startLine": 80,
+        "startChar": 10,
+        "endLine": 80,
+        "endChar": 18
+      },
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_258dda7b",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "I really like this interface!  With the defaults key, it might be worth removing the hard-coded defaults and recommending them in this and other documentation.",
+      "range": {
+        "startLine": 78,
+        "startChar": 0,
+        "endLine": 85,
+        "endChar": 24
+      },
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_a5244aaf",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "It might make sense to define this as a complex, nested type, either inline or as a type alias, a la stdlib.  (note that type aliases weren\u0027t added until Puppet 4.4)",
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_c56d0ece",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "This is going to go stale.  Replace \"4.8\" with \"latest\".",
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_25b6fa3d",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 293,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "Is there some reason you\u0027re not using a hash merge and create_resources() here?  Puppet\u0027s language is really more functional than it is procedural, even with the new loops.",
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_c5562e06",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 298,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "is_type() functions are deprecated.  Use is_a() instead.",
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9aa53dc9_c57bce7a",
+        "filename": "manifests/init.pp",
+        "patchSetId": 2
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 1008615
+      },
+      "writtenOn": "2016-11-18T14:25:38Z",
+      "side": 1,
+      "message": "With create_resources() you should be able to consolidate this to the primitive Iptables_rule resource type.  As mentioned above, the parameters interface to Iptables_rule needs some work, so maybe it could also be updated to work more sensibly with create_resources(), if needed.",
+      "range": {
+        "startLine": 307,
+        "startChar": 0,
+        "endLine": 319,
+        "endChar": 9
+      },
+      "revId": "a4ada9a5e760769d807408f8a7e9d43f4994dd77",
+      "serverId": "d5d70762-12d0-45a1-890d-524b12d3f735",
+      "unresolved": false
+    }
+  ]
+}
