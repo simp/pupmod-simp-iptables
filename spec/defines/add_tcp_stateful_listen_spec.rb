@@ -8,19 +8,19 @@ describe "iptables::add_tcp_stateful_listen", :type => :define do
           facts
         end
 
-        context "with client_nets in IPv4 CIDR format" do
+        context "with trusted_nets in IPv4 CIDR format" do
           let( :title  ){ 'allow_tcp_1234' }
           let( :params ){{
-            :client_nets => ['10.0.2.0/24'],
+            :trusted_nets => ['10.0.2.0/24'],
             :dports      => '1234'
           }}
           it { is_expected.to create_iptables__add_tcp_stateful_listen('allow_tcp_1234').with_dports('1234') }
         end
 
-        context "with client_nets in IPv6 CIDR format" do
+        context "with trusted_nets in IPv6 CIDR format" do
           let( :title  ){ 'allow_tcp_1234' }
           let( :params ){{
-            :client_nets => ['fe80::/64'],
+            :trusted_nets => ['fe80::/64'],
             :dports      => '1234',
             :apply_to    => 'ipv6'
           }}
@@ -32,7 +32,7 @@ describe "iptables::add_tcp_stateful_listen", :type => :define do
         context "with more than 10 ports" do
           let( :title  ){ 'allow_tcp_more_than_10_ports' }
           let( :params ){{
-            :client_nets => ['10.0.2.0/24'],
+            :trusted_nets => ['10.0.2.0/24'],
             :dports      => ('101'..'111').to_a
           }}
           # does the catalog accept it?

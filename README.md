@@ -104,26 +104,26 @@ The IPtables module has a set of defined types for adding in new firewall rules.
 #open TCP port 443 (HTTPS) and a custom 8443 from any IP Address
 
 iptables::add_tcp_stateful_listen { 'webserver':
-  client_nets => ['any'],
+  trusted_nets => ['any'],
   dports => ['443','8443']
 }
 
 #open UDP port 53 (DNS) from two specific IP addresses
 
 iptables::add_udp_stateful_listen {'DNS':
-  client_nets => ['192.168.56.55','192.168.56.147'],
+  trusted_nets => ['192.168.56.55','192.168.56.147'],
   dports      => ['53']
 }
 
 #Allow a specific machine full access to this node
 
 iptables::add_all_listen { 'Central Management':
-  client_nets => ['10.10.35.100'],
+  trusted_nets => ['10.10.35.100'],
 }
 
 #Allow a range of ports to be accessible from a specific IP
 iptables::add_tcp_stateful_listen { 'myapp':
-  client_nets => ['10.10.45.100'],
+  trusted_nets => ['10.10.45.100'],
   dports => ['1024:60000']
 }
 
@@ -253,7 +253,7 @@ This define provides a simple way to allow all protocols to all ports on the tar
 
 ```ruby
 iptables::add_all_listen { 'example':
-  client_nets => [ '1.2.3.4', '5.6.7.8' ],
+  trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
 }
 ```
 
@@ -287,7 +287,7 @@ Command
 
 ```ruby
 iptables::add_icmp_listen { "example":
-  client_nets => [ "1.2.3.4", "5.6.7.8" ],
+  trusted_nets => [ "1.2.3.4", "5.6.7.8" ],
   icmp_type => '8'
 }
 ```
@@ -398,7 +398,7 @@ All parameters are optional, unless otherwise noted.
      - **ipv6** -> ip6tables
      - **all**  -> Both
      - **auto** -> Try to figure it out from the rule, will not pick `all`.
-* `client_nets`: Client networks that should be allowed by this rule.  Set the string to `any` to allow all networks
+* `trusted_nets`: Client networks that should be allowed by this rule.  Set the string to `any` to allow all networks
 
 ##### Example
 
@@ -406,7 +406,7 @@ Command
 
 ```ruby
 iptables::add_tcp_stateful_listen { 'example':
-  client_nets => [ '1.2.3.4', '5.6.7.8' ],
+  trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
   dports => [ '5', '1024:65535' ]
 }
 ```
@@ -458,7 +458,7 @@ This provides a simple way to allow UDP ports into the system.
      - **ipv6** -> ip6tables
      - **all**  -> Both
      - **auto** -> Try to figure it out from the rule, will not pick `all`.
-* `client_nets`: Client networks that should be allowed by this rule.  Set the string to `any` to allow all networks
+* `trusted_nets`: Client networks that should be allowed by this rule.  Set the string to `any` to allow all networks
 
 ##### Example
 
@@ -466,7 +466,7 @@ Command
 
 ```ruby
 iptables::add_udp_stateful_listen { 'example':
-  client_nets => [ '1.2.3.4', '5.6.7.8' ],
+  trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
   dports => [ '5', '1024:65535' ]
 }
 ```

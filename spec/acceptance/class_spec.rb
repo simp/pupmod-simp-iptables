@@ -15,7 +15,7 @@ test_name "iptables class"
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
         # define a rule that permit SSH access from the standard Vagrant subnets:
         iptables::add_tcp_stateful_listen { 'allow_sshd':
-          client_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
+          trusted_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
           dports      => '22',
         }
       EOS
@@ -55,7 +55,7 @@ test_name "iptables class"
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
         # define a rule that permit SSH access from the standard Vagrant subnets:
         iptables::add_tcp_stateful_listen { 'allow_sshd':
-          client_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
+          trusted_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
           dports      => '22',
         }
       EOS
@@ -103,7 +103,7 @@ EOM
         on(host, "cat /sys/module/xt_recent/parameters/ip_list_perms", :acceptable_exit_codes => 0) do
           expect(stdout).to eq("416\n")
         end
- 
+
         on(host, "cat /sys/module/xt_recent/parameters/ip_list_uid", :acceptable_exit_codes => 0) do
           expect(stdout).to eq("0\n")
         end
@@ -162,7 +162,7 @@ EOM
         on(host, "cat /sys/module/xt_recent/parameters/ip_list_perms", :acceptable_exit_codes => 0) do
           expect(stdout).to eq("420\n")
         end
- 
+
         on(host, "cat /sys/module/xt_recent/parameters/ip_list_uid", :acceptable_exit_codes => 0) do
           expect(stdout).to eq("0\n")
         end

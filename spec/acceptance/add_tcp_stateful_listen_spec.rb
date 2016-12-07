@@ -13,25 +13,25 @@ test_name "iptables::add_tcp_stateful_listen"
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
         # define a rule that permit SSH access from the standard Vagrant subnets:
         iptables::add_tcp_stateful_listen { 'allow_sshd':
-          client_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
+          trusted_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
           dports      => '22',
         }
 
 
         iptables::add_tcp_stateful_listen { 'test_tcp_on_both':
-          client_nets => ['10.0.2.0/16', 'fe80::/64'],  # Standard Beaker/Vagrant subnet
+          trusted_nets => ['10.0.2.0/16', 'fe80::/64'],  # Standard Beaker/Vagrant subnet
           dports      => '2222',
           apply_to    => 'all',
         }
 
         iptables::add_tcp_stateful_listen { 'test_tcp_on_ipv4':
-          client_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
+          trusted_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
           dports      => '4444',
           apply_to    => 'ipv4',
         }
 
         iptables::add_tcp_stateful_listen { 'test_tcp_on_ipv6':
-          client_nets => ['fe80::/64'],  # Standard Beaker/Vagrant subnet
+          trusted_nets => ['fe80::/64'],  # Standard Beaker/Vagrant subnet
           dports      => '6666',
           apply_to    => 'ipv6',
         }

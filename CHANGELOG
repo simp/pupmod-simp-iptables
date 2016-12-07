@@ -1,3 +1,6 @@
+* Wed Dec 07 2016 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.0-0
+- Renamed the global catalyst 'client_nets' to 'trusted_nets'.
+
 * Wed Nov 09 2016 Liz Nemsick <lnemsick.simp@gmail.com> - 5.0.0-0
 - Fixed bug in the set provider for the xt_recent type that required manual
   modifications to the permissions for the /sys/module/xt_recent/parameters/*

@@ -8,28 +8,28 @@ describe "iptables::add_udp_listen", :type => :define do
           facts
         end
 
-        describe "with IPv4 client_nets" do
+        describe "with IPv4 trusted_nets" do
           let( :title  ){ 'allow_udp_1234' }
           let( :params ){{
-            :client_nets => ['10.0.2.0'],
+            :trusted_nets => ['10.0.2.0'],
             :dports      => '1234'
           }}
           it { is_expected.to create_iptables__add_udp_listen('allow_udp_1234').with_dports('1234') }
         end
 
-        describe "with IPv4 client_netsi in CIDR notation" do
+        describe "with IPv4 trusted_nets in CIDR notation" do
           let( :title  ){ 'allow_udp_1234' }
           let( :params ){{
-            :client_nets => ['10.0.2.0/24'],
+            :trusted_nets => ['10.0.2.0/24'],
             :dports      => '1234'
           }}
           it { is_expected.to create_iptables__add_udp_listen('allow_udp_1234').with_dports('1234') }
         end
 
-        describe "with IPv6 client_nets" do
+        describe "with IPv6 trusted_nets" do
           let( :title  ){ 'allow_udp_1234' }
           let( :params ){{
-            :client_nets => ['fe80::'],
+            :trusted_nets => ['fe80::'],
             :dports      => '1234',
             :apply_to    => 'ipv6'
           }}
@@ -37,10 +37,10 @@ describe "iptables::add_udp_listen", :type => :define do
           it { is_expected.to create_iptables_rule('udp_allow_udp_1234') }
         end
 
-        describe "with IPv6 client_nets in CIDR format" do
+        describe "with IPv6 trusted_nets in CIDR format" do
           let( :title  ){ 'allow_udp_1234' }
           let( :params ){{
-            :client_nets => ['fe80::/64'],
+            :trusted_nets => ['fe80::/64'],
             :dports      => '1234',
             :apply_to    => 'ipv6'
           }}
