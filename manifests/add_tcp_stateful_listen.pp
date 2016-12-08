@@ -10,7 +10,7 @@
 #
 #  Command
 #     iptables::add_tcp_stateful_listen { 'example':
-#         client_nets => [ '1.2.3.4', '5.6.7.8' ],
+#         trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
 #         dports => [ '5', '1024:65535' ]
 #     }
 #
@@ -69,12 +69,12 @@ define iptables::add_tcp_stateful_listen (
 #       - auto -> Try to figure it out from the rule, will not pick
 #                 'all'. (default)
     $apply_to = 'auto',
-# $client_nets
+# $trusted_nets
 #     Client networks that should be allowed by this rule.  Set the string to
 #     'any' to allow all networks
-  $client_nets = '127.0.0.1'
+  $trusted_nets = '127.0.0.1'
 ) {
-#  validate_net_list($client_nets,'^(any|ALL)$')
+#  validate_net_list($trusted_nets,'^(any|ALL)$')
 
   $l_protocol = 'tcp'
 

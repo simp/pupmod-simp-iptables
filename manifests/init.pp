@@ -81,7 +81,7 @@ class iptables (
   $enable_default_rules = true,
   $enable_scanblock     = false,
   $prevent_localhost_spoofing = true,
-  $disable              = !hiera('use_iptables', true)
+  $disable              = !lookup('simp_options::firewall',  { 'default_value' => false, 'value_type' => Boolean })
 ) {
   validate_bool($authoritative)
   validate_bool($class_debug)

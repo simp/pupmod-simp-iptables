@@ -1,8 +1,8 @@
 <%
 t_max_multiport_length = 15
 
-t_client_nets = Array(@client_nets).flatten
-t_allow_all = !t_client_nets.select{|x| x =~ /^any|nil|ALL$/ }.empty?
+t_trusted_nets = Array(@trusted_nets).flatten
+t_allow_all = !t_trusted_nets.select{|x| x =~ /^any|nil|ALL$/ }.empty?
 t_dports = Array(@dports).flatten.uniq.sort
 t_all_dports = !t_dports.select{|x| x =~ /^any|nil|ALL$/ }.empty?
 
@@ -20,7 +20,7 @@ t_output = []
 if t_all_dports && t_allow_all then
   t_output << "#{t_output_base} -j ACCEPT"
 elsif t_all_dports && !t_allow_all then
-  t_client_nets.each do |n|
+  t_trusted_nets.each do |n|
     t_output << "#{t_output_base} -s #{n} -j ACCEPT"
   end
 elsif !t_all_dports && t_allow_all then
@@ -28,7 +28,7 @@ elsif !t_all_dports && t_allow_all then
     t_output << "#{t_output_base} -m multiport --dports #{t_slice.join(',')} -j ACCEPT"
   end
 else
-  t_client_nets.each do |n|
+  t_trusted_nets.each do |n|
     t_port_slices.each do |t_slice|
       t_output << "#{t_output_base} -s #{n} -m multiport --dports #{t_slice.join(',')} -j ACCEPT"
     end
