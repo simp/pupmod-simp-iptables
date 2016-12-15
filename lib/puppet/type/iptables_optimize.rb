@@ -2,7 +2,7 @@ Puppet::Type.newtype(:iptables_optimize) do
   @desc="Optimize managed iptables rules."
 
   newparam(:name, :namevar => true) do
-    desc "A name variable, doesn't really do anything"
+    desc 'The path to the target file to be optimized. Mainly used for ensuring that the file comes after the optimization.'
   end
 
   newparam(:disable) do
@@ -86,11 +86,19 @@ Puppet::Type.newtype(:iptables_optimize) do
     resource = catalog.resources.find_all { |r|
       r.is_a?(Puppet::Type.type(:iptables_rule))
     }
-    if not resource.empty? then
+    unless resource.empty?
       req << resource
     end
     req.flatten!
     req.each { |r| debug "Autorequiring #{r}" }
     req
+  end
+
+  autonotify(:file) do
+    [self[:name]]
+  end
+
+  autonotify(:service) do
+    ['iptables']
   end
 end

@@ -130,7 +130,7 @@ Puppet::Type.newtype(:iptables_rule) do
     newvalues(/\w+/)
 
     def change_to_s(current_value, new_value)
-      if current_value and current_value.is_a?(Array) and not current_value.empty? then
+      if current_value && current_value.is_a?(Array) && !current_value.empty?
         return "#{current_value.join(' and ')} rules changed."
       else
         super
