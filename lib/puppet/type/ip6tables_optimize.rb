@@ -98,4 +98,13 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     req.each { |r| debug "Autorequiring #{r}" }
     req
   end
+
+  autonotify(:file) do
+    [self[:name]]
+  end
+
+  autonotify(:service) do
+    ['ip6tables']
+  end
+
 end

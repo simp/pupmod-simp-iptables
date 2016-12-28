@@ -1,4 +1,11 @@
 Puppet::Type.type(:iptables_optimize).provide(:optimize) do
+  desc <<-EOM
+    Run through all of the proposed IPTables rules and optimize them where
+    possible.
+
+    Provides a fail-safe mode to just open port 22 in the case that the rules
+    fail to apply.
+  EOM
 
   commands :iptables => 'iptables'
   commands :iptables_restore => 'iptables-restore'
@@ -57,8 +64,8 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
     # Start of the actual optmize code
     result = resource[:optimize]
 
-    if @ipt_config[:enabled] then
-      if "#{resource[:optimize]}" == 'true' then
+    if @ipt_config[:enabled]
+      if "#{resource[:optimize]}" == 'true'
         @ipt_config[:optimized_config] = @ipt_config[:source_config].optimize
       else
         @ipt_config[:optimized_config] = @ipt_config[:source_config]
@@ -67,9 +74,9 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
 
     # We go ahead and do the comparison here because passing the
     # appropriate values around becomes a mess in the log output.
-    if @ipt_config[:target_config].to_hash != @ipt_config[:optimized_config].to_hash then
+    if @ipt_config[:target_config].to_hash != @ipt_config[:optimized_config].to_hash
       @ipt_config[:changed] = true
-      if "#{resource[:optimize]}" != 'true' then
+      unless ("#{resource[:optimize]}" == 'true')
         result = :synchronized
       else
         result = :optimized
@@ -92,7 +99,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
   end
 
   def optimize=(should)
-    if resource[:ignore] and not resource[:ignore].empty? then
+    if resource[:ignore] && !resource[:ignore].empty?
       to_apply = @ipt_config[:optimized_config].live_format(@ipt_config[:running_config].chains(resource[:ignore]))
     else
       to_apply = @ipt_config[:optimized_config].live_format
@@ -108,7 +115,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
     end
 
     debug("Starting to apply the new ruleset")
-    if @ipt_config[:changed] then
+    if @ipt_config[:changed]
       debug("Backing up original config for #{resource[:name]}")
 
       File.open("#{resource[:name]}.bak",'w').puts(@ipt_config[:target_config])

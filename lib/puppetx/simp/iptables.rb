@@ -22,7 +22,7 @@ module PuppetX
         rules.chomp.split("\n").each do |rule|
           next if rule =~ /^\s*(#.*)?$/
 
-          if rule =~ /^\s*(\*.*)/ then
+          if rule =~ /^\s*(\*.*)/
             current_table = $1.strip
             @tables[current_table] ||= []
             next
@@ -62,11 +62,11 @@ module PuppetX
         @rules.each do |rule|
           next unless rule.chain
 
-          if to_match.empty? then
+          if to_match.empty?
             result[rule.chain] = true
           else
             to_match.each do |regex|
-              if regex.match(rule.chain) or regex.match(rule.jump) then
+              if regex.match(rule.chain) || regex.match(rule.jump)
                 result[rule.chain] = true
               end
             end
@@ -90,15 +90,15 @@ module PuppetX
         created_chains = []
 
         @rules.each do |rule|
-          if rule.rule_type == :rule then
+          if rule.rule_type == :rule
             table = rule.table.split('*').last
 
-            if not created_chains.include?(rule.chain) then
+            unless created_chains.include?(rule.chain)
               result.unshift("-N #{rule.chain} 2>/dev/null")
               created_chains << rule.chain
             end
 
-            if not (protect.include?(rule.chain) or flushed_chains[rule.chain]) then
+            unless (protect.include?(rule.chain) || flushed_chains[rule.chain])
               result << "-t #{table} -F #{rule.chain}"
               flushed_chains[rule.chain] = true
             end
@@ -143,7 +143,7 @@ module PuppetX
 
             do_ignore = false
             to_ignore.each do |ignore|
-              if ignore.match(rule.chain) or ignore.match(rule.jump) then
+              if ignore.match(rule.chain) || ignore.match(rule.jump)
                do_ignore = true
                break
               end
@@ -152,7 +152,7 @@ module PuppetX
 
             result[table][rule.chain] ||= {}
 
-            if rule.jump then
+            if rule.jump
               result[table][rule.chain][rule.jump] ||= 0
               result[table][rule.chain][rule.jump] += 1
             end
@@ -174,13 +174,13 @@ module PuppetX
           @tables[table].each do |rule|
             rule = rule.to_s
 
-            if new_rules.empty? then
+            if new_rules.empty?
               new_rules << rule
               next
             end
 
             # Make sure we have a valid rule for multiport compression.
-            if  rule !~ /-p(rotocol)?\s+(ud|tc)p/ and
+            if  rule !~ /-p(rotocol)?\s+(ud|tc)p/ &&
                 rule !~ /--(d(estination-)?|s(ource-)?)ports?\s+/
             then
               new_rules << rule
@@ -196,12 +196,12 @@ module PuppetX
 
             prev_rule = last_rule.split(/\s+-/).delete_if{ |x|
               retval = false
-              if x.empty? then
+              if x.empty?
                 retval = true
-              elsif x =~ /m(ulti)?port/ then
+              elsif x =~ /m(ulti)?port/
                 prev_multiport = true
                 retval = true
-              elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/ then
+              elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/
                 port_type = $1[0].chr
                 prev_ports += $4.split(',')
                 retval = true
@@ -211,9 +211,9 @@ module PuppetX
 
             new_rule = rule.split(/\s+-/).delete_if{ |x|
               retval = false
-              if x.empty? or x =~ /m(ulti)?port/ then
+              if x.empty? || x =~ /m(ulti)?port/
                 retval = true
-              elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/ then
+              elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/
                 # Add ranges as sub-arrays.
                 new_ports += $4.split(',')
                 retval = true
@@ -224,7 +224,7 @@ module PuppetX
             new_rule.map!{|x| x = normalize_rule(x)}
             prev_rule.map!{|x| x = normalize_rule(x)}
 
-            if (new_rule.sort <=> prev_rule.sort) == 0 then
+            if (new_rule.sort <=> prev_rule.sort) == 0
               Puppet.debug("Rule:\n  #{new_rule} matches\n  #{prev_rule}")
               # Flatten when comparing sizes to account for ranges.
               new_ports = (prev_ports + new_ports).uniq
@@ -253,7 +253,9 @@ module PuppetX
         to_slice = to_slice.map{|x| x.to_s.split(':')}.flatten
 
         num_groups = to_slice.length/max_length
-        to_slice.length % max_length != 0 and num_groups += 1
+        unless (to_slice.length % max_length) == 0
+          num_groups += 1
+        end
 
         retval = []
         (0...num_groups).each do |x|
@@ -263,7 +265,7 @@ module PuppetX
         i = 0
         retval.each do |arr|
           arr.each_with_index do |x,j|
-            if cluster_locations[i] then
+            if cluster_locations[i]
               arr[j] = "#{arr[j]}:#{arr[j+1]}"
               arr.delete_at(j+1)
             end
@@ -277,8 +279,8 @@ module PuppetX
       def normalize_rule(rule)
         # Normalize Addresses for Comparison
         # Needs  a pre-split rule as an argument.
-        if rule =~ /^(s(ource)?|d(estination)?)\s+(.*)/ then
-          if $1 then
+        if rule =~ /^(s(ource)?|d(estination)?)\s+(.*)/
+          if $1
             opt = $1[0].chr
             addr = $4
             begin

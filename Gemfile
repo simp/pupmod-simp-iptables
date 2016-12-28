@@ -10,6 +10,7 @@ group :test do
   gem 'puppet', ENV.fetch('PUPPET_VERSION',  '~>4')
   gem 'rspec'
   gem 'rspec-puppet'
+  gem 'puppet-strings'
   gem 'hiera-puppet-helper'
   gem 'puppetlabs_spec_helper'
   gem 'metadata-json-lint'
@@ -24,7 +25,6 @@ group :development do
   gem 'travis-lint'
   gem 'travish'
   gem 'puppet-blacksmith'
-  gem 'puppet-strings'
   gem 'guard-rake'
   gem 'pry'
   gem 'pry-doc'
@@ -36,7 +36,7 @@ end
 
 group :system_tests do
   # This patch is required to fix Beaker's broken `aio` handling
-  gem 'beaker' #, :git => 'https://github.com/trevor-vaughan/beaker.git', :branch => 'BKR-931'
+  gem 'beaker', :git => 'https://github.com/trevor-vaughan/beaker.git', :branch => 'BKR-978-2.51.0'
   gem 'beaker-rspec'
   gem 'simp-beaker-helpers', ENV.fetch('SIMP_BEAKER_HELPERS_VERSION', '~> 1.5')
 end

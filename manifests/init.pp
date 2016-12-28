@@ -1,270 +1,108 @@
-# == Class: iptables
+# Add management of iptables with default rule optimization and a failsafe
+# fallback mode
 #
-# This sets the system up in a way that will maximally utilize the iptables
-# native types.
+# This class will detect conflicts with the SIMP option
+# ``simp_options::firewall`` and, if necessary, cease management of IPTables in
+# the case of a conflict.
 #
-# == Parameters
+# In particular, this means that if ``simp_options::firewall`` is ``false``,
+# but you have included this class, it will refuse to manage IPTables and will
+# instead raise a warning.
 #
-# [*authoritative*]
-# Type: Boolean
-# Default: true
-#   If true, only iptables rules set by Puppet may be present on the
-#   system. Otherwise, only manage the *chains* that Puppet is
-#   managing.
+# If the ``simp_options::firewall`` variable is not present, the module will
+# manage IPTables as expected.
 #
-#   Be *extremely* careful with this option. If you don't match all of
-#   your rules that you want left around, but you also don't have
-#   something to clean up the various tables, you will get continuous
-#   warnings that IPTables rules are being optimized.
+# @param enable
+#   Enable IPTables
 #
-# [*class_debug*]
-# Type: Boolean
-# Default: false
-#   If true, the system will print messages regarding rule comparisons.
+#   * If set to ``false`` will **disable** IPTables completely
+#   * If set to ``ignore`` will stop managing IPTables
 #
-# [*optimize_rules*]
-# Type: Boolean
-# Default: true
-#   If true, the inbuilt iptables rule optimizer will be run to collapse the
-#   rules down to as small as is reasonably possible without reordering. IPsets
-#   will be used eventually.
+# @param ensure
+#   The state that the ``package`` resources should target
 #
-# [*ignore*]
-# Type: Array
-# Default: []
-#   Set this to an Array of regular expressions that you would like to match in
-#   order to preserve running rules. This modifies the behavior of the optimize
-#   type.  Do not include the beginning and ending '/' but do include an end or
-#   beginning of word marker if appropriate.
+#   * May take any value acceptable to the native ``package`` resource
+#     ``ensure`` parameter
 #
-# [*enable_default_rules*]
-# Type: Boolean
-# Default: true
-#   If true, enable the usual set of default deny rules that you would expect
-#   to see on most systems.
+# @param ipv6
+#   Also manage IP6Tables
 #
-#   This uses the following expectations of rule ordering (not enforced):
-#     * 1 -> ESTABLISHED,RELATED rules.
-#     * 2-5 -> Standard ACCEPT/DENY rules.
-#     * 6-10 -> Jumps to other rule sets.
-#     * 11-20 -> Pure accept rules.
-#     * 22-30 -> Logging and rejection rules.
+# @param class_debug
+#   Print messages regarding rule comparisons
 #
-# [*enable_scanblock*]
-# Type: Boolean
-# Default: false
-#   If true, enable a technique for setting up port-based triggers that will
-#   block anyone connecting to the system for an hour after connection to a
-#   forbidden port.
+# @param optimize_rules
+#   Run the inbuilt iptables rule optimizer to collapse the rules down to as
+#   small as is reasonably possible without reordering
 #
-# [*prevent_localhost_spoofing*]
-# Type: Boolean
-# Default: true
-#   If true, add rules to PREROUTING that will prevent spoofed packets from
-#   localhost addresses from reaching your system.
+#   * IPsets will be eventually be incorporated
 #
-# [*disable*]
-# Type: Boolean
-# Default: false
-#   If true, disable iptables management completely. The build will
-#   still happen but nothing will be enforced.
+# @param ignore
+#   Regular expressions that you would like to match in order to preserve
+#   running rules
 #
-# == Authors:
-#   * Trevor Vaughan <tvaughan@onyxpoint.com>
-#   * Chris Tessmer  <chris.tessmer@onyxpoint.com>
+#   * This modifies the behavior of the ``iptables_optimize`` Type.
+#   * Do **not** include the beginning and ending ``/`` but **do** include an
+#     end or beginning of word marker (``^`` and/or ``$``) if appropriate
+#
+# @param default_rules
+#   Enable the usual set of default deny rules that you would expect to see on
+#   most systems
+#
+#   * Uses the following expectations of rule ordering (not enforced):
+#       * 1     -> ``ESTABLISHED`` and ``RELATED`` rules
+#       * 2-5   -> Standard ``ACCEPT`` and ``DENY`` rules
+#       * 6-10  -> ``JUMP`` to other rule sets
+#       * 11-20 -> Pure ``ACCEPT`` rules
+#       * 22-30 -> ``LOG`` and ``REJECT`` rules
+#
+# @param scanblock
+#   Enable a technique for setting up port-based triggers that will block
+#   anyone connecting to the system for an hour after connection to a forbidden
+#   port
+#
+# @param prevent_localhost_spoofing
+#   Add rules to ``PREROUTING`` that will prevent spoofed packets from
+#   ``localhost`` addresses from reaching your system
+#
+# @author Trevor Vaughan <tvaughan@onyxpoint.com>
+# @author Chris Tessmer  <chris.tessmer@onyxpoint.com>
 #
 class iptables (
-  $authoritative        = true,
-  $class_debug          = false,
-  $optimize_rules       = true,
-  $ignore               = [],
-  $enable_default_rules = true,
-  $enable_scanblock     = false,
-  $prevent_localhost_spoofing = true,
-  $disable              = !lookup('simp_options::firewall',  { 'default_value' => false, 'value_type' => Boolean })
+  Variant[Enum['ignore'],Boolean] $enable                     = simplib::lookup('simp_options::firewall', { 'default_value' => true }),
+  String                          $ensure                     = 'latest',
+  Boolean                         $ipv6                       = true,
+  Boolean                         $class_debug                = false,
+  Boolean                         $optimize_rules             = true,
+  Array[String]                   $ignore                     = [],
+  Boolean                         $default_rules              = true,
+  Boolean                         $scanblock                  = false,
+  Boolean                         $prevent_localhost_spoofing = true
 ) {
-  validate_bool($authoritative)
-  validate_bool($class_debug)
-  validate_bool($optimize_rules)
-  validate_array($ignore)
-  validate_bool($enable_default_rules)
-  validate_bool($enable_scanblock)
-  validate_bool($prevent_localhost_spoofing)
-  validate_bool($disable)
 
-  if $enable_default_rules { include '::iptables::base_rules' }
-  if $enable_scanblock { include '::iptables::scanblock' }
-  if $prevent_localhost_spoofing { include '::iptables::prevent_localhost_spoofing' }
+  if $enable != 'ignore' {
+    contain '::iptables::install'
+    contain '::iptables::service'
 
-  # IPV4-only stuff
-  file { '/etc/init.d/iptables':
-    ensure  => 'file',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0744',
-    source  => 'puppet:///modules/iptables/iptables',
-    seltype => 'iptables_initrc_exec_t',
-    require => Package['iptables']
-  }
+    if $default_rules { contain '::iptables::rules::base' }
+    if $scanblock { contain '::iptables::rules::scanblock' }
+    if $prevent_localhost_spoofing { contain '::iptables::rules::prevent_localhost_spoofing' }
 
-  # --------------------------------------------------
-  # Set the iptables startup script to fail safe.
-  #
-  file { '/etc/init.d/iptables-retry':
-    ensure  => 'file',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0744',
-    source  => 'puppet:///modules/iptables/iptables-retry',
-    seltype => 'iptables_initrc_exec_t',
-    require => Package['iptables']
-  }
+    Class['iptables::install'] -> Class['iptables::service']
 
-  file { '/etc/sysconfig/iptables':
-    ensure  => 'file',
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0640',
-    audit   => 'content',
-    require => [
-      Package['iptables'],
-      Iptables_optimize['/etc/sysconfig/iptables']
-    ]
-  }
-
-  package { 'iptables': ensure => 'latest' }
-
-  # This has magic voodoo from the optimize segment.
-  service { 'iptables':
-    ensure     => 'running',
-    enable     => true,
-    hasrestart => false,
-    restart    => '/sbin/iptables-restore /etc/sysconfig/iptables || ( /sbin/iptables-restore /etc/sysconfig/iptables.bak && exit 3 )',
-    hasstatus  => true,
-    require    => [
-      File['/etc/init.d/iptables'],
-      Package['iptables']
-    ],
-    provider   => 'redhat'
-  }
-
-  service { 'iptables-retry':
-    enable   => true,
-    require  => [
-      File['/etc/init.d/iptables-retry'],
-      Package['iptables']
-    ],
-    provider => 'redhat'
-  }
-
-  if ( defined('$::ipv6_enabled') and getvar('::ipv6_enabled') ) {
-
-    # IPV6-only stuff
-    file { '/etc/init.d/ip6tables':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0744',
-      seltype => 'iptables_initrc_exec_t',
-      source  => 'puppet:///modules/iptables/ip6tables'
-    }
-
-    file { '/etc/init.d/ip6tables-retry':
-      ensure  => 'file',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0744',
-      seltype => 'iptables_initrc_exec_t',
-      source  => 'puppet:///modules/iptables/ip6tables-retry'
-    }
-
-    file { '/etc/sysconfig/ip6tables':
-      ensure  => 'present',
-      owner   => 'root',
-      group   => 'root',
-      mode    => '0640',
-      audit   => 'content',
-      require => [
-        Ip6tables_optimize['/etc/sysconfig/ip6tables']
-      ]
-    }
-
-    # This has magic voodoo from the optimize segment.
-    service { 'ip6tables':
-      ensure     => 'running',
-      enable     => true,
-      hasrestart => false,
-      restart    => '/sbin/ip6tables-restore /etc/sysconfig/ip6tables || ( /sbin/ip6tables-restore /etc/sysconfig/ip6tables.bak && exit 3 )',
-      hasstatus  => true,
-      require    => File['/etc/init.d/ip6tables'],
-      subscribe  => Ip6tables_optimize['/etc/sysconfig/ip6tables'],
-      provider   => 'redhat'
-    }
-
-    service { 'ip6tables-retry':
-      enable   => true,
-      require  => File['/etc/init.d/ip6tables-retry'],
-      provider => 'redhat'
-    }
-
-    # A rule optimizer (required)
-    ip6tables_optimize { '/etc/sysconfig/ip6tables':
+    # These are required to run if you are managing iptables with the custom
+    # types at all.
+    iptables_optimize { '/etc/sysconfig/iptables':
       optimize => $optimize_rules,
       ignore   => $ignore,
-      disable  => $disable
+      disable  => !$enable
     }
 
-    if $authoritative {
-      Ip6tables_optimize['/etc/sysconfig/ip6tables'] ~> Service['ip6tables']
-    }
-
-    case $::operatingsystem {
-      'RedHat','CentOS': {
-        if $::operatingsystemmajrelease > '6' {
-          Package['iptables'] -> File['/etc/init.d/ip6tables']
-          Package['iptables'] -> File['/etc/init.d/ip6tables-retry']
-          Package['iptables'] -> File['/etc/sysconfig/ip6tables']
-          Package['iptables'] -> Ip6tables_optimize['/etc/sysconfig/ip6tables']
-        }
-        else {
-          package { 'iptables-ipv6': ensure => 'latest' }
-          Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables']
-          Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
-          Package['iptables-ipv6'] -> File['/etc/sysconfig/ip6tables']
-          Package['iptables-ipv6'] -> Ip6tables_optimize['/etc/sysconfig/ip6tables']
-        }
-      }
-      default: {
-        fail("${::operatingsystem} is not yet supported by ${module_name}")
+    if $ipv6 and $facts['ipv6_enabled'] {
+      ip6tables_optimize { '/etc/sysconfig/ip6tables':
+        optimize => $optimize_rules,
+        ignore   => $ignore,
+        disable  => !$enable
       }
     }
-  }
-
-
-  # firewalld must be disabled on EL7+
-  case $::operatingsystem {
-    'RedHat','CentOS': {
-      if $::operatingsystemmajrelease > '6' {
-        service{ 'firewalld':
-          ensure => 'stopped',
-          enable => false,
-        } -> Service['iptables']
-      }
-    }
-    default: {
-      fail("${::operatingsystem} is not yet supported by ${module_name}")
-    }
-  }
-
-
-  # A rule optimizer (required)
-  iptables_optimize { '/etc/sysconfig/iptables':
-    optimize => $optimize_rules,
-    ignore   => $ignore,
-    disable  => $disable
-  }
-
-  if $authoritative {
-    Iptables_optimize['/etc/sysconfig/iptables'] ~> Service['iptables']
   }
 }

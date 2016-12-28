@@ -37,7 +37,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
 
     super(*args)
 
-    if not $iptables_rule_classvars[:initialized]
+    unless $iptables_rule_classvars[:initialized]
       $iptables_rule_classvars[:table_types].each do |table_type|
         load_rules(table_type)
       end
@@ -90,7 +90,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
 
           check_list = check_list.split(',')
           check_list.each do |to_check|
-            if not ipaddr?(to_check)
+            unless ipaddr?(to_check)
               require 'resolv'
 
               addresses = []
@@ -136,7 +136,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
         end
       end
 
-      if not rule_replaced
+      unless rule_replaced
         apply_to?(content_line).each do |rule_type|
           rule_type = rule_type.to_sym
 
@@ -195,7 +195,11 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       end
 
       # If we didn't change anything, just spoof out the return.
-      changed.empty? and return resource[:content] or return changed
+      if changed.empty?
+        return resource[:content]
+      else
+        return changed
+      end
     end
 
     # If we got here, we're not ready to potentially change anything yet.
@@ -246,7 +250,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
         #TODO: Clean this up when we move to puppet4
         #Had to check for 0 or more digits followed by a colon
         #to account for bad ipv6 formation in ruby 1.8.7
-        if ip_check.ipv6? and i =~ /\d*:+/
+        if ip_check.ipv6? && (i =~ /\d*:+/)
           retval = [:ip6tables]
         else
           retval = [:iptables]
@@ -267,15 +271,15 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       end
     end
 
-    if targets.to_s == 'ipv4' and !retval.include?(:iptables)
+    if (targets.to_s == 'ipv4') && !retval.include?(:iptables)
       fail Puppet::Error,"#{line} does not appear to be an IPv4 address"
-    elsif targets.to_s == 'ipv6' and !retval.include?(:ip6tables)
+    elsif (targets.to_s == 'ipv6') && !retval.include?(:ip6tables)
       fail Puppet::Error,"#{line} does not appear to be an IPv6 address"
     end
 
     # Here, we remove any target that does not have a valid table.
     $iptables_rule_classvars[:table_types].each do |table|
-      if not $iptables_rule_classvars[table][:valid_tables].include?(resource[:table].to_sym)
+      unless $iptables_rule_classvars[table][:valid_tables].include?(resource[:table].to_sym)
         Puppet.debug("Ignoring ':#{resource[:table]}' since it is not valid for :#{table}")
         retval.delete(table)
       end
@@ -349,9 +353,9 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     old_rules.each_line do |line|
       line.strip!
 
-      line =~ /^\s*$/ and next
-      line[0].chr == '#' and next
-      line[0].chr == '*' and current_table = line[1..-1].to_sym and next
+      next if line =~ /^\s*$/
+      next if line[0].chr == '#'
+      next if (line[0].chr == '*') && (current_table = line[1..-1].to_sym)
       $iptables_rule_classvars[table_type][:old_content_hash][current_table] ||= []
       $iptables_rule_classvars[table_type][:old_content_hash][current_table] << line
     end

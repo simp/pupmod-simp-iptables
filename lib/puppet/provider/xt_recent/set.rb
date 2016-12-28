@@ -1,4 +1,9 @@
 Puppet::Type.type(:xt_recent).provide(:set) do
+  desc <<-EOM
+    Set parameters on the xt_recent kernel module and ensure that the module is
+    loaded.
+  EOM
+
   confine :kernel => 'Linux'
   confine :true => ( Facter[:kernelmajversion].value.to_f >= 2.6 )
   commands :modprobe => '/sbin/modprobe'
@@ -6,7 +11,7 @@ Puppet::Type.type(:xt_recent).provide(:set) do
   def initialize(*args)
     super(*args)
 
-    if not File.exist?(resource[:name]) then
+    unless File.exist?(resource[:name])
       modprobe "xt_recent"
     end
 
@@ -36,7 +41,7 @@ Puppet::Type.type(:xt_recent).provide(:set) do
   def ip_list_hash_size
     # If this is 0, then it's getting auto-calculated and we shouldn't
     # check it.
-    if resource[__method__].to_s == '0' then
+    if resource[__method__].to_s == '0'
       return resource[__method__]
     else
       File.read("#{resource[:name]}/#{__method__}").chomp

@@ -9,55 +9,55 @@
     * [Beginning with iptables](#beginning-with-iptables)
 4. [Usage - Configuration options and additional functionality](#usage)
 5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-    * [Native Types](#native-types)
-      * [iptables_rule](#iptables_rule)
-      * [iptables_optimize](#iptables_optimize)
-      * [ip6tables_optimize](#ip6tables_optimize)
-      * [xt_recent](#xt_recent)
-    * [Classes](#classes)
-      * [iptables](#iptables)
-    * [Defined Types](#defined-types)
-      * [add_all_listen](#add_all_listen)
-      * [add_icmp_listen](#add_icmp_listen)
-      * [add_rules](#add_rules)
-      * [add_tcp_stateful_listen](#add_tcp_stateful_listen)
-      * [add_udp_stateful_listen](#add_udp_stateful_listen)
-
+    * [Data Types](#data-types)
 6. [Limitations - OS compatibility, etc.](#limitations)
 7. [Development - Guide for contributing to the module](#development)
       * [Acceptance Tests - Beaker env variables](#acceptance-tests)
 
 ## Overview
 
-This module provides native types for managing the system IPTables and IP6Tables as well as convenience defines and general system configuration capabilities.
+This module provides native types for managing the system IPTables and
+IP6Tables as well as convenience defines and general system configuration
+capabilities.
 
 ## This is a SIMP module
-This module is a component of the [System Integrity Management Platform](https://github.com/NationalSecurityAgency/SIMP), a compliance-management framework built on Puppet.
+This module is a component of the [System Integrity Management Platform](https://github.com/NationalSecurityAgency/SIMP),
+a compliance-management framework built on Puppet.
 
-Most SIMP modules actively take advantage of this module when used within the SIMP ecosystem.
+Most SIMP modules actively take advantage of this module when used within the
+SIMP ecosystem.
 
 ## Module Description
 
-The `iptables` module manages all IPTables and IP6Tables rules in an atomic fashion. All rules are applied only once per puppet agent run during the application of the last executed `iptables` resource.
+The ``iptables`` module manages all IPTables and IP6Tables rules in an atomic
+fashion. All rules are applied only once per puppet agent run during the
+application of the last executed ``iptables`` resource.
 
-Applying the rules in this manner ensures that avoid situations where you have a partially applied IPTables rule set during a failure in your run of puppet (someone hits ^C, your system runs out of memory, etc...).
+Applying the rules in this manner ensures that avoid situations where you have
+a partially applied IPTables rule set during a failure in your run of puppet
+(someone hits ^C, your system runs out of memory, etc...).
 
-The module also takes additional safety measures to attempt to keep your firewall rules in a consistent state over time to include:
+The module also takes additional safety measures to attempt to keep your
+firewall rules in a consistent state over time to include:
 
 * Rolling back to the last configuration if the application of the new configuration fails
 * Rolling back to an 'ssh-only' mode if application of all configurations fail
 
-The goal is to remain in a state where you can be sure that your system is tightly restricted but also able to be recovered.
+The goal is to remain in a state where you can be sure that your system is
+tightly restricted but also able to be recovered.
 
-Finally, the module works to ensure that services such as OpenStack, Docker, VirtualBox, etc... can apply their rules without being affected by this module. The module provides mechanisms to preserve these rules as managed by external systems based on regular expression matches.
+Finally, the module works to ensure that services such as OpenStack, Docker,
+VirtualBox, etc... can apply their rules without being affected by this module.
+The module provides mechanisms to preserve these rules as managed by external
+systems based on regular expression matches.
 
 ## Setup
 
 ### What iptables affects
 
-The module manages the `iptables` package, service, and rules.
+The module manages the ``iptables`` package, service, and rules.
 
-On systems containing the `firewalld` service, it is ensured to be stopped.
+On systems containing the ``firewalld`` service, it is ensured to be stopped.
 
 ### Beginning with iptables
 
@@ -98,20 +98,21 @@ COMMIT
 
 #### I want to open a specific port or allow access
 
-The IPtables module has a set of defined types for adding in new firewall rules. This code can be utilized in a role or profile.
+The IPtables module has a set of defined types for adding in new firewall
+rules. This code can be utilized in a role or profile.
 
 ```puppet
 #open TCP port 443 (HTTPS) and a custom 8443 from any IP Address
 
-iptables::add_tcp_stateful_listen { 'webserver':
-  trusted_nets => ['any'],
+iptables::listen::tcp_stateful { 'webserver':
+  client_nets => ['any'],
   dports => ['443','8443']
 }
 
 #open UDP port 53 (DNS) from two specific IP addresses
 
-iptables::add_udp_stateful_listen {'DNS':
-  trusted_nets => ['192.168.56.55','192.168.56.147'],
+iptables::listen::udp {'DNS':
+  client_nets => ['192.168.56.55','192.168.56.147'],
   dports      => ['53']
 }
 
@@ -122,8 +123,8 @@ iptables::add_all_listen { 'Central Management':
 }
 
 #Allow a range of ports to be accessible from a specific IP
-iptables::add_tcp_stateful_listen { 'myapp':
-  trusted_nets => ['10.10.45.100'],
+iptables::listen::tcp_stateful { 'myapp':
+  client_nets => ['10.10.45.100'],
   dports => ['1024:60000']
 }
 
@@ -131,12 +132,13 @@ iptables::add_tcp_stateful_listen { 'myapp':
 
 #### This module doesn't cover my specific iptables rule
 
-In the case you need a rule not covered properly by the module, you can use the iptables::add_rules type to place the exact rule into /etc/sysconfig/iptables.
+In the case you need a rule not covered properly by the module, you can use the
+``iptables::add_rules`` type to place the exact rule into ``/etc/sysconfig/iptables``.
 
 ```puppet
 # Inserts a custom rule into IPtables
 
-iptables::add_rules { 'example':
+iptables::rule { 'example':
   content => '-A LOCAL-INPUT -m state --state NEW -m tcp -p tcp\
   -s 1.2.3.4 --dport 1024:65535 -j ACCEPT'
 }
@@ -144,6 +146,7 @@ iptables::add_rules { 'example':
 
 ## Reference
 
+<<<<<<< be8c418e96cf122b1636397d7921baf0d5b33b86
 ### Native Types
 
 #### `iptables_rule`
@@ -333,173 +336,24 @@ All parameters are optional, unless otherwise noted.
      - **11-20** --> Pure accept rules.
      - **22-30** --> Logging and rejection rules.
    These are suggestions and are not enforced.
+=======
+For the most up to date reference, please see [The Project Documentation](https://github.com/simp/pupmod-simp-iptables/doc/index.html).
 
-* `comment`: A comment to prepend to the rule.  Default: ''.
-* `header`:  Whether or not to include the line header `'-A LOCAL-INPUT'`.  Default: true.
-* `apply_to`: iptables target.  Default: 'auto'.
-     - **ipv4** -> iptables
-     - **ipv6** -> ip6tables
-     - **all**  -> Both
-     - **auto** -> Try to figure it out from the rule, will not pick `all`.
+Items that are not covered by ``puppet strings`` are listed below.
 
-##### Example
+### Data Types
 
-Command
-
-```ruby
-iptables::add_rules { 'example':
-  content => '-A LOCAL-INPUT -m state --state NEW -m tcp -p tcp\
-  -s 1.2.3.4 --dport 1024:65535 -j ACCEPT'
-}
-```
-
-Output (to /`etc/sysconfig/iptables`)
-
-```bash
-*filter
-:INPUT DROP [0:0]
-:FORWARD DROP [0:0]
-:OUTPUT ACCEPT [0:0]
-:LOCAL-INPUT - [0:0]
--A INPUT -j LOCAL-INPUT
--A FORWARD -j LOCAL-INPUT
--A LOCAL-INPUT -p icmp --icmp-type 8 -j ACCEPT
--A LOCAL-INPUT -i lo -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp -s 1.2.3.4 --dport 1024:65535 -j ACCEPT
--A LOCAL-INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
--A LOCAL-INPUT -j LOG --log-prefix "IPT:"
--A LOCAL-INPUT -j DROP
-COMMIT
-```
-
-#### `add_tcp_stateful_listen`
-
-This provides a simple way to allow TCP ports into the system.
-
-##### Parameters
-All parameters are optional, unless otherwise noted.
-
-* `dports`: **Required.** The ports to which to allow entry.  Single ports and port ranges (1:100) are both allowed.  Set the string to 'any' to allow all ports.
-* `first`: Should be set to 'true' if you want to prepend your custom rules.
-* `absolute`: Should be set to 'true' if you want the section to be absolutely first or last, depending on the setting of $first.  This is relative and basically places items in alphabetical order.
-* `order`: The order in which the rule should appear.  1 is the minimum, 11 is the mean, and 9999999 is the max.
-
-   The following ordering ranges are suggested:
-     - **1**     --> ESTABLISHED,RELATED rules.
-     - **2-5**   --> Standard ACCEPT/DENY rules.
-     - **6-10**  --> Jumps to other rule sets.
-     - **11-20** --> Pure accept rules.
-     - **22-30** --> Logging and rejection rules.
-   These are suggestions and are not enforced.
-
-* `apply_to`: iptables target.  Default: 'auto'.
-     - **ipv4** -> iptables
-     - **ipv6** -> ip6tables
-     - **all**  -> Both
-     - **auto** -> Try to figure it out from the rule, will not pick `all`.
-* `trusted_nets`: Client networks that should be allowed by this rule.  Set the string to `any` to allow all networks
-
-##### Example
-
-Command
-
-```ruby
-iptables::add_tcp_stateful_listen { 'example':
-  trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
-  dports => [ '5', '1024:65535' ]
-}
-```
-
-Output (to /`etc/sysconfig/iptables`)
-
-```bash
-*filter
-:INPUT DROP [0:0]
-:FORWARD DROP [0:0]
-:OUTPUT ACCEPT [0:0]
-:LOCAL-INPUT - [0:0]
--A INPUT -j LOCAL-INPUT
--A FORWARD -j LOCAL-INPUT
--A LOCAL-INPUT -p icmp --icmp-type 8 -j ACCEPT
--A LOCAL-INPUT -i lo -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp -s 1.2.3.4 --dport 5 -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp -s 5.6.7.8 --dport 5 -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp -s 1.2.3.4 --dport 1024:65535 -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp -s 5.6.7.8 --dport 1024:65535 -j ACCEPT
--A LOCAL-INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
--A LOCAL-INPUT -j LOG --log-prefix "IPT:"
--A LOCAL-INPUT -j DROP
-COMMIT
-```
-
-#### `add_udp_stateful_listen`
-
-This provides a simple way to allow UDP ports into the system.
-
-##### Parameters
-
-* `dports`: **Required.** The ports to which to allow entry.  Single ports and port ranges (1:100) are both allowed.  Set the string to 'any' to allow all ports.
-* `first`: Should be set to 'true' if you want to prepend your custom rules.
-* `absolute`: Should be set to 'true' if you want the section to be absolutely first or last, depending on the setting of $first.  This is relative and basically places items in alphabetical order.
-* `order`: The order in which the rule should appear.  1 is the minimum, 11 is the mean, and 9999999 is the max.
-
-   The following ordering ranges are suggested:
-     - **1**     --> ESTABLISHED,RELATED rules.
-     - **2-5**   --> Standard ACCEPT/DENY rules.
-     - **6-10**  --> Jumps to other rule sets.
-     - **11-20** --> Pure accept rules.
-     - **22-30** --> Logging and rejection rules.
-   These are suggestions and are not enforced.
-
-* `apply_to`: iptables target.  Default: 'auto'.
-     - **ipv4** -> iptables
-     - **ipv6** -> ip6tables
-     - **all**  -> Both
-     - **auto** -> Try to figure it out from the rule, will not pick `all`.
-* `trusted_nets`: Client networks that should be allowed by this rule.  Set the string to `any` to allow all networks
-
-##### Example
-
-Command
-
-```ruby
-iptables::add_udp_stateful_listen { 'example':
-  trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
-  dports => [ '5', '1024:65535' ]
-}
-```
-
-Output (to /`etc/sysconfig/iptables`)
-
-```bash
-*filter
-:INPUT DROP [0:0]
-:FORWARD DROP [0:0]
-:OUTPUT ACCEPT [0:0]
-:LOCAL-INPUT - [0:0]
--A INPUT -j LOCAL-INPUT
--A FORWARD -j LOCAL-INPUT
--A LOCAL-INPUT -p icmp --icmp-type 8 -j ACCEPT
--A LOCAL-INPUT -i lo -j ACCEPT
--A LOCAL-INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
--A LOCAL-INPUT -s 1.2.3.4/32 -p udp -m state --state NEW -m multiport --dports 1024:65535,5 -j ACCEPT
--A LOCAL-INPUT -s 5.6.7.8/32 -p udp -m state --state NEW -m multiport --dports 1024:65535,5 -j ACCEPT
--A LOCAL-INPUT -p udp -s 1.2.3.4 --dport 5 -j ACCEPT
--A LOCAL-INPUT -p udp -s 5.6.7.8 --dport 5 -j ACCEPT
--A LOCAL-INPUT -p udp -s 1.2.3.4 --dport 1024:65535 -j ACCEPT
--A LOCAL-INPUT -p udp -s 5.6.7.8 --dport 1024:65535 -j ACCEPT
--A LOCAL-INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
--A LOCAL-INPUT -j LOG --log-prefix "IPT:"
--A LOCAL-INPUT -j DROP
-COMMIT
-```
+* Iptables::PortRange
+    * A range of ports, in IPTables format
+        * ``22:1234``
 
 ## Limitations
-* IPv6 support has not been fully tested, use with caution.
-* `firewalld` must be disabled.  The module will disable `firewalld` if it is present.
-* This module is intended to be used on a Redhat Enterprise Linux-compatible distribution such as EL6 and EL7. However, any distribution that uses the /etc/sysconfig/iptables configuration should function properly (let us know!).
+* IPv6 support has not been fully tested, use with caution
+* ``firewalld`` must be disabled.  The module will disable ``firewalld`` if it is present
+* This module is intended to be used on a Redhat Enterprise Linux-compatible
+  distribution such as EL6 and EL7. However, any distribution that uses the
+  ``/etc/sysconfig/iptables`` configuration should function properly (let us
+  know!).
 
 ## Development
 
@@ -510,7 +364,7 @@ Please see the [SIMP Contribution Guidelines](https://simp-project.atlassian.net
 To run the system tests, you need [Vagrant](https://www.vagrantup.com/) installed. Then, run:
 
 ```shell
-bundle exec rake acceptance
+bundle exec rake beaker:suites
 ```
 
 Some environment variables may be useful:
