@@ -73,7 +73,8 @@ define iptables::listen::udp (
   Boolean                              $absolute     = false,
   Integer[0]                           $order        = 11,
   Enum['ipv4','ipv6','all','auto']     $apply_to     = 'auto',
-  Enum['any','ALL', Simplib::Netlist]  $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
+  Variant[Enum['any','ALL'],
+    Simplib::Netlist]  $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
 ) {
   $_protocol = 'udp'
 
