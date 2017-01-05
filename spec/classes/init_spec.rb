@@ -52,6 +52,26 @@ describe 'iptables' do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
         end
+
+        context 'iptables_ports_hash in hiera' do
+          context 'defaults ' do
+            let(:hieradata){ 'iptables__ports' }
+            it { is_expected.to create_iptables__listen__tcp_stateful('port_80').with({ :apply_to => 'ipv4'}) }
+            it { is_expected.to create_iptables__listen__udp('port_53').with({ :apply_to => 'ipv4'}) }
+            it { is_expected.to create_iptables__listen__tcp_stateful('port_443').with({ :apply_to => 'ipv6'}) }
+          end
+          context 'a hash without a default section' do
+            let(:hieradata){ 'iptables__ports_no_default' }
+            it { is_expected.to create_iptables__listen__tcp_stateful('port_80').with({ :apply_to => 'auto'}) }
+            it { is_expected.to create_iptables__listen__udp('port_53').with({ :apply_to => 'auto'}) }
+            it { is_expected.to create_iptables__listen__tcp_stateful('port_443').with({ :apply_to => 'ipv6'}) }
+          end
+          context 'a hash containing an invalid parameter' do
+            let(:hieradata){ 'iptables__ports_bad_param' }
+            it { is_expected.to raise_error(/param/) }
+          end
+        end
+
       end
     end
   end

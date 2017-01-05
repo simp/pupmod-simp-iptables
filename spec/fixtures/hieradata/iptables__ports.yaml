@@ -1,0 +1,9 @@
+---
+iptables::ports:
+  defaults:
+    apply_to: ipv4
+  80:
+  53:
+    proto: udp
+  443:
+    apply_to: ipv6
