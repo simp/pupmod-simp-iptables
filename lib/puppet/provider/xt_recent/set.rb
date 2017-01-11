@@ -5,7 +5,7 @@ Puppet::Type.type(:xt_recent).provide(:set) do
   EOM
 
   confine :kernel => 'Linux'
-  confine :true => ( Facter[:kernelmajversion].value.to_f >= 2.6 )
+  confine :true => ( Facter.value('kernelmajversion').to_f >= 2.6 )
   commands :modprobe => '/sbin/modprobe'
 
   def initialize(*args)
