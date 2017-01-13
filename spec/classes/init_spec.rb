@@ -53,8 +53,8 @@ describe 'iptables' do
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
         end
 
-        context 'iptables_ports_hash in hiera' do
-          context 'defaults ' do
+        context 'with a provided iptables::ports hash' do
+          context 'containing a defaults section' do
             let(:hieradata){ 'iptables__ports' }
             it { is_expected.to create_iptables__listen__tcp_stateful('port_80').with({ :apply_to => 'ipv4'}) }
             it { is_expected.to create_iptables__listen__udp('port_53').with({ :apply_to => 'ipv4'}) }
