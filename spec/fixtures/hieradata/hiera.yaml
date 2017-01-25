@@ -1,0 +1,9 @@
+---
+:backends:
+- yaml
+:yaml:
+  :datadir: "/home/nick/simpdev/pupmod-simp-iptables/spec/fixtures/hieradata"
+:hierarchy:
+- "%{custom_hiera}"
+- "%{module_name}"
+- default
