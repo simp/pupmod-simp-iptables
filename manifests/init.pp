@@ -133,8 +133,9 @@ class iptables (
 
     # https://docs.puppet.com/puppet/latest/reference/lang_resources_advanced.html#implementing-the-createresources-function
     $raw_ports.each |$port, $options| {
+      $_port = Integer.new($port)
       $name_to_param = {
-        'dports' => [$port],
+        'dports' => [$_port],
       }
 
       if $options.is_a(Hash) {
