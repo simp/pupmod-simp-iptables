@@ -1,5 +1,9 @@
 * Wed May 24 2017 Brandon Riden <brandon.riden@onyxpoint.com> - 6.0.1-0
 - Added a workaround for Puppet 4.10 type issues
+  - There was a bug in Puppet where all lookup() Hash keys were being converted
+    into Strings even if they were another data type
+  - This is fixed in Puppet > 4.10.2 but this patch will remain for backwards
+    compatibility
 
 * Thu Jan 13 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.0.1-0
 - Added a feature to add resources via hiera
