@@ -113,7 +113,7 @@ class iptables::rules::scanblock (
 
   if $enable {
     iptables_rule{'scanblock':
-      order    => 28,
+      order    => 7,
       header   => false,
       apply_to => 'all',
       # lint:ignore:only_variable_string
