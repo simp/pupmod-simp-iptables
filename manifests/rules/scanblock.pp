@@ -112,13 +112,12 @@ class iptables::rules::scanblock (
   }
 
   if $enable {
-    iptables_rule{'scanblock':
-      order    => 7,
+    iptables_rule{'attk_check':
+      order    => 28,
       header   => false,
       apply_to => 'all',
       # lint:ignore:only_variable_string
       content  => @("EOM")
-        -A LOCAL-INPUT -m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP
         -A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK
         -A ATTACKED -m limit --limit ${logs_per_minute}/min -j LOG --log-prefix "IPT: (Rule ATTACKED): "
         -A ATTACKED -m recent --set --name BANNED --rsource -j DROP
@@ -127,6 +126,17 @@ class iptables::rules::scanblock (
         |EOM
     }
     # lint:endignore
+    iptables_rule{'ban_check':
+      order    => 7,
+      header   => false,
+      apply_to => 'all',
+      # lint:ignore:only_variable_string
+      content  => @("EOM")
+        -A LOCAL-INPUT -m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP
+        |EOM
+    }
+    # lint:endignore
+
   }
 
   class { 'iptables::rules::mod_recent':

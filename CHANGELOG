@@ -1,3 +1,8 @@
+* Mon Dec 04 2017 Some Dude <7zbayf+sw1l67jjhlbk@sharklasers.com> - 6.1.0-0
+- Fixed a bug in the order of the IPTables rules in scanblock module
+  - Previously, IPTables would not block connections from banned IPs that
+    were accessing open ports.
+
 * Thu Nov 30 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.0-0
 - Added the ability to ignore interfaces using the 'ignore' regex array
 - Fixed issues with ignoring rules and added some optimization
@@ -8,7 +13,7 @@
 - Updated iptables::listen::tcp_stateful example to pass valid
   Iptables::DestPort types to dports
 
-* Wed May 24 2017 Brandon Riden <brandon.riden@onyxpoint.com> - 6.0.2-0
+* Wed May 24 2017 Brandon Riden <brandon.riden@onyxpoint.com> - 6.0.1-0
 - Added a workaround for Puppet 4.10 type issues
   - There was a bug in Puppet where all lookup() Hash keys were being converted
     into Strings even if they were another data type
