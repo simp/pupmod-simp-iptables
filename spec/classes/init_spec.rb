@@ -49,6 +49,10 @@ describe 'iptables' do
         end
 
         context "default spoofing prevention" do
+          let(:facts) {
+            facts[:ipv6_enabled] = true
+            facts
+          }
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
         end
