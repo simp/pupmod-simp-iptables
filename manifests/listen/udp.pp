@@ -3,7 +3,7 @@
 # @example Allow UDP Access to ``1.2.3.4`` and ``5.6.7.8``
 #   iptables::listen::udp { 'example':
 #     trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
-#     dports       => [ 5, 1024:65535 ]
+#     dports       => [ 5, '1024:65535' ]
 #   }
 #
 #   ### Result
