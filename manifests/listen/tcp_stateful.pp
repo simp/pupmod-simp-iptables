@@ -3,7 +3,7 @@
 # @example Provide Access to Specific Ports
 #   iptables::listen::tcp_stateful { 'example':
 #     trusted_nets => [ '1.2.3.4', '5.6.7.8' ],
-#     dports => [ '5', '1024:65535' ]
+#     dports => [ 5, '1024:65535' ]
 #   }
 #
 #   ### Result
