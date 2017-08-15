@@ -9,12 +9,12 @@ describe "iptables::listen::udp", :type => :define do
         end
 
         describe "with IPv4 trusted_nets" do
-          let( :title  ){ 'allow_udp_1234' }
+          let( :title  ){ 'allow_udp_range' }
           let( :params ){{
             :trusted_nets => ['10.0.2.0'],
-            :dports       => 1234
+            :dports       => [1234,'9999:20000']
           }}
-          it { is_expected.to create_iptables__listen__udp('allow_udp_1234').with_dports(1234) }
+          it { is_expected.to create_iptables__listen__udp("allow_udp_range").with_dports(params[:dports]) }
         end
 
         describe "with IPv4 trusted_netsi in CIDR notation" do
