@@ -7,19 +7,75 @@ module PuppetX
       attr_reader :table
       attr_reader :chain
       attr_reader :jump
+      attr_reader :input_interface
+      attr_reader :output_interface
+
       # This is true if the rule has more than just a jump in it.
       attr_reader :complex
+
+      def self.to_hash(rule)
+        require 'optparse'
+        require 'shellwords'
+
+
+        opt_arr = Shellwords.shellwords(rule)
+
+        opt_parser = OptionParser.new
+
+        opts = Hash.new
+        negate = false
+
+        until opt_arr.empty? do
+          begin
+            opt_parser.parse!(opt_arr)
+            opt_arr.shift
+          rescue OptionParser::InvalidOption => e
+            e.recover(opt_arr)
+
+            key = opt_arr.shift.gsub(/^-*/,'')
+
+            while opt_arr.first && (opt_arr.first[0] != '-')
+              opts[key] ||= { :value => [], :negate => negate }
+              opts[key][:value] << opt_arr.shift
+            end
+
+            if opts[key][:value].last.strip == '!'
+              opts[key][:value].pop
+              negate = true
+            else
+              negate = false
+            end
+          end
+        end
+
+        return opts
+      end
 
       def self.parse(rule)
         output = {
           :chain => nil,
-          :jump  => nil
+          :jump => nil,
+          :input_interface => nil,
+          :output_interface => nil
         }
 
-        if rule =~ /^\s*-(?:A|D|I|R|N|P)\s+(\S+)(?:.*-j\s+(.+)\s*)*/ then
-          output[:chain] = $1
-          output[:jump] = $2.to_s.split(/\s+/).first
+        rule_hash = PuppetX::SIMP::IPTables::Rule.to_hash(rule)
+
+        if rule_hash
+          chain = rule_hash.find{ |k,_| ['A','D','I','R','N','P'].include?(k)}
+          output[:chain] = chain.last[:value].first if chain
+
+          jump = rule_hash.find{ |k,_| ['j'].include?(k)}
+          output[:jump] = jump.last[:value].first if jump
+
+          input_interface = rule_hash.find{ |k,_| ['i'].include?(k)}
+          output[:input_interface] = input_interface.last[:value].first if input_interface
+
+          output_interface = rule_hash.find{ |k,_| ['o'].include?(k)}
+          output[:output_interface] = output_interface.last[:value].first if output_interface
         end
+
+        output[:rule_hash] = rule_hash
 
         return output
       end
@@ -31,7 +87,7 @@ module PuppetX
         @rule_type = :rule
 
         if table.nil? or table.empty? then
-          raise(Puppet::Error,"All rules must have an associated table: '#{rule}'")
+          raise(Puppet::Error, "All rules must have an associated table: '#{rule}'")
         end
 
         @table = table.strip
@@ -40,16 +96,20 @@ module PuppetX
 
         @chain = parsed_rule[:chain]
         @jump = parsed_rule[:jump]
+        @input_interface = parsed_rule[:input_interface]
+        @output_interface = parsed_rule[:output_interface]
+
         @complex = true
 
         if @rule == 'COMMIT' then
           @rule_type = :commit
-        elsif @rule =~ /^\s*(:.*)\s+(.*)\s/ then
+        elsif @rule =~ /^\s*(:.*)\s+(.*)\s/
           @rule = "#{$1} #{$2} [0:0]"
           @rule_type = :chain
         end
 
-        if @rule =~ /^\s*-(A|D|I|R|N|P)\s+\S+\s+-j\s+\S+\s*$/ then
+        # If there is only a jump, then the rule is simple
+        if (parsed_rule[:rule_hash].keys - ['A','D','I','R','N','P','j']).empty?
           @complex = false
         end
       end

@@ -22,11 +22,12 @@ Puppet::Type.newtype(:ip6tables_optimize) do
 
   newparam(:ignore) do
     desc <<-EOM
-      Ignore all *running* ip6tables rules matching one or more
-      provided Ruby regexes. The regexes are compared against the
-      running rules and excluded from the synchronization comparison
-      against the new rules. Do not include the beginning and ending
-      slashes in your regular expressions.
+      Ignore all *running* iptables rules matching one or more provided Ruby
+      regexes. The regexes are compared against the jump and chain options, as
+      well as the interface name of the running rules and excluded from the
+      synchronization comparison against the new rules.
+
+      !!Do not include the beginning and ending slashes in your regular expressions.!!
 
       NOTE: If a rule has been added or removed, this setting ignored and
       ip6tables *will* be restarted! If you have services which are

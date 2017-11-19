@@ -1,3 +1,6 @@
+* Sun Nov 19 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.0-0
+- Added the ability to ignore interfaces using the 'ignore' regex array
+
 * Thu Aug 10 2017 Nick Markowski <nmarkowski@keywcorp.com> - 6.0.3-0
 - Updated iptables::listen::tcp_stateful example to pass valid
   Iptables::DestPort types to dports

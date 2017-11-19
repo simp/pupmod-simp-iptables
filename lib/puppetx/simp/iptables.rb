@@ -143,18 +143,22 @@ module PuppetX
 
             do_ignore = false
             to_ignore.each do |ignore|
-              if ignore.match(rule.chain) || ignore.match(rule.jump)
+              if [rule.chain, rule.jump, rule.input_interface, rule.output_interface].find {|x| ignore.match(x)}
                do_ignore = true
                break
               end
             end
+
             next if do_ignore
 
             result[table][rule.chain] ||= {}
 
-            if rule.jump
-              result[table][rule.chain][rule.jump] ||= 0
-              result[table][rule.chain][rule.jump] += 1
+            # Need a unique key target for precise matches
+            tgt_key = [rule.input_interface, rule.output_interface, rule.jump].compact.join('|')
+
+            unless tgt_key.empty?
+              result[table][rule.chain][tgt_key] ||= 0
+              result[table][rule.chain][tgt_key] += 1
             end
           end
         end
