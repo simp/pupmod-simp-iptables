@@ -69,15 +69,15 @@ iptables::rules::scanblock::ip_list_perms : '0644'
 EOM
       }
 
-      xit 'should work with no errors' do
+      it 'should work with no errors' do
         apply_manifest_on(host, manifest_with_scanblock_enabled, :catch_failures => true)
       end
 
-      xit 'should be idempotent' do
+      it 'should be idempotent' do
         apply_manifest_on(host, manifest_with_scanblock_enabled, :catch_changes => true)
       end
 
-      xit 'should install and configure xt_recent kernel module using defaults' do
+      it 'should install and configure xt_recent kernel module using defaults' do
         on(host, "lsmod  | grep xt_recent", :acceptable_exit_codes => 0)
 
         on(host, "cat /etc/modprobe.d/xt_recent.conf", :acceptable_exit_codes => 0) do
@@ -111,7 +111,7 @@ EOM
         end
       end
 
-      xit 'should add electric fence rules to iptables' do
+      it 'should add electric fence rules to iptables' do
         on(host, 'iptables-save',  :acceptable_exit_codes => 0) do
           expect(stdout).to match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -j DROP/m)
           expect(stdout).to match(/-A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK/m)
@@ -122,7 +122,7 @@ EOM
         end
       end
 
-      xit 'should add electric fence rules to ip6tables' do
+      it 'should add electric fence rules to ip6tables' do
         os_release = fact_on(host, 'operatingsystemmajrelease')
 
         on(host, 'ip6tables-save',  :acceptable_exit_codes => 0) do
@@ -139,7 +139,7 @@ EOM
         end
       end
 
-      xit 'should configure xt_recent kernel module using hieradata overrides' do
+      it 'should configure xt_recent kernel module using hieradata overrides' do
         set_hieradata_on(host, hieradata_with_overrides)
         apply_manifest_on(host, manifest_with_scanblock_enabled, :catch_failures => true)
 

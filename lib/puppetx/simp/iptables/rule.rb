@@ -34,12 +34,13 @@ module PuppetX
 
             key = opt_arr.shift.gsub(/^-*/,'')
 
+            opts[key] ||= { :value => [], :negate => negate }
+
             while opt_arr.first && (opt_arr.first[0] != '-')
-              opts[key] ||= { :value => [], :negate => negate }
               opts[key][:value] << opt_arr.shift
             end
 
-            if opts[key][:value].last.strip == '!'
+            if !opts[key][:value].empty? && (opts[key][:value].last.strip == '!')
               opts[key][:value].pop
               negate = true
             else
