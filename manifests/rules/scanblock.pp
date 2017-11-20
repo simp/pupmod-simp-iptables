@@ -126,17 +126,12 @@ class iptables::rules::scanblock (
         |EOM
     }
     # lint:endignore
+
     iptables_rule{'ban_check':
       order    => 7,
-      header   => false,
       apply_to => 'all',
-      # lint:ignore:only_variable_string
-      content  => @("EOM")
-        -A LOCAL-INPUT -m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP
-        |EOM
+      content  => "-m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP"
     }
-    # lint:endignore
-
   }
 
   class { 'iptables::rules::mod_recent':
