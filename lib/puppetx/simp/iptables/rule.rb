@@ -9,6 +9,7 @@ module PuppetX
       attr_reader :jump
       attr_reader :input_interface
       attr_reader :output_interface
+      attr_reader :rule_hash
 
       # This is true if the rule has more than just a jump in it.
       attr_reader :complex
@@ -83,8 +84,8 @@ module PuppetX
 
       # Create the particular rule. The containing table should be passed in
       # for future reference.
-      def initialize(rule,table)
-        @rule = rule.strip
+      def initialize(rule_str, table)
+        @rule = rule_str.strip
         @rule_type = :rule
 
         if table.nil? or table.empty? then
@@ -99,13 +100,15 @@ module PuppetX
         @jump = parsed_rule[:jump]
         @input_interface = parsed_rule[:input_interface]
         @output_interface = parsed_rule[:output_interface]
+        @rule_hash = parsed_rule[:rule_hash]
 
         @complex = true
 
         if @rule == 'COMMIT' then
           @rule_type = :commit
-        elsif @rule =~ /^\s*(:.*)\s+(.*)\s/
-          @rule = "#{$1} #{$2} [0:0]"
+        elsif @rule =~ /^\s*:(.*)\s+(.*)\s/
+          @chain = $1
+          @rule = ":#{@chain} #{$2} [0:0]"
           @rule_type = :chain
         end
 

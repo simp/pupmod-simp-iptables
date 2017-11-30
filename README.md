@@ -1,4 +1,8 @@
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-iptables.svg)](https://travis-ci.org/simp/pupmod-simp-iptables) [![SIMP compatibility](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)](https://img.shields.io/badge/SIMP%20compatibility-4.2.*%2F5.1.*-orange.svg)
+[![License](https://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/73/badge)](https://bestpractices.coreinfrastructure.org/projects/73)
+[![Puppet Forge](https://img.shields.io/puppetforge/v/simp/iptables.svg)](https://forge.puppetlabs.com/simp/iptables)
+[![Puppet Forge Downloads](https://img.shields.io/puppetforge/dt/simp/iptables.svg)](https://forge.puppetlabs.com/simp/iptables)
+[![Build Status](https://travis-ci.org/simp/pupmod-simp-iptables.svg)](https://travis-ci.org/simp/pupmod-simp-iptables)
 
 #### Table of Contents
 
@@ -21,9 +25,8 @@ IP6Tables as well as convenience defines and general system configuration
 capabilities.
 
 ## This is a SIMP module
-This module is a component of the [System Integrity Management
-Platform](https://github.com/NationalSecurityAgency/SIMP), a
-compliance-management framework built on Puppet.
+This module is a component of the [System Integrity Management Platform](https://github.com/NationalSecurityAgency/SIMP),
+a compliance-management framework built on Puppet.
 
 Most SIMP modules actively take advantage of this module when used within the
 SIMP ecosystem.
@@ -41,8 +44,7 @@ a partially applied IPTables rule set during a failure in your run of puppet
 The module also takes additional safety measures to attempt to keep your
 firewall rules in a consistent state over time to include:
 
-* Rolling back to the last configuration if the application of the new
-  configuration fails
+* Rolling back to the last configuration if the application of the new configuration fails
 * Rolling back to an 'ssh-only' mode if application of all configurations fail
 
 The goal is to remain in a state where you can be sure that your system is
@@ -70,7 +72,7 @@ A basic setup with iptables will allow the following:
 * ICMP
 * Loopback
 * SSH
-* Estabilished and Related traffic (Return Traffic)
+* Established and Related traffic (Return Traffic)
 
 ```puppet
 # Set up iptables with the default settings
@@ -100,8 +102,8 @@ COMMIT
 
 #### I want to open a specific port or allow access
 
-The IPtables module has a set of defined types for adding in new firewall
-rules. This code can be utilized in a role or profile.
+The `iptables` module has a set of defined types for adding in new firewall
+rules.
 
 ```puppet
 #open TCP port 443 (HTTPS) and a custom 8443 from any IP Address
@@ -148,9 +150,112 @@ iptables::rule { 'example':
 
 ## Reference
 
-For the most up to date reference, please see [The Project Documentation](https://github.com/simp/pupmod-simp-iptables/doc/index.html).
+For the most up to date `class` and `defined type` reference, please see
+[The Project Documentation](https://https://simp.github.io/pupmod-simp-iptables/)
 
 Items that are not covered by ``puppet strings`` are listed below.
+
+### Native Types
+
+#### `iptables_rule`
+
+A managed iptables rule. This may be used to provide ultimate flexibility in
+managing the system rules.
+
+##### Parameters
+
+* name: A unique name for the rule, does not provide any other function.
+  Required
+* comment: A comment to apply to the rule. Default: No Comment
+* header: Whether or not to auto-include the table LOCAL-INPUT in the rule.
+  Default: true
+* apply_to: What version(s) of iptables to which to apply this rule. Default: 'auto'
+  If set to `auto` (the default) then we'll try to guess what you want and
+  default to ['ipv4','ipv6'].
+  If `auto` is set then each line will be evaluated as an independent rule.
+    * Any rules that have IPv4 addresses will be applied to iptables.
+    * Any rules that have IPv6 addresses will be applied to ip6tables.
+    * All other rules will be applied to *both* utilities.
+    * If in doubt, split your rules and specify your tables!
+
+* table: The name of the table to which you are adding the rule. Default:
+  'filter'
+* first: If `true`, prepend the rule to the rule set. Default: `false`
+* absolute: If `true`, ensure that the rule is at the absolute beginning or end
+  of the rule set. If multiple rules are marked as absolute then they are
+  sorted by resource name. Default: `false`
+* order: The order in which the rule should appear. 1 is the minimum and 999 is
+  the maximum. Default: '11'
+* resolve: If `true`, Puppet will resolve any hostnames in the rules prior to
+  application to prevent iptables from starting should a name change in the
+  future. Default: `true`
+* content: The full content of the rule that should be added to the rule set.
+  You may place *anything* here. Required
+
+#### iptables_optimize
+#### ip6tables_optimize
+
+This type collects all of the `iptables_rule` resources and compiles the final
+iptables rule set. By default, it will collapse rules into a single rule when
+possible to make the iptables rule set more efficient.
+
+Eventually, it will support `ipset`.
+
+The `ip6tables_optimize` type has the exact same parameters but affects
+`ip6tables` instead of `iptables`.
+
+##### Parameters
+
+* name: An arbitrary name for the resource. This resource is not meant to be
+  called more than once...
+* disable: If `true`, disable the management of iptables altogether. Default:
+  `false`
+* ignore: Ignore all *running* iptables rules matching one or more provided
+  Ruby regular expressions. The regular expressions are compared against all
+  interfaces as well as both the JUMP and CHAIN options of the running rules.
+  Anything matching these rules are excluded from the synchronization
+  comparison against the new rules.
+
+  **Caveats**
+
+  Do **NOT** include the beginning and trailing slashes in your regular
+  expressions.
+
+  If a rule has been added or removed, this setting ignored and iptables *will*
+  be restarted! If you have services which are affected by this, make sure that
+  they subscribe to `Service['iptables']`, `Service['ip6tables']`, or
+  `Class['iptables::service']` as appropriate.
+
+  **Examples**
+
+  ```
+  # Preserve all rules whose jump or chain begins with the word 'foo'
+  ignore => '^foo'
+
+  # Preserve all rules whose jump or chain begins with the word 'foo' or
+  # ends with the word 'bar'
+  ignore => ['^foo','bar$']
+  ```
+
+* optimize: If `true`, enable the optimization of the IPTables rules. Default:
+  `true`
+
+#### xt_recent
+
+##### Parameters
+
+* name: The path to the xt_recent variables to be manipulated
+* ip_list_tot: The number of addresses remembered per table. This effectively
+  becomes the maximum size of your block list. The more addresses you are
+  recording, the higher the load on your system. Default: '100'
+* ip_pkt_list_tot: The number of packets per address remembered. Default: '20'
+* ip_list_hash_size: The hash table size. 0 means to calculate it based on
+  ip_list_tot. Default: '0'
+* ip_list_perms: Permissions for /proc/net/xt_recent/* files. Default: '0640'
+* ip_list_uid: Numerical UID for ownership of /proc/net/xt_recent/* files.
+  Default: '0'
+* ip_list_gid: Numerical GID for ownership of /proc/net/xt_recent/* files.
+  Default: '0'
 
 ### Data Types
 
@@ -159,7 +264,6 @@ Items that are not covered by ``puppet strings`` are listed below.
         * ``22:1234``
 
 ## Limitations
-
 * IPv6 support has not been fully tested, use with caution
 * ``firewalld`` must be disabled.  The module will disable ``firewalld`` if it is present
 * This module is intended to be used on a Redhat Enterprise Linux-compatible
@@ -173,7 +277,8 @@ Please see the [SIMP Contribution Guidelines](https://simp-project.atlassian.net
 
 ### Acceptance tests
 
-To run the system tests, you need [Vagrant](https://www.vagrantup.com/) installed. Then, run:
+To run the system tests, you need [Vagrant](https://www.vagrantup.com/)
+installed. Then, run:
 
 ```shell
 bundle exec rake beaker:suites
@@ -189,6 +294,12 @@ BEAKER_use_fixtures_dir_for_modules=yes
 ```
 
 * `BEAKER_debug`: show the commands being run on the STU and their output.
-* `BEAKER_destroy=no`: prevent the machine destruction after the tests finish so you can inspect the state.
-* `BEAKER_provision=no`: prevent the machine from being recreated. This can save a lot of time while you're writing the tests.
-* `BEAKER_use_fixtures_dir_for_modules=yes`: cause all module dependencies to be loaded from the `spec/fixtures/modules` directory, based on the contents of `.fixtures.yml`.  The contents of this directory are usually populated by `bundle exec rake spec_prep`.  This can be used to run acceptance tests to run on isolated networks.
+* `BEAKER_destroy=no`: prevent the machine destruction after the tests finish
+  so you can inspect the state.
+* `BEAKER_provision=no`: prevent the machine from being recreated. This can
+  save a lot of time while you're writing the tests.
+* `BEAKER_use_fixtures_dir_for_modules=yes`: cause all module dependencies to
+  be loaded from the `spec/fixtures/modules` directory, based on the contents
+  of `.fixtures.yml`.  The contents of this directory are usually populated by
+  `bundle exec rake spec_prep`.  This can be used to run acceptance tests to
+  run on isolated networks.

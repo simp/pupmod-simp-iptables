@@ -7,8 +7,6 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
     fail to apply.
   EOM
 
-  commands :iptables => 'iptables'
-  commands :iptables_restore => 'iptables-restore'
   commands :iptables_save => 'iptables-save'
 
   def initialize(*args)
@@ -20,7 +18,6 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
       :id               => 'iptables',
       :running_config   => nil,
       :target_config    => nil,
-      :source_config    => nil,
       :changed          => false,
       :enabled          => !Facter.value('ipaddress').nil?,
       :default_config   => <<-EOM.gsub(/^\s+/,'')
@@ -57,26 +54,33 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
 
     @ipt_config[:target_config] = PuppetX::SIMP::IPTables.new(target_config)
 
-    @ipt_config[:source_config] = PuppetX::SIMP::IPTables.new(
+    source_config = PuppetX::SIMP::IPTables.new(
       File.read("#{File.dirname(@resource[:name])}/.#{File.basename(@resource[:name])}_puppet")
     )
+
+    if resource[:ignore] && !resource[:ignore].empty?
+      source_config = source_config.merge(@ipt_config[:running_config].preserve_match(resource[:ignore]))
+    end
 
     # Start of the actual optmize code
     result = resource[:optimize]
 
     if @ipt_config[:enabled]
-      if "#{resource[:optimize]}" == 'true'
-        @ipt_config[:optimized_config] = @ipt_config[:source_config].optimize
+      if resource[:optimize] == :true
+        @ipt_config[:optimized_config] = source_config.optimize
       else
-        @ipt_config[:optimized_config] = @ipt_config[:source_config]
+        @ipt_config[:optimized_config] = source_config
       end
     end
 
     # We go ahead and do the comparison here because passing the
     # appropriate values around becomes a mess in the log output.
-    if @ipt_config[:target_config].to_hash != @ipt_config[:optimized_config].to_hash
+    #
+    # We need to compare the String versions since the Hashes will contain
+    # unique object references
+    if @ipt_config[:target_config].to_s != @ipt_config[:optimized_config].to_s
       @ipt_config[:changed] = true
-      unless ("#{resource[:optimize]}" == 'true')
+      unless (resource[:optimize] == :true)
         result = :synchronized
       else
         result = :optimized
@@ -87,8 +91,9 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
   end
 
   def system_insync?
-    optimized_rules = @ipt_config[:optimized_config].report
+    optimized_rules = @ipt_config[:optimized_config].report(resource[:ignore])
     running_rules = @ipt_config[:running_config].report(resource[:ignore])
+
 
     # We only care about tables that we're managing!
     (running_rules.keys - optimized_rules.keys).each do |chain|
@@ -99,44 +104,24 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
   end
 
   def optimize=(should)
-    if resource[:ignore] && !resource[:ignore].empty?
-      to_apply = @ipt_config[:optimized_config].live_format(@ipt_config[:running_config].chains(resource[:ignore]))
-    else
-      to_apply = @ipt_config[:optimized_config].live_format
-    end
-
-    to_apply.each do |rule|
-      begin
-        self.iptables(rule)
-      rescue
-        Puppet.err("Something went wrong when applying '#{iptables.to_s} #{rule}'. Falling back to defaults.")
-        self.iptables_restore(@ipt_config[:default_config])
-      end
-    end
-
     debug("Starting to apply the new ruleset")
+
     if @ipt_config[:changed]
       debug("Backing up original config for #{resource[:name]}")
 
       File.open("#{resource[:name]}.bak",'w').puts(@ipt_config[:target_config])
 
       debug("Writing new #{@ipt_config[:id]} config file #{resource[:name]}")
+
       File.open(resource[:name],'w') { |fh|
         fh.puts(@ipt_config[:optimized_config].to_s)
       }
+
       File.chmod(0640,resource[:name])
     end
   end
 
   private
-
-  def self.iptables(args)
-    %x{#{command(:iptables)} #{args}}
-  end
-
-  def self.iptables_restore(args)
-    %x{#{command(:iptables_restore)} #{args}}
-  end
 
   def self.iptables_save
     %x{#{command(:iptables_save)}}

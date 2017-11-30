@@ -10,8 +10,6 @@ Puppet::Type.type(:ip6tables_optimize).provide(:optimize, :parent => Puppet::Typ
     Builds off of the ``iptables_optimize`` provider.
   EOM
 
-  commands :ip6tables => 'ip6tables'
-  commands :ip6tables_restore => 'ip6tables-restore'
   commands :ip6tables_save => 'ip6tables-save'
 
   has_feature :ipv6
@@ -26,14 +24,6 @@ Puppet::Type.type(:ip6tables_optimize).provide(:optimize, :parent => Puppet::Typ
   end
 
   private
-
-  def self.iptables(args)
-    %x{#{command(:ip6tables)} #{args}}
-  end
-
-  def self.iptables_restore(args)
-    %x{#{command(:ip6tables_restore)} #{args}}
-  end
 
   def self.iptables_save
     %x{#{command(:ip6tables_save)}}

@@ -1,3 +1,8 @@
+* Thu Nov 30 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.1-0
+- Fixed issues with ignoring rules and added some optimization
+- No longer apply IPTables rules in the optimization phase and simply wait for
+  the downstream service to trigger
+
 * Sun Nov 19 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.0-0
 - Added the ability to ignore interfaces using the 'ignore' regex array
 
