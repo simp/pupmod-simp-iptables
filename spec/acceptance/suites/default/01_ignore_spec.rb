@@ -24,10 +24,16 @@ hosts.each do |host|
       EOS
       }
 
-      let(:hieradata) {
+      let(:hieradata_nic_only) {
       <<-EOS
 ---
 iptables::ignore: ['#{nic_regex}']
+      EOS
+      }
+      let(:hieradata_nic_lo) {
+      <<-EOS
+---
+iptables::ignore: ['#{nic_regex}','lo']
       EOS
       }
 
@@ -47,8 +53,8 @@ iptables::ignore: ['#{nic_regex}']
         on(host,"iptables-save | grep ' -p tcp' | grep -w 6969", :acceptable_exit_codes => 1)
       end
 
-      it 'should apply hieradata' do
-        set_hieradata_on(host,hieradata)
+      it 'should apply hieradata nic,lo' do
+        set_hieradata_on(host,hieradata_nic_lo)
       end
 
       it 'should re-apply rules without puppet' do
@@ -58,8 +64,29 @@ iptables::ignore: ['#{nic_regex}']
         on(host,"iptables-save | grep ' -p tcp' | grep lo | grep -w 6969", :acceptable_exit_codes => 0)
       end
 
+      it "should apply ignore => #{nic_regex},lo with no errors" do
+        apply_manifest_on(host, manifest, :catch_failures => true)
+      end
+
+      it "should apply ignore => #{nic_regex},lo and be idempotent" do
+        apply_manifest_on(host, manifest, :catch_changes => true)
+      end
+
+      it "should contain manually created rules on ignored interfaces: #{nic},lo" do
+        on(host,"iptables-save | grep ' -p tcp' | grep #{nic} | grep -w 6969", :acceptable_exit_codes => 0)
+        on(host,"iptables-save | grep ' -p tcp' | grep lo | grep -w 6969", :acceptable_exit_codes => 0)
+      end
+
+      it 'should apply hieradata nic only' do
+        set_hieradata_on(host,hieradata_nic_only)
+      end
+
       it "should apply ignore => #{nic_regex} with no errors" do
         apply_manifest_on(host, manifest, :catch_failures => true)
+      end
+
+      it "should apply ignore => #{nic_regex} and be idempotent" do
+        apply_manifest_on(host, manifest, :catch_changes => true)
       end
 
       it "should only contain manually created rules on ignored interface: #{nic}" do
