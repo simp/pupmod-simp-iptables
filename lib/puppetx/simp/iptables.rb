@@ -5,32 +5,65 @@ module PuppetX
       require 'puppetx/simp/iptables/rule'
 
       def initialize(rules_str)
-        current_table = nil
-
         # The @tables Hash is a way to reference arrays of rules based on the
         # table that contains the rule.
 
         @tables = { }
 
+        new_rules = []
+
+        current_table = nil
         rules_str.chomp.split("\n").each do |rule|
+          # Skip Inline Comments
           next if rule =~ /^\s*(#.*)?$/
 
           if rule =~ /^\s*\*/
+            # New tables means new rules
+            @tables[current_table][:rules] = sort_rules(new_rules) unless new_rules.empty?
+
             current_table = add_table(rule)
+
+            new_rules = []
 
             next
           end
 
-          rule = PuppetX::SIMP::IPTables::Rule.new(rule, current_table)
+          if current_table
+            rule = PuppetX::SIMP::IPTables::Rule.new(rule, current_table)
 
-          if rule
-            if rule.rule_type == :chain
-              @tables[current_table][:chains] << rule
-            elsif rule.rule_type == :rule
-              @tables[current_table][:rules] << rule
+            if rule
+              if rule.rule_type == :chain
+                @tables[current_table][:chains] << rule
+              elsif rule.rule_type == :rule
+                new_rules << rule
+              end
             end
           end
         end
+
+        # Need to sort the last set of rules in the stack
+        @tables[current_table][:rules] = sort_rules(new_rules) unless new_rules.empty?
+
+        prune_chains!
+      end
+
+      # Sort a list of rules into the same order that `iptables-save` uses on
+      # output
+      #
+      # @param to_sort [Array[PuppetX::SIMP::IPTables::Rule]]
+      #
+      # @return [Array[PuppetX::SIMP::IPTables::Rule]]
+      #
+      def sort_rules(to_sort)
+        ordered_chains = to_sort.collect{|r| r.chain}.uniq
+
+        ordered_rules = []
+
+        ordered_chains.each do |chain|
+          ordered_rules += to_sort.select{|r| r.chain == chain}
+        end
+
+        return ordered_rules
       end
 
       # Return all IPTables 'tables'
@@ -52,7 +85,7 @@ module PuppetX
       # @return [PuppetX::SIMP::IPTables]
       #
       def merge(iptables_obj)
-        return PuppetX::SIMP::IPTables.new(self.to_s).merge!(iptables_obj)
+        return PuppetX::SIMP::IPTables.new(to_s).merge!(iptables_obj)
       end
 
       # The same behavior as `merge` but affecting the current object
@@ -61,10 +94,12 @@ module PuppetX
       #   The IPTables object to be merged
       #
       def merge!(iptables_obj)
+
         iptables_obj.tables.each do |table|
-          add_chains(table, iptables_obj.chains(table))
           prepend_rules(table, iptables_obj.rules(table))
         end
+
+        prune_chains!
 
         return self
       end
@@ -127,6 +162,26 @@ module PuppetX
         end
       end
 
+      # Remove any chains from the tables that do not have a matching rule
+      def prune_chains!
+        tables.each do |table|
+          pruned_chains = []
+
+          chains(table).each do |chain|
+            rules(table).each do |rule|
+              if rule.rule =~ /\s#{chain.chain}(\s|$)/
+                pruned_chains << chain
+                break
+              end
+            end
+          end
+
+          @tables[table][:chains] = pruned_chains
+        end
+
+        return self
+      end
+
       # Return all 'rules' for the given table
       #
       # @param table [String]
@@ -138,7 +193,7 @@ module PuppetX
         return @tables[table][:rules]
       end
 
-      # Prepend rules to the existing rules
+      # Prepend rules to the existing rules while preserving chain order
       #
       # @param table [String]
       #   The table to which to add the chains
@@ -148,16 +203,31 @@ module PuppetX
       #
       def prepend_rules(table, new_rules)
         Array(new_rules).each do |rule|
+          if rule.is_a?(String)
+            rule = PuppetX::SIMP::IPTables::Rule.new(rule)
+          end
+
           if rule.is_a?(PuppetX::SIMP::IPTables::Rule)
             process_rule(rule)
-            @tables[table][:rules].unshift(rule)
+
+            if @tables[table][:rules].empty?
+              @tables[table][:rules] << rule
+            else
+              start_index = @tables[table][:rules].index{|x| x.chain == rule.chain} || 0
+
+              unless rule == @tables[table][:rules][start_index]
+                @tables[table][:rules].insert(start_index, rule)
+              end
+            end
           else
             fail "rule must be a PuppetX::SIMP::IPTables::Rule not #{rule.class}"
           end
         end
       end
 
-      # Append rules to the existing rules
+      # Append rules to the existing rules while preserving chain order
+      #
+      # Will not add a duplicate rule to the chain
       #
       # @param table [String]
       #   The table to which to add the chains
@@ -167,13 +237,46 @@ module PuppetX
       #
       def append_rules(table, new_rules)
         Array(new_rules).each do |rule|
+          if rule.is_a?(String)
+            rule = PuppetX::SIMP::IPTables::Rule.new(rule)
+          end
+
           if rule.is_a?(PuppetX::SIMP::IPTables::Rule)
             process_rule(rule)
-            @tables[table][:rules].push(rule)
+
+            if @tables[table][:rules].empty?
+              @tables[table][:rules] << rule
+            else
+              end_index = @tables[table][:rules].rindex{|x| x.chain == rule.chain} || -2
+
+              unless rule == @tables[table][:rules][end_index]
+                end_index = end_index + 1
+
+                @tables[table][:rules].insert(end_index, rule)
+              end
+            end
           else
             fail "rule must be a PuppetX::SIMP::IPTables::Rule not #{rule.class}"
           end
         end
+      end
+
+      # Return whether or not the table contains a matching rule
+      #
+      # @param table [String]
+      #   The table to which to add the chains
+      #
+      # @param rule [PuppetX::SIMP::IPTables::Rule]
+      #   The rule that is to be matched
+      #
+      # @return Boolean
+      #
+      def include_rule?(table, rule)
+        rules(table).each do |current_rule|
+          return true if current_rule == rule
+        end
+
+        return false
       end
 
       # Return a string that is ready for processing by the `iptables-restore`
@@ -189,6 +292,7 @@ module PuppetX
 
           result += chains(table).map(&:rule)
           result += rules(table).map(&:rule)
+
           result << 'COMMIT'
         end
 
@@ -211,15 +315,17 @@ module PuppetX
         result = PuppetX::SIMP::IPTables.new('')
 
         @tables.each_key do |table|
-          # Keep all chains since we can't easily tell extention chains from rule chains
-          chains(table).each do |chain|
-            result.add_chains(table, chain)
-          end
+
+          # Preserve all existing chains
+          result.add_chains(table, chains(table))
 
           rules(table).each do |rule|
             Array(regex).each do |cmp|
-              if Array(components).map{|c| rule.send(c)}.find {|x| cmp.match(x)}
-                result.append_rules(table, rule)
+              Array(components).each do |component|
+                val = rule.send(component)
+                if cmp.match(val)
+                  result.prepend_rules(table, rule)
+                end
               end
             end
           end
@@ -285,86 +391,103 @@ module PuppetX
       # @return PuppetX::SIMP::IPTables
       #
       def optimize
-        new_rules = []
+        new_rules = PuppetX::SIMP::IPTables.new('')
 
         # Hard coded limit in iptables multiport rules.
         max_ports = 15
 
         tables.each do |table|
-          new_rules << table
+          new_rules.add_table(table)
+          new_rules.add_chains(table, chains(table))
 
-          (chains(table) + rules(table)).each do |rule|
-            rule = rule.to_s
+          existing_rules = rules(table)
 
-            if new_rules.empty?
-              new_rules << rule
-              next
-            end
+          pending_rule = nil
 
-            next if new_rules.last == rule
+          existing_rules.each_with_index do |rule, index|
+            if pending_rule
+              prev_ports = []
+              new_ports = []
+              prev_multiport = false
+              port_type = nil
 
-            # Make sure we have a valid rule for multiport compression.
-            if  rule !~ /-p(rotocol)?\s+(ud|tc)p/ &&
-                rule !~ /--(d(estination-)?|s(ource-)?)ports?\s+/
-            then
-              new_rules << rule
-              next
-            end
+              prev_rule = PuppetX::SIMP::IPTables::Rule.new(
+                pending_rule.to_s.split(/\s+-/).delete_if{ |x|
+                  retval = false
+                  if x.empty?
+                    retval = true
+                  elsif x =~ /m(ulti)?port/
+                    prev_multiport = true
+                    retval = true
+                  elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/
+                    port_type = $1[0].chr
+                    prev_ports += $4.split(',')
+                    retval = true
+                  end
+                  retval
+                }.join(' -'), table
+              )
 
-            last_rule = new_rules.pop
+              new_rule = PuppetX::SIMP::IPTables::Rule.new(
+                rule.to_s.split(/\s+-/).delete_if{ |x|
+                  retval = false
+                  if x.empty? || x =~ /m(ulti)?port/
+                    retval = true
+                  elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/
+                    # Add ranges as sub-arrays.
+                    new_ports += $4.split(',')
+                    retval = true
+                  end
+                  retval
+                }.join(' -'), table
+              )
 
-            prev_ports = []
-            new_ports = []
-            prev_multiport = false
-            port_type = nil
+              if new_rule == prev_rule
+                Puppet.debug("Rule:\n  #{new_rule} matches\n  #{prev_rule}")
+                # Flatten when comparing sizes to account for ranges.
+                new_ports = (prev_ports + new_ports).uniq
 
-            prev_rule = last_rule.split(/\s+-/).delete_if{ |x|
-              retval = false
-              if x.empty?
-                retval = true
-              elsif x =~ /m(ulti)?port/
-                prev_multiport = true
-                retval = true
-              elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/
-                port_type = $1[0].chr
-                prev_ports += $4.split(',')
-                retval = true
-              end
-              retval
-            }
+                slice_array(new_ports, max_ports).each do |sub_ports|
+                  pending_rule = PuppetX::SIMP::IPTables::Rule.new(prev_rule.dup.insert(-2,"m multiport --#{port_type}ports #{sub_ports.sort.uniq.join(',')}").join(' -'))
 
-            new_rule = rule.split(/\s+-/).delete_if{ |x|
-              retval = false
-              if x.empty? || x =~ /m(ulti)?port/
-                retval = true
-              elsif x =~ /(d(estination-)?|s(ource-)?)ports?\s+(.*)/
-                # Add ranges as sub-arrays.
-                new_ports += $4.split(',')
-                retval = true
-              end
-              retval
-            }
+                  # If on the last rule, just write it out
+                  if (index == (existing_rules.count - 1))
+                    Puppet.debug("Adding: rule '#{pending_rule}' to table '#{table}'")
+                    new_rules.append_rules(table, pending_rule)
+                  end
+                end
+              else
+                Puppet.debug("No match for: #{rule}")
 
-            new_rule.map!{|x| x = normalize_rule(x)}
-            prev_rule.map!{|x| x = normalize_rule(x)}
+                Puppet.debug("Adding: pending rule '#{pending_rule}' to table '#{table}'")
+                new_rules.append_rules(table, pending_rule)
 
-            if (new_rule.sort <=> prev_rule.sort) == 0
-              Puppet.debug("Rule:\n  #{new_rule} matches\n  #{prev_rule}")
-              # Flatten when comparing sizes to account for ranges.
-              new_ports = (prev_ports + new_ports).uniq
-              slice_array(new_ports, max_ports).each do |sub_ports|
-                new_rules << prev_rule.dup.insert(-2,"m multiport --#{port_type}ports #{sub_ports.sort.uniq.join(',')}").join(' -')
+                Puppet.debug("Adding: rule '#{rule}' to table '#{table}'")
+                new_rules.append_rules(table, rule)
+
+                pending_rule = nil
               end
             else
-              Puppet.debug("No match for: #{rule}")
+              # Make sure we have a valid rule for multiport compression.
+              #
+              # Ignore if we're the last rule since this is only used for
+              # pending rule optimization
+              if (index != (existing_rules.count - 1)) &&
+                 rule.to_s !~ /-p(rotocol)?\s+(ud|tc)p/ &&
+                 rule.to_s !~ /--(d(estination-)?|s(ource-)?)ports?\s+/
+              then
+                pending_rule = rule
+              else
+                Puppet.debug("Adding: rule '#{rule}' to table '#{table}'")
+                new_rules.append_rules(table, rule)
 
-              new_rules << last_rule
-              new_rules << rule
+                pending_rule = nil
+              end
             end
           end
         end
 
-        return PuppetX::SIMP::IPTables.new(new_rules.join("\n"))
+        return new_rules.prune_chains!
       end
 
       private
@@ -399,27 +522,6 @@ module PuppetX
         end
 
         return retval
-      end
-
-      # Normalize Addresses for Comparison
-      # Needs  a pre-split rule as an argument.
-      #
-      def normalize_rule(rule)
-        if rule =~ /^(s(ource)?|d(estination)?)\s+(.*)/
-          if $1
-            opt = $1[0].chr
-            addr = $4
-            begin
-              ipaddr = IPAddr.new(addr)
-              rule = "#{opt} #{ipaddr}/#{ipaddr.inspect.split('/').last.chop}"
-            rescue ArgumentError,NoMethodError
-              # If it's a bad address, or something was nil, just return the rule.
-              # We should never get here.
-            end
-          end
-        end
-
-        return rule
       end
 
       private

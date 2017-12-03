@@ -113,12 +113,12 @@ EOM
 
       it 'should add electric fence rules to iptables' do
         on(host, 'iptables-save',  :acceptable_exit_codes => 0) do
-          expect(stdout).to match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -j DROP/m)
-          expect(stdout).to match(/-A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK/m)
-          expect(stdout).to match(/-A ATTACKED -m limit --limit 5\/min -j LOG --log-prefix \"IPT: \(Rule ATTACKED\): \"/m)
-          expect(stdout).to match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -j DROP/m)
+          expect(stdout).to match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+          expect(stdout).to match(/-A LOCAL-INPUT -m state --state NEW -m comment --comment "SIMP:" -j ATTK_CHECK/m)
+          expect(stdout).to match(/-A ATTACKED -m limit --limit 5\/min -m comment --comment "SIMP:" -j LOG --log-prefix \"IPT: \(Rule ATTACKED\): \"/m)
+          expect(stdout).to match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
           expect(stdout).to match(/-A ATTK_CHECK -m recent --set --name ATTK .*--rsource/m)
-          expect(stdout).to match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -j ATTACKED/m)
+          expect(stdout).to match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
         end
       end
 
@@ -126,15 +126,15 @@ EOM
         os_release = fact_on(host, 'operatingsystemmajrelease')
 
         on(host, 'ip6tables-save',  :acceptable_exit_codes => 0) do
-          expect(stdout).to match(/-A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK/m)
-          expect(stdout).to match(/-A ATTACKED -m limit --limit 5\/min -j LOG --log-prefix \"IPT: \(Rule ATTACKED\): \"/m)
-          expect(stdout).to match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -j DROP/m)
+          expect(stdout).to match(/-A LOCAL-INPUT -m state --state NEW -m comment --comment "SIMP:" -j ATTK_CHECK/m)
+          expect(stdout).to match(/-A ATTACKED -m limit --limit 5\/min -m comment --comment "SIMP:" -j LOG --log-prefix \"IPT: \(Rule ATTACKED\): \"/m)
+          expect(stdout).to match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
           expect(stdout).to match(/-A ATTK_CHECK -m recent --set --name ATTK .*--rsource/m)
 
           #FIXME Why are these ipv6 iptables rules missing for CentOS6?
           unless os_release == '6'
-            expect(stdout).to match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -j DROP/m)
-            expect(stdout).to match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -j ATTACKED/m)
+            expect(stdout).to match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+            expect(stdout).to match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
           end
         end
       end

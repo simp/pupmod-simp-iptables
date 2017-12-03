@@ -34,19 +34,22 @@ module PuppetX
             e.recover(opt_arr)
 
             key = opt_arr.shift.gsub(/^-*/,'')
+            value = []
 
-            opts[key] ||= { :value => [], :negate => negate }
+            opts[key] ||= { :value => nil, :negate => negate }
 
             while opt_arr.first && (opt_arr.first[0] != '-')
-              opts[key][:value] << opt_arr.shift
+              value << opt_arr.shift
             end
 
-            if !opts[key][:value].empty? && (opts[key][:value].last.strip == '!')
-              opts[key][:value].pop
+            if !value.empty? && (value.last.strip == '!')
+              value.pop
               negate = true
             else
               negate = false
             end
+
+            opts[key][:value] = value.join(' ')
           end
         end
 
@@ -65,16 +68,16 @@ module PuppetX
 
         if rule_hash
           chain = rule_hash.find{ |k,_| ['A','D','I','R','N','P'].include?(k)}
-          output[:chain] = chain.last[:value].first if chain
+          output[:chain] = chain.last[:value] if chain
 
           jump = rule_hash.find{ |k,_| ['j'].include?(k)}
-          output[:jump] = jump.last[:value].first if jump
+          output[:jump] = jump.last[:value] if jump
 
           input_interface = rule_hash.find{ |k,_| ['i'].include?(k)}
-          output[:input_interface] = input_interface.last[:value].first if input_interface
+          output[:input_interface] = input_interface.last[:value] if input_interface
 
           output_interface = rule_hash.find{ |k,_| ['o'].include?(k)}
-          output[:output_interface] = output_interface.last[:value].first if output_interface
+          output[:output_interface] = output_interface.last[:value] if output_interface
         end
 
         output[:rule_hash] = rule_hash
@@ -120,6 +123,41 @@ module PuppetX
 
       def to_s
         return @rule
+      end
+
+      def normalize_addresses(to_normalize)
+        require 'ipaddr'
+
+        normalized_array = []
+
+        Array(to_normalize).each do |item|
+          begin
+            normalized_array << IPAddr.new(item)
+          rescue ArgumentError, NoMethodError, IPAddr::InvalidAddressError
+            normalized_array << item
+          end
+        end
+
+        return normalized_array
+      end
+
+      def ==(other_rule)
+        return false if (other_rule.nil? || other_rule.rule_hash.nil? || other_rule.rule_hash.empty?)
+
+        return false if (@rule_hash.size != other_rule.rule_hash.size)
+
+        local_hash = @rule_hash.dup
+        other_hash = other_rule.rule_hash.dup
+
+        local_hash.each_key do |key|
+          local_hash[key][:value] = normalize_addresses(local_hash[key][:value]) if (other_hash[key] && other_hash[key][:value])
+        end
+
+        other_hash.each_key do |key|
+          other_hash[key][:value] = normalize_addresses(other_hash[key][:value]) if (other_hash[key] && other_hash[key][:value])
+        end
+
+        return local_hash == other_hash
       end
     end
   end

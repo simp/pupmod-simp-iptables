@@ -15,11 +15,13 @@ Puppet::Type.newtype(:iptables_rule) do
   end
 
   newparam(:comment) do
-    desc "A comment to add to the rule."
+    desc "A comment to add to the rule. 'SIMP:' Will be prepended to the comment for tracking."
     defaultto ""
 
     munge do |value|
       # IPTables can only take comments up to 256 characters.
+      value = ('SIMP: ' + value).strip
+
       value[0..255]
     end
   end
