@@ -17,11 +17,12 @@ Puppet::Type.newtype(:iptables_optimize) do
 
   newparam(:ignore) do
     desc <<-EOM
-      Ignore all *running* iptables rules matching one or more
-      provided Ruby regexes. The regexes are compared against both the jump
-      and chain options of the running rules and excluded from the
-      synchronization comparison against the new rules. Do not include
-      the beginning and ending slashes in your regular expressions.
+      Ignore all *running* iptables rules matching one or more provided Ruby
+      regexes. The regexes are compared against the jump and chain options, as
+      well as the interface name of the running rules and excluded from the
+      synchronization comparison against the new rules.
+
+      !!Do not include the beginning and ending slashes in your regular expressions.!!
 
       NOTE: If a rule has been added or removed, this setting ignored and
       iptables *will* be restarted! If you have services which are
@@ -38,7 +39,7 @@ Puppet::Type.newtype(:iptables_optimize) do
     EOM
 
     munge do |value|
-      if value.empty? then
+      if value.empty?
         value = []
       else
         begin
@@ -58,24 +59,24 @@ Puppet::Type.newtype(:iptables_optimize) do
     defaultto :true
 
     def insync?(is)
-      if resource[:disable] == :true then
+      if resource[:disable] == :true
         debug("IPTables administratively disabled due to setting $disable in iptables_optimize")
         return true
       end
 
-      if Array(is) != Array(@should) then
+      if Array(is) != Array(@should)
         @rules_differ = true
-      elsif not provider.system_insync?
+      elsif !provider.system_insync?
         @running_rules_out_of_sync = true
       end
 
-      ( @rules_differ or @running_rules_out_of_sync ) ? false : true
+      ( @rules_differ || @running_rules_out_of_sync ) ? false : true
     end
 
     def change_to_s(from,to)
-      if @rules_differ then
+      if @rules_differ
         return "System rules have changed"
-      elsif @running_rules_out_of_sync then
+      elsif @running_rules_out_of_sync
         return "Active rules do not match configured rules"
       end
     end

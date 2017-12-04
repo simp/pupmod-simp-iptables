@@ -64,7 +64,7 @@
 #   Add rules to ``PREROUTING`` that will prevent spoofed packets from
 #   ``localhost`` addresses from reaching your system
 #
-# @param ports [Hash]
+# @param ports
 #   A hash with structure as defined below that will open ports based on the
 #   structure of the hash.
 #   @example An example section of hieradata:

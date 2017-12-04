@@ -214,10 +214,13 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     $iptables_rule_classvars[:table_types].each do |table_type|
       File.open($iptables_rule_classvars[table_type][:target_file],'w') { |fh|
         fh.rewind
+
         fh.puts($iptables_rule_classvars[table_type][:new_content])
       }
       File.chmod(0600,$iptables_rule_classvars[table_type][:target_file])
     end
+
+    $iptables_rule_classvars[:initialized] = false
   end
 
   private
@@ -334,7 +337,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       output << 'COMMIT'
     }
 
-    return output.join("\n")
+    return PuppetX::SIMP::IPTables.new(output.join("\n")).to_s
   end
 
   def load_rules(table_type)
