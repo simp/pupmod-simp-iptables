@@ -1,5 +1,5 @@
 # A define to allow for the standardization of the
-#  iptables::ports syntax across modules 
+#  iptables::ports syntax across modules
 #
 # @param ports
 #   A hash with structure as defined below that will open ports based on the
@@ -27,7 +27,6 @@ define iptables::ports (
     $raw_ports = $ports
   }
 
-  # https://docs.puppet.com/puppet/latest/reference/lang_resources_advanced.html#implementing-the-createresources-function
   $raw_ports.each |$port, $options| {
     $_port = Integer.new($port)
     $name_to_param = {
@@ -35,24 +34,36 @@ define iptables::ports (
     }
 
     if $options.is_a(Hash) {
-      $proto = $options['proto']
-      $args  = ($options - 'proto') + $name_to_param
+      if $options['proto'] {
+        $proto = $options['proto']
+      }
+      else {
+        $proto = $defaults['proto']
+      }
+      $_defaults = $defaults - 'proto'
+      $args      = ($options - 'proto') + $name_to_param
     }
     else {
-      $proto = 'tcp'
+      if $defaults['proto'] {
+        $proto = $defaults['proto']
+      }
+      else {
+        $proto = 'tcp'
+      }
+      $_defaults = $defaults - 'proto'
       $args  = $name_to_param
     }
 
     case $proto {
       default: {
         iptables::listen::tcp_stateful {
-          default:        * => $defaults;
+          default:        * => $_defaults;
           "port_${port}": * => $args;
         }
       }
       'udp': {
         iptables::listen::udp {
-          default:        * => $defaults;
+          default:        * => $_defaults;
           "port_${port}": * => $args;
         }
       }
