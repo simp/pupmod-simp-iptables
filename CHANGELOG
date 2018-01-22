@@ -1,9 +1,13 @@
+* Mon Jan 22 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.1
+- Fixed bugs in the chain retention and optimization code that would cause
+  iptables to fail to reload in some situations.
+
 * Mon Jan 22 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.1.1
-- This commit moves the logic that parses the iptables::ports hash into a
+- This commit moves the logic that parses the `iptables::ports` Hash into a
   define, to make it possible to use the same hash format in other modules
   without copying code.
-- There was also a bug where compilation would fail if proto was specified in
-  the defaults section of the hash.
+- There was also a bug where compilation would fail if `proto` was specified in
+  the defaults section of the Hash.
 
 * Mon Dec 04 2017 Some Dude <7zbayf+sw1l67jjhlbk@sharklasers.com> - 6.1.0-0
 - Fixed a bug in the order of the IPTables rules in scanblock module
