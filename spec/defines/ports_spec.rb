@@ -11,8 +11,8 @@ describe "iptables::ports", :type => :define do
       context 'a hash without a default section' do
         let(:params) {{
           'ports' => {
-            '80': nil,
-            '53': {
+            '80' => nil,
+            '53' => {
               'proto' => 'udp'
             },
             '443' => {
@@ -32,11 +32,11 @@ describe "iptables::ports", :type => :define do
               'apply_to' => 'ipv4',
               'proto'    => 'tcp'
             },
-            '80': nil,
-            '53': {
+            '80'=> nil,
+            '53'=> {
               'proto' => 'udp'
             },
-            '443': {
+            '443' => {
               'apply_to' => 'ipv6'
             }
           }
