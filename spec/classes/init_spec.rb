@@ -9,7 +9,6 @@ describe 'iptables' do
 
       context "on #{os}" do
         context "iptables class without any parameters" do
-          let(:params) {{ }}
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
           it { is_expected.to contain_package('iptables').with_ensure('latest') }
@@ -26,6 +25,7 @@ describe 'iptables' do
 
         context "iptables class with firewall enabled from hiera via 'simp_options::firewall: true'" do
           let(:hieradata) { "firewall__enable" }
+
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
 
@@ -49,10 +49,8 @@ describe 'iptables' do
         end
 
         context "default spoofing prevention" do
-          let (:facts) do facts.merge({
-            :ipv6_enabled => true
-            })
-          end
+          let (:facts) { facts.merge( ipv6_enabled: true ) }
+
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
         end

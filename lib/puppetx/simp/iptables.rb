@@ -96,6 +96,7 @@ module PuppetX
       def merge!(iptables_obj)
 
         iptables_obj.tables.each do |table|
+          add_chains(table, iptables_obj.chains(table))
           prepend_rules(table, iptables_obj.rules(table))
         end
 
@@ -146,7 +147,7 @@ module PuppetX
             if chain[0].chr == ':'
               chain = PuppetX::SIMP::IPTables::Rule.new(chain, table)
             else
-              chain = PuppetX::SIMP::IPTables::Rule.new(':' + chain + ' ACCEPT [0:0]', table)
+              chain = PuppetX::SIMP::IPTables::Rule.new(':' + chain + ' - [0:0]', table)
             end
           end
 
@@ -164,19 +165,23 @@ module PuppetX
 
       # Remove any chains from the tables that do not have a matching rule
       def prune_chains!
+        all_chains = @tables.collect { |key, value|
+          @tables[key][:rules]
+        }.
+        flatten.map { |rule|
+          rule.chain
+        }.uniq
+
         tables.each do |table|
-          pruned_chains = []
+          chains_to_keep = []
 
           chains(table).each do |chain|
-            rules(table).each do |rule|
-              if rule.rule =~ /\s#{chain.chain}(\s|$)/
-                pruned_chains << chain
-                break
-              end
+            if all_chains.include?(chain.chain)
+              chains_to_keep << chain
             end
           end
 
-          @tables[table][:chains] = pruned_chains
+          @tables[table][:chains] = chains_to_keep
         end
 
         return self
