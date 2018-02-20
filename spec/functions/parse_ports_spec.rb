@@ -2,48 +2,128 @@ require 'spec_helper'
 
 describe 'iptables::parse_ports' do
 
-  inputs = {
-    'a hash without a default section' => {
-      '53'  => { 'proto'    => 'udp' },
-      '443' => { 'apply_to' => 'ipv6' },
-      '514' => { 'proto'    => ['udp','tcp'] },
-      '80'  => nil,
-    },
-    'containing a defaults section' => {
-      'defaults' => {
-        'apply_to' => 'ipv4',
-        'proto'    => 'tcp'
+  tests = {
+    'a port with details' => {
+      'params' => {
+        80 => {
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        }
       },
-      '53'  => { 'proto'    => 'udp' },
-      '443' => { 'apply_to' => 'ipv6' },
-      '514' => { 'proto'    => ['udp','tcp'] },
-      '80'  => nil,
+      'returns' => {
+        'port_80_tcp' => {
+          'dports'       => [80],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+      }
+    },
+    'a port with a specified proto' => {
+      'params' => {
+        80 => {
+          'proto'        => 'udp',
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        }
+      },
+      'returns' => {
+        'port_80_udp' => {
+          'dports'       => [80],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+      }
+    },
+    'a port with two specified protos' => {
+      'params' => {
+        80 => {
+          'proto'        => ['tcp','udp'],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        }
+      },
+      'returns' => {
+        'port_80_tcp' => {
+          'dports'       => [80],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+        'port_80_udp' => {
+          'dports'       => [80],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+      }
+    },
+    'a port with nothing else' => {
+      'params' => {
+        80 => nil
+      },
+      'returns' => {
+        'port_80_tcp' => {
+          'dports' => [80],
+        }
+      }
+    },
+    'a few ports with a defaults section and a specified proto' => {
+      'params' => {
+        'defaults' => { 'apply_to' => 'auto' },
+        80 => {
+          'proto'        => 'udp',
+          'trusted_nets' => ['192.168.1.0/24']
+        }
+      },
+      'returns' => {
+        'port_80_udp' => {
+          'dports'       => [80],
+          'apply_to'     => 'auto',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+      }
+    },
+    'a few ports with a defaults section two specified protos' => {
+      'params' => {
+        'defaults' => { 'apply_to' => 'auto' },
+        80 => {
+          'proto'        => ['tcp','udp'],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        }
+      },
+      'returns' => {
+        'port_80_tcp' => {
+          'dports'       => [80],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+        'port_80_udp' => {
+          'dports'       => [80],
+          'apply_to'     => 'ipv4',
+          'trusted_nets' => ['192.168.1.0/24']
+        },
+      }
+    },
+    'a few ports with a defaults section nothing else' => {
+      'params' => {
+        'defaults' => { 'apply_to' => 'auto' },
+        80 => nil
+      },
+      'returns' => {
+        'port_80_tcp' => {
+          'dports'   => [80],
+          'apply_to' => 'auto',
+        },
+
+      }
     },
   }
 
-  outputs = {
-    'a hash without a default section' => {
-      'port_80_tcp'  => { 'dports' => [80]  },
-      'port_53_udp'  => { 'dports' => [53]  },
-      'port_443_tcp' => { 'dports' => [443], 'apply_to' => 'ipv6'},
-      'port_514_udp' => { 'dports' => [514] },
-      'port_514_tcp' => { 'dports' => [514] },
-    },
-    'containing a defaults section' => {
-      'port_443_tcp' => { 'dports' => [443], 'apply_to' => 'ipv6'},
-      'port_53_udp'  => { 'dports' => [53],  'apply_to' => 'ipv4'},
-      'port_514_udp' => { 'dports' => [514], 'apply_to' => 'ipv4'},
-      'port_514_tcp' => { 'dports' => [514], 'apply_to' => 'ipv4'},
-      'port_80_tcp'  => { 'dports' => [80],  'apply_to' => 'ipv4'},
-    },
-  }
-
-  inputs.keys.each do |test_name|
+  tests.keys.each do |test_name|
     context test_name do
       it {
         is_expected.to run
-          .with_params(inputs[test_name])
-          .and_return(outputs[test_name])
+          .with_params(tests[test_name]['params'])
+          .and_return(tests[test_name]['returns'])
         }
     end
   end

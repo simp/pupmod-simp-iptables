@@ -25,7 +25,10 @@ describe 'iptables::ports', :type => :define do
         it { is_expected.to create_iptables__listen__udp('port_53_udp').with(apply_to: 'auto') }
         it { is_expected.to create_iptables__listen__udp('port_514_udp').with(apply_to: 'auto') }
         it { is_expected.to create_iptables__listen__tcp_stateful('port_514_tcp').with(apply_to: 'auto') }
-        it { is_expected.to create_iptables__listen__tcp_stateful('port_80_tcp').with(apply_to: 'auto') }
+        it { is_expected.to create_iptables__listen__tcp_stateful('port_80_tcp').with(
+          apply_to: 'auto',
+          dports: [80]
+        ) }
       end
 
       context 'containing a defaults section' do
@@ -52,7 +55,10 @@ describe 'iptables::ports', :type => :define do
         it { is_expected.to create_iptables__listen__udp('port_53_udp').with(apply_to: 'ipv4') }
         it { is_expected.to create_iptables__listen__udp('port_514_udp').with(apply_to: 'ipv4') }
         it { is_expected.to create_iptables__listen__tcp_stateful('port_514_tcp').with(apply_to: 'ipv4') }
-        it { is_expected.to create_iptables__listen__tcp_stateful('port_80_tcp').with(apply_to: 'ipv4') }
+        it { is_expected.to create_iptables__listen__tcp_stateful('port_80_tcp').with(
+          apply_to: 'ipv4',
+          dports: [80]
+        ) }
       end
 
       context 'a hash containing an invalid parameter' do
