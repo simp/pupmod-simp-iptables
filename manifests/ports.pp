@@ -13,60 +13,19 @@
 #         proto: udp
 #       443:
 #         apply_to: ipv6
+#       514:
+#         proto: [udp,tcp]
 #
 define iptables::ports (
   Hash $ports,
 ) {
-  # extract defaults and remove that hash from iteration
-  if $ports['defaults'].is_a(Hash) {
-    $defaults  = $ports['defaults']
-    $raw_ports = $ports - 'defaults'
-  }
-  else {
-    $defaults  = {}
-    $raw_ports = $ports
-  }
 
-  $raw_ports.each |$port, $options| {
-    $_port = Integer.new($port)
-    $name_to_param = {
-      'dports' => [$_port],
-    }
+  $ports_hash = iptables::parse_ports($ports)
 
-    if $options.is_a(Hash) {
-      if $options['proto'] {
-        $proto = $options['proto']
-      }
-      else {
-        $proto = $defaults['proto']
-      }
-      $_defaults = $defaults - 'proto'
-      $args      = ($options - 'proto') + $name_to_param
-    }
-    else {
-      if $defaults['proto'] {
-        $proto = $defaults['proto']
-      }
-      else {
-        $proto = 'tcp'
-      }
-      $_defaults = $defaults - 'proto'
-      $args  = $name_to_param
-    }
-
-    case $proto {
-      default: {
-        iptables::listen::tcp_stateful {
-          default:        * => $_defaults;
-          "port_${port}": * => $args;
-        }
-      }
-      'udp': {
-        iptables::listen::udp {
-          default:        * => $_defaults;
-          "port_${port}": * => $args;
-        }
-      }
+  $ports_hash.each |$res_name,$data| {
+    case $res_name {
+      default:        { iptables::listen::tcp_stateful { $res_name: * => $data; } }
+      Pattern[/udp/]: { iptables::listen::udp {          $res_name: * => $data; } }
     }
   }
 }

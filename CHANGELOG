@@ -1,3 +1,7 @@
+* Tue Feb 20 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.1.2
+- Move iptables::ports logic into a function to allow ports to be specified
+  in multiple protocols
+
 * Mon Jan 22 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.1
 - Fixed bugs in the chain retention and optimization code that would cause
   iptables to fail to reload in some situations.
