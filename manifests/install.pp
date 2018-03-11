@@ -69,7 +69,7 @@ class iptables::install {
     }
 
     case $facts['os']['name'] {
-      'RedHat','CentOS': {
+      'RedHat','CentOS','OracleLinux': {
         if $facts['os']['release']['major'] > '6' {
           Package['iptables'] -> File['/etc/init.d/ip6tables']
           Package['iptables'] -> File['/etc/init.d/ip6tables-retry']
@@ -81,9 +81,6 @@ class iptables::install {
           Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
           Package['iptables-ipv6'] -> File['/etc/sysconfig/ip6tables']
         }
-      }
-      default: {
-        fail("${::operatingsystem} is not yet supported by ${module_name}")
       }
     }
   }

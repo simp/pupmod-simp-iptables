@@ -60,7 +60,7 @@ puppet-5:
     - docker
   image: ruby:2.4
   variables:
-    PUPPET_VERSION: '5.0'
+    PUPPET_VERSION: '5.4'
   <<: *cache_bundler
   <<: *setup_bundler_env
   <<: *static_tests
@@ -75,6 +75,26 @@ default:
     PUPPET_VERSION: '4.10'
   script:
     - bundle exec rake beaker:suites
+
+oel:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    PUPPET_VERSION: '4.10'
+  script:
+    - bundle exec rake beaker:suites[default,oel]
+
+puppet5:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  script:
+    - bundle exec rake beaker:suites[default,puppet5]
 
 default-fips:
   stage: acceptance
