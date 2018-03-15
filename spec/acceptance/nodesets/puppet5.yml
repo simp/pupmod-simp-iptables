@@ -15,4 +15,5 @@ HOSTS:
     hypervisor : vagrant
 CONFIG:
   type: aio
+  puppet_collection: puppet5
   vagrant_memsize: 256

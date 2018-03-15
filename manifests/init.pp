@@ -93,6 +93,8 @@ class iptables (
   Optional[Hash]                  $ports                      = undef
 ) {
 
+  simplib::assert_metadata($module_name)
+
   if $enable != 'ignore' {
     contain '::iptables::install'
     contain '::iptables::service'

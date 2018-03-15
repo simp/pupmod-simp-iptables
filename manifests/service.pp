@@ -13,6 +13,8 @@ class iptables::service (
   $enable = pick(getvar('::iptables::enable'),true),
   $ipv6   = pick(getvar('::iptables::ipv6'),true)
 ){
+  simplib::assert_metadata($module_name)
+
   if $enable != 'ignore' {
     if $enable {
       $_ensure = 'running'
@@ -55,7 +57,7 @@ class iptables::service (
 
     # firewalld must be disabled on EL7+
     case $::operatingsystem {
-      'RedHat','CentOS': {
+      'RedHat','CentOS','OracleLinux': {
         if $::operatingsystemmajrelease > '6' {
           service{ 'firewalld':
             ensure => 'stopped',
@@ -63,9 +65,6 @@ class iptables::service (
             before => Service['iptables']
           }
         }
-      }
-      default: {
-        fail("${::operatingsystem} is not yet supported by ${module_name}")
       }
     }
   }

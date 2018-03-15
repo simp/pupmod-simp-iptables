@@ -1,3 +1,7 @@
+* Sun Mar 11 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.2
+- Added support for OEL 6 and 7
+- Added Puppet 5 acceptance tests
+
 * Mon Jan 22 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.1
 - Fixed bugs in the chain retention and optimization code that would cause
   iptables to fail to reload in some situations.
