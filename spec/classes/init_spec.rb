@@ -53,6 +53,8 @@ describe 'iptables' do
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
+          it { is_expected.to create_service('firewalld').that_comes_before('Service[iptables]') }
+          it { is_expected.to create_service('firewalld').that_comes_before('Service[ip6tables]') }
         end
 
         context 'with a provided iptables::ports hash' do
