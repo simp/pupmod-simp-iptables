@@ -23,6 +23,13 @@ class iptables::service (
       $_ensure = 'stopped'
     }
 
+    # firewalld must be disabled
+    service{ 'firewalld':
+      ensure => 'stopped',
+      enable => false,
+      before => Service['iptables']
+    }
+
     service { 'iptables':
       ensure     => $_ensure,
       enable     => $enable,
@@ -53,19 +60,8 @@ class iptables::service (
         require  => File['/etc/init.d/ip6tables-retry'],
         provider => 'redhat'
       }
-    }
 
-    # firewalld must be disabled on EL7+
-    case $::operatingsystem {
-      'RedHat','CentOS','OracleLinux': {
-        if $::operatingsystemmajrelease > '6' {
-          service{ 'firewalld':
-            ensure => 'stopped',
-            enable => false,
-            before => Service['iptables']
-          }
-        }
-      }
+      Service['firewalld'] -> Service['ip6tables']
     }
   }
 }
