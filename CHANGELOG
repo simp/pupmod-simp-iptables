@@ -2,7 +2,6 @@
 - Fix issue where a `jump` target went to an empty ruleset and the chain was
   dropped
 - Retain all native IPTables jump points by default
-- Retain Docker and Kubernetes rules by default
 - Add `==` method for IPTables Rulesets
 
 * Sun Mar 11 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.2

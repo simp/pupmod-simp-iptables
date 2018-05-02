@@ -323,8 +323,7 @@ module PuppetX
       #
       def preserve_match(regex = [], components = ['chain', 'jump', 'input_interface', 'output_interface'])
 
-      # A standard list of items that are built into iptables, along with the
-      # standard Docker and Kubernetes rules that should always be preserved
+      # A standard list of items that are built into iptables
       always_preserve = Regexp.new('^(' + [
           'ACCEPT',
           'DROP',
