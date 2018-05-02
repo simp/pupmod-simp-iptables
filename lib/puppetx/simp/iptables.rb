@@ -323,9 +323,9 @@ module PuppetX
       #
       def preserve_match(regex = [], components = ['chain', 'jump', 'input_interface', 'output_interface'])
 
-	# A standard list of items that are built into iptables, along with the
-	# standard Docker and Kubernetes rules that should always be preserved
-	always_preserve = Regexp.new('^(' + [
+      # A standard list of items that are built into iptables, along with the
+      # standard Docker and Kubernetes rules that should always be preserved
+      always_preserve = Regexp.new('^(' + [
           'ACCEPT',
           'DROP',
           'FORWARD',
@@ -333,9 +333,6 @@ module PuppetX
           'OUTPUT',
           '(NF)?LOG',
           '(PRE|POST)ROUTING',
-          'DOCKER',
-          'docker',
-          'KUBE',
           'REDIRECT',
           'MASQ',
           'MASQUERADE',
