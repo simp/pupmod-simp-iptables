@@ -1,3 +1,9 @@
+* Wed May 02 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.3
+- Fix issue where a `jump` target went to an empty ruleset and the chain was
+  dropped
+- Retain all native IPTables jump points by default
+- Add `==` method for IPTables Rulesets
+
 * Sun Mar 11 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.2
 - Added support for OEL 6 and 7
 - Added Puppet 5 acceptance tests

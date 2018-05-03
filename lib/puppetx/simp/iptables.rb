@@ -47,6 +47,12 @@ module PuppetX
         prune_chains!
       end
 
+      # A comparator for two rulesets
+      def ==(to_cmp)
+        tables == to_cmp.tables &&
+          report == to_cmp.report
+      end
+
       # Sort a list of rules into the same order that `iptables-save` uses on
       # output
       #
@@ -94,7 +100,6 @@ module PuppetX
       #   The IPTables object to be merged
       #
       def merge!(iptables_obj)
-
         iptables_obj.tables.each do |table|
           add_chains(table, iptables_obj.chains(table))
           prepend_rules(table, iptables_obj.rules(table))
@@ -169,8 +174,9 @@ module PuppetX
           @tables[key][:rules]
         }.
         flatten.map { |rule|
-          rule.chain
-        }.uniq
+          new_rule = [rule.chain]
+          new_rule << rule.jump if rule.jump
+        }.flatten.uniq
 
         tables.each do |table|
           chains_to_keep = []
@@ -317,6 +323,41 @@ module PuppetX
       #
       def preserve_match(regex = [], components = ['chain', 'jump', 'input_interface', 'output_interface'])
 
+      # A standard list of items that are built into iptables
+      always_preserve = Regexp.new('^(' + [
+          'ACCEPT',
+          'DROP',
+          'FORWARD',
+          'INPUT',
+          'OUTPUT',
+          '(NF)?LOG',
+          '(PRE|POST)ROUTING',
+          'REDIRECT',
+          'MASQ',
+          'MASQUERADE',
+          'RETURN',
+          'MARK',
+          'NOTRACK',
+          'SET',
+          '(D|S)NAT',
+          '(D|S)NPT',
+          'AUDIT',
+          'CONN(SEC)?MARK',
+          'HMARK',
+          'LED',
+          'RATEEST',
+          'REJECT',
+          'RPFILTER',
+          'SECMARK',
+          'SYNPROXY',
+          'TCP(MSS|OPTSTRIP)',
+          'TEE',
+          'TOS',
+        ].join('|') + ')$')
+
+        _regex = Array(regex).dup
+        _regex << always_preserve
+
         result = PuppetX::SIMP::IPTables.new('')
 
         @tables.each_key do |table|
@@ -325,9 +366,13 @@ module PuppetX
           result.add_chains(table, chains(table))
 
           rules(table).each do |rule|
-            Array(regex).each do |cmp|
+            # Ignore all rules dropped by SIMP
+            next if (rule.rule_hash['comment'] && rule.rule_hash['comment'][:value].start_with?('SIMP:'))
+
+            Array(_regex).each do |cmp|
               Array(components).each do |component|
                 val = rule.send(component)
+
                 if cmp.match(val)
                   result.prepend_rules(table, rule)
                 end

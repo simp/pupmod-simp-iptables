@@ -75,10 +75,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
 
     # We go ahead and do the comparison here because passing the
     # appropriate values around becomes a mess in the log output.
-    #
-    # We need to compare the String versions since the Hashes will contain
-    # unique object references
-    if @ipt_config[:target_config].to_s != @ipt_config[:optimized_config].to_s
+    if @ipt_config[:target_config] != @ipt_config[:optimized_config]
       @ipt_config[:changed] = true
       unless (resource[:optimize] == :true)
         result = :synchronized
@@ -93,7 +90,6 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
   def system_insync?
     optimized_rules = @ipt_config[:optimized_config].report(resource[:ignore])
     running_rules = @ipt_config[:running_config].report(resource[:ignore])
-
 
     # We only care about tables that we're managing!
     (running_rules.keys - optimized_rules.keys).each do |chain|
