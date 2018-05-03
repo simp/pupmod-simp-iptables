@@ -322,42 +322,6 @@ module PuppetX
       # @return PuppetX::SIMP::IPTables
       #
       def preserve_match(regex = [], components = ['chain', 'jump', 'input_interface', 'output_interface'])
-
-      # A standard list of items that are built into iptables
-      always_preserve = Regexp.new('^(' + [
-          'ACCEPT',
-          'DROP',
-          'FORWARD',
-          'INPUT',
-          'OUTPUT',
-          '(NF)?LOG',
-          '(PRE|POST)ROUTING',
-          'REDIRECT',
-          'MASQ',
-          'MASQUERADE',
-          'RETURN',
-          'MARK',
-          'NOTRACK',
-          'SET',
-          '(D|S)NAT',
-          '(D|S)NPT',
-          'AUDIT',
-          'CONN(SEC)?MARK',
-          'HMARK',
-          'LED',
-          'RATEEST',
-          'REJECT',
-          'RPFILTER',
-          'SECMARK',
-          'SYNPROXY',
-          'TCP(MSS|OPTSTRIP)',
-          'TEE',
-          'TOS',
-        ].join('|') + ')$')
-
-        _regex = Array(regex).dup
-        _regex << always_preserve
-
         result = PuppetX::SIMP::IPTables.new('')
 
         @tables.each_key do |table|
@@ -369,7 +333,7 @@ module PuppetX
             # Ignore all rules dropped by SIMP
             next if (rule.rule_hash['comment'] && rule.rule_hash['comment'][:value].start_with?('SIMP:'))
 
-            Array(_regex).each do |cmp|
+            Array(regex).each do |cmp|
               Array(components).each do |component|
                 val = rule.send(component)
 
