@@ -217,9 +217,10 @@ puppet5:
   <<: *cache_bundler
   <<: *setup_bundler_env
   variables:
-    PUPPET_VERSION: '4.10'
+    PUPPET_VERSION: '5.0'
+    BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
-    - bundle exec rake beaker:suites[default,puppet5]
+    - bundle exec rake beaker:suites[default]
 
 default-fips:
   stage: acceptance

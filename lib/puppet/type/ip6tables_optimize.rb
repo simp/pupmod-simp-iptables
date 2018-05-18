@@ -100,6 +100,10 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     req
   end
 
+  autorequire(:service) do
+    ['firewalld']
+  end
+
   autonotify(:file) do
     [self[:name]]
   end

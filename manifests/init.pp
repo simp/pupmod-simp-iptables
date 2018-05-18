@@ -105,6 +105,12 @@ class iptables (
 
     Class['iptables::install'] -> Class['iptables::service']
 
+    file { '/etc/sysconfig/iptables':
+      owner => 'root',
+      group => 'root',
+      mode  => '0640'
+    }
+
     # These are required to run if you are managing iptables with the custom
     # types at all.
     iptables_optimize { '/etc/sysconfig/iptables':
@@ -114,6 +120,12 @@ class iptables (
     }
 
     if $ipv6 and $facts['ipv6_enabled'] {
+      file { '/etc/sysconfig/ip6tables':
+        owner => 'root',
+        group => 'root',
+        mode  => '0640'
+      }
+
       ip6tables_optimize { '/etc/sysconfig/ip6tables':
         optimize => $optimize_rules,
         ignore   => $ignore,

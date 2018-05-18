@@ -17,3 +17,4 @@ HOSTS:
 CONFIG:
   type: aio
   vagrant_memsize: 256
+  log_level: verbose

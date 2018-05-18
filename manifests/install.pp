@@ -32,15 +32,8 @@ class iptables::install {
     seltype => 'iptables_initrc_exec_t'
   }
 
-  file { '/etc/sysconfig/iptables':
-    owner => 'root',
-    group => 'root',
-    mode  => '0640'
-  }
-
   Package['iptables'] -> File['/etc/init.d/iptables']
   Package['iptables'] -> File['/etc/init.d/iptables-retry']
-  Package['iptables'] -> File['/etc/sysconfig/iptables']
 
   if $::iptables::ipv6 and $facts['ipv6_enabled'] {
     # IPV6-only stuff
@@ -62,24 +55,16 @@ class iptables::install {
       content => file("${module_name}/ip6tables-retry")
     }
 
-    file { '/etc/sysconfig/ip6tables':
-      owner => 'root',
-      group => 'root',
-      mode  => '0640'
-    }
-
     case $facts['os']['name'] {
       'RedHat','CentOS','OracleLinux': {
         if $facts['os']['release']['major'] > '6' {
           Package['iptables'] -> File['/etc/init.d/ip6tables']
           Package['iptables'] -> File['/etc/init.d/ip6tables-retry']
-          Package['iptables'] -> File['/etc/sysconfig/ip6tables']
         }
         else {
           package { 'iptables-ipv6': ensure => $::iptables::ensure }
           Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables']
           Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
-          Package['iptables-ipv6'] -> File['/etc/sysconfig/ip6tables']
         }
       }
     }
