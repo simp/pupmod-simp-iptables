@@ -39,6 +39,7 @@ iptables::ignore: ['#{nic_regex}','lo']
 
       it 'should apply ignore => [] with no errors' do
         apply_manifest_on(host, manifest, :catch_failures => true)
+        on(host, 'iptables-save')
       end
 
       it 'should apply rules without puppet' do
@@ -50,6 +51,7 @@ iptables::ignore: ['#{nic_regex}','lo']
 
       it 'should no longer contain the rule after puppet apply' do
         apply_manifest_on(host, manifest, :catch_failures => true)
+        on(host, 'iptables-save')
         on(host,"iptables-save | grep ' -p tcp' | grep -w 6969", :acceptable_exit_codes => 1)
       end
 
@@ -83,6 +85,7 @@ iptables::ignore: ['#{nic_regex}','lo']
 
       it "should apply ignore => #{nic_regex} with no errors" do
         apply_manifest_on(host, manifest, :catch_failures => true)
+        on(host, 'iptables-save')
       end
 
       it "should apply ignore => #{nic_regex} and be idempotent" do
