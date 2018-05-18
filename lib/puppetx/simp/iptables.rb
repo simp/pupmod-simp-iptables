@@ -49,8 +49,24 @@ module PuppetX
 
       # A comparator for two rulesets
       def ==(to_cmp)
-        tables == to_cmp.tables &&
-          report == to_cmp.report
+        # Fast matching
+        unless tables == to_cmp.tables
+          Puppet.debug('Tables differ between rulesets')
+          return false
+        end
+
+        unless report == to_cmp.report
+          Puppet.debug('Reports differ between rulesets')
+          return false
+        end
+
+        # Comprehensive search
+        tables.each do |table|
+          unless rules(table) == to_cmp.rules(table)
+            Puppet.debug("Rules in table '#{table}' differ")
+            return false
+          end
+        end
       end
 
       # Sort a list of rules into the same order that `iptables-save` uses on

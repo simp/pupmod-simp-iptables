@@ -1,3 +1,7 @@
+* Thu May 17 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.5
+- Perform deep rule comparison on rulesets that are otherwise identical
+- Remove chances for memory leaks due to the design of iptables_rule
+
 * Thu May 03 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.4
 - Remove erroneous native IPTables jump point retention
 
