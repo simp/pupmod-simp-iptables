@@ -7,7 +7,7 @@ HOSTS:
     box :     centos/7
     hypervisor : vagrant
 
-  el7:
+  el6:
     roles:
       - server6
     platform: el-6-x86_64

@@ -34,7 +34,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
   def self.iptables_rules
     return @iptables_rules if @iptables_rules
 
-    @iptables_rule_classvars = {
+    @iptables_rules = {
       :iptables         => {
         :target_file      => '/etc/sysconfig/.iptables_puppet',
         :old_content      => '',
