@@ -1,3 +1,10 @@
+<%
+  if ENV['BEAKER_HYPERVISOR']
+    hypervisor = ENV['BEAKER_HYPERVISOR']
+  else
+    hypervisor = 'vagrant'
+  end
+-%>
 HOSTS:
   el7:
     roles:
@@ -5,14 +12,14 @@ HOSTS:
       - default
     platform: el-7-x86_64
     box :     centos/7
-    hypervisor : vagrant
+    hypervisor : <%= hypervisor %>
 
   el6:
     roles:
       - server6
     platform: el-6-x86_64
     box :     centos/6
-    hypervisor : vagrant
+    hypervisor : <%= hypervisor %>
 CONFIG:
   type: aio
   log_level: verbose
