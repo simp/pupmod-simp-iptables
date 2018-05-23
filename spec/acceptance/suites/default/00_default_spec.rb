@@ -4,8 +4,11 @@ test_name "iptables class"
 
 hosts.each do |host|
   describe "iptables class #{host}" do
-    context 'default parameters' do
-      let(:manifest) {
+    before(:context) do
+      on(host, 'puppet module list --tree')
+    end
+
+    let(:default_manifest) {
       <<-EOS
         class { 'iptables': }
 
@@ -17,14 +20,16 @@ hosts.each do |host|
           dports       => 22,
         }
       EOS
-      }
+    }
 
+    context 'default parameters' do
       it 'should work with no errors' do
-        apply_manifest_on(host, manifest, :catch_failures => true)
+        apply_manifest_on(host, default_manifest, :catch_failures => true)
+        on(host, 'iptables-save')
       end
 
       it 'should be idempotent' do
-        apply_manifest_on(host, manifest, :catch_changes => true)
+        apply_manifest_on(host, default_manifest, :catch_changes => true)
       end
 
       it 'should install the iptables package' do
@@ -71,6 +76,8 @@ EOM
 
       it 'should work with no errors' do
         apply_manifest_on(host, manifest_with_scanblock_enabled, :catch_failures => true)
+        on(host, 'iptables-save')
+        on(host, 'ip6tables-save')
       end
 
       it 'should be idempotent' do
@@ -175,6 +182,44 @@ EOM
       end
 
       #TODO verify iptables electric fence rules do what is expected!
+    end
+
+    context 'with default parameters after scan block had been enabled' do
+      it 'should work with no errors' do
+        apply_manifest_on(host, default_manifest, :catch_failures => true)
+        on(host, 'iptables-save')
+        on(host, 'ip6tables-save')
+      end
+
+      it 'should only contain single ipv4 rule from default manifest' do
+        on(host, "test `iptables-save  | grep ' -p tcp' | wc -l` -eq 1", :acceptable_exit_codes => 0)
+        expect(on(host, "iptables-save  | grep ' -p tcp'").stdout).to include(' --dport', ' 22')
+        on(host, 'iptables-save',  :acceptable_exit_codes => 0) do
+          expect(stdout).to_not match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+          expect(stdout).to_not match(/-A LOCAL-INPUT -m state --state NEW -m comment --comment "SIMP:" -j ATTK_CHECK/m)
+          expect(stdout).to_not match(/-A ATTACKED -m limit --limit 5\/min -m comment --comment "SIMP:" -j LOG --log-prefix \"IPT: \(Rule ATTACKED\): \"/m)
+          expect(stdout).to_not match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+          expect(stdout).to_not match(/-A ATTK_CHECK -m recent --set --name ATTK .*--rsource/m)
+          expect(stdout).to_not match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
+        end
+      end
+
+      it 'should not contain ipv6 rules from scan block manifest' do
+        os_release = fact_on(host, 'operatingsystemmajrelease')
+
+        on(host, 'ip6tables-save',  :acceptable_exit_codes => 0) do
+          expect(stdout).to_not match(/-A LOCAL-INPUT -m state --state NEW -m comment --comment "SIMP:" -j ATTK_CHECK/m)
+          expect(stdout).to_not match(/-A ATTACKED -m limit --limit 5\/min -m comment --comment "SIMP:" -j LOG --log-prefix \"IPT: \(Rule ATTACKED\): \"/m)
+          expect(stdout).to_not match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+          expect(stdout).to_not match(/-A ATTK_CHECK -m recent --set --name ATTK .*--rsource/m)
+
+          #FIXME Why are these ipv6 iptables rules missing for CentOS6?
+          unless os_release == '6'
+            expect(stdout).to_not match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+            expect(stdout).to_not match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
+          end
+        end
+      end
     end
   end
 end

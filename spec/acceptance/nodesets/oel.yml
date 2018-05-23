@@ -7,7 +7,7 @@ HOSTS:
     box :     elastic/oel-7-x86_64
     hypervisor : vagrant
 
-  oel7:
+  oel6:
     roles:
       - server6
     platform: el-6-x86_64
@@ -17,3 +17,4 @@ HOSTS:
 CONFIG:
   type: aio
   vagrant_memsize: 256
+  log_level: verbose

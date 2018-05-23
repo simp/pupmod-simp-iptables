@@ -95,6 +95,10 @@ Puppet::Type.newtype(:iptables_optimize) do
     req
   end
 
+  autorequire(:service) do
+    ['firewalld']
+  end
+
   autonotify(:file) do
     [self[:name]]
   end

@@ -55,17 +55,10 @@ class iptables::service (
       }
     }
 
-    # firewalld must be disabled on EL7+
-    case $::operatingsystem {
-      'RedHat','CentOS','OracleLinux': {
-        if $::operatingsystemmajrelease > '6' {
-          service{ 'firewalld':
-            ensure => 'stopped',
-            enable => false,
-            before => Service['iptables']
-          }
-        }
-      }
+    # firewalld should be disabled
+    service{ 'firewalld':
+      ensure => 'stopped',
+      enable => false
     }
   }
 }

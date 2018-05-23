@@ -6,51 +6,87 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
   commands :iptables  => 'iptables'
   commands :ip6tables => 'ip6tables'
 
-  $iptables_rule_classvars = {
-    :iptables         => {
-      :target_file      => '/etc/sysconfig/.iptables_puppet',
-      :old_content      => '',
-      :old_content_hash => {},
-      :new_content      => {},
-      :valid_tables     => [:nat, :filter, :mangle, :raw]
-    },
-    :ip6tables        => {
-      :target_file      => '/etc/sysconfig/.ip6tables_puppet',
-      :old_content      => '',
-      :old_content_hash => {},
-      :new_content      => {},
-      :valid_tables     => [:filter, :mangle, :raw]
-    },
-    # The types of tables that we can handle. Mostly for iteration.
-    :table_types      => [
-      :iptables,
-      :ip6tables
-     ],
-    :initialized      => false,
-    :num_resources    => 0,
-    :num_runs         => 0
-  }
+  def self.load_rules(table_type)
+    old_rules = ''
+
+    if File.readable?(iptables_rules[table_type][:target_file])
+      File.open(iptables_rules[table_type][:target_file],'r') { |fh|
+        old_rules = fh.read.chomp
+      }
+    end
+
+    iptables_rules[table_type][:old_content] = old_rules
+
+    # Split them up for comparison later.
+    current_table = ''
+    old_rules.each_line do |line|
+      line.strip!
+
+      next if line =~ /^\s*$/
+      next if line[0].chr == '#'
+      next if (line[0].chr == '*') && (current_table = line[1..-1].to_sym)
+
+      iptables_rules[table_type][:old_content_hash][current_table] ||= []
+      iptables_rules[table_type][:old_content_hash][current_table] << line
+    end
+  end
+
+  def self.iptables_rules
+    return @iptables_rules if @iptables_rules
+
+    @iptables_rules = {
+      :iptables         => {
+        :target_file      => '/etc/sysconfig/.iptables_puppet',
+        :old_content      => '',
+        :old_content_hash => {},
+        :new_content      => {},
+        :valid_tables     => [:nat, :filter, :mangle, :raw]
+      },
+      :ip6tables        => {
+        :target_file      => '/etc/sysconfig/.ip6tables_puppet',
+        :old_content      => '',
+        :old_content_hash => {},
+        :new_content      => {},
+        :valid_tables     => [:filter, :mangle, :raw]
+      },
+      # The types of tables that we can handle. Mostly for iteration.
+      :table_types      => [
+        :iptables,
+        :ip6tables
+       ],
+      :initialized      => false,
+      :num_resources    => 0,
+      :num_runs         => 0
+    }
+
+    @iptables_rules[:table_types].each do |table_type|
+      load_rules(table_type)
+    end
+
+    return @iptables_rules
+  end
+
+  def self.post_resource_eval
+    # Clean up our cruft
+    @iptables_rules = nil
+  end
+
+  def iptables_rules
+    self.class.iptables_rules
+  end
 
   def initialize(*args)
     require 'puppetx/simp/simplib'
     require 'puppetx/simp/iptables'
 
     super(*args)
-
-    unless $iptables_rule_classvars[:initialized]
-      $iptables_rule_classvars[:table_types].each do |table_type|
-        load_rules(table_type)
-      end
-
-      $iptables_rule_classvars[:initialized] = true
-    end
   end
 
   def content
-    $iptables_rule_classvars[:num_runs] += 1
+    iptables_rules[:num_runs] += 1
 
-    if $iptables_rule_classvars[:num_resources] == 0
-      $iptables_rule_classvars[:num_resources] =
+    if iptables_rules[:num_resources] == 0
+      iptables_rules[:num_resources] =
         resource.catalog.resources.find_all{ |x|
           x.is_a?(Puppet::Type.type(:iptables_rule))
         }.count
@@ -149,7 +185,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     parsed_rule.keys.each do |key|
       table = resource[:table].to_sym
 
-      $iptables_rule_classvars[key][:new_content][table] ||= {
+      iptables_rules[key][:new_content][table] ||= {
         :chains => {},
         :rules => {}
       }
@@ -163,31 +199,31 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
 
         # Strip off and store the valid existing chain lines (if any)
         if x =~ /^(:.*?)\s+(.*?)\s+/
-          $iptables_rule_classvars[key][:new_content][table][:chains][$1] = "#{$2} [0:0]"
+          iptables_rules[key][:new_content][table][:chains][$1] = "#{$2} [0:0]"
         end
       }
-      $iptables_rule_classvars[key][:new_content][table][:rules]["#{resource[:order]}_#{resource[:name]}"] = parsed_rule[key].join("\n")
+      iptables_rules[key][:new_content][table][:rules]["#{resource[:order]}_#{resource[:name]}"] = parsed_rule[key].join("\n")
     end
 
-    if $iptables_rule_classvars[:num_runs] == $iptables_rule_classvars[:num_resources]
+    if iptables_rules[:num_runs] == iptables_rules[:num_resources]
       # Here, we put together the new content for all known content.
       changed = []
-      $iptables_rule_classvars[:table_types].each do |table_type|
+      iptables_rules[:table_types].each do |table_type|
         # This may be bad form, but we're discarding the :new_content
         # hash and simply holding a string for comparison and writing
         # purposes at this point.
-        $iptables_rule_classvars[table_type][:new_content] = collate_output(table_type)
+        iptables_rules[table_type][:new_content] = collate_output(table_type)
 
         Puppet.debug("Content Diff for *#{table_type}:\n" +
-          "  Old: #{$iptables_rule_classvars[table_type][:old_content]}\n" +
-          "  New: #{$iptables_rule_classvars[table_type][:new_content]}"
+          "  Old: #{iptables_rules[table_type][:old_content]}\n" +
+          "  New: #{iptables_rules[table_type][:new_content]}"
         )
 
         # Actually do the comparison between the old and the new to
         # see if things changed.
         if (
-          $iptables_rule_classvars[table_type][:new_content] !=
-          $iptables_rule_classvars[table_type][:old_content]
+          iptables_rules[table_type][:new_content] !=
+          iptables_rules[table_type][:old_content]
         )
         then
           changed << table_type
@@ -211,16 +247,16 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
   end
 
   def flush
-    $iptables_rule_classvars[:table_types].each do |table_type|
-      File.open($iptables_rule_classvars[table_type][:target_file],'w') { |fh|
+    iptables_rules[:table_types].each do |table_type|
+      File.open(iptables_rules[table_type][:target_file],'w') { |fh|
         fh.rewind
 
-        fh.puts($iptables_rule_classvars[table_type][:new_content])
+        fh.puts(iptables_rules[table_type][:new_content])
       }
-      File.chmod(0600,$iptables_rule_classvars[table_type][:target_file])
+      File.chmod(0600,iptables_rules[table_type][:target_file])
     end
 
-    $iptables_rule_classvars[:initialized] = false
+    iptables_rules[:initialized] = false
   end
 
   private
@@ -281,8 +317,8 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     end
 
     # Here, we remove any target that does not have a valid table.
-    $iptables_rule_classvars[:table_types].each do |table|
-      unless $iptables_rule_classvars[table][:valid_tables].include?(resource[:table].to_sym)
+    iptables_rules[:table_types].each do |table|
+      unless iptables_rules[table][:valid_tables].include?(resource[:table].to_sym)
         Puppet.debug("Ignoring ':#{resource[:table]}' since it is not valid for :#{table}")
         retval.delete(table)
       end
@@ -294,7 +330,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
   def collate_output(rule_type)
     output = []
 
-    $iptables_rule_classvars[rule_type][:new_content].keys.sort.each { |table|
+    iptables_rules[rule_type][:new_content].keys.sort.each { |table|
       # First, we have to list the filter name.
       output << "*#{table}"
 
@@ -304,21 +340,21 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       # If we've never actually run this before, then the old content
       # will be nil so we just cast it to an empty Array.
       (
-        $iptables_rule_classvars[rule_type][:new_content][table][:rules].values +
-        Array($iptables_rule_classvars[rule_type][:old_content_hash][table])
+        iptables_rules[rule_type][:new_content][table][:rules].values +
+        Array(iptables_rules[rule_type][:old_content_hash][table])
       ).each do |x|
         # Could have a multi-line rule!
         x.each_line do |rule_line|
           chain = PuppetX::SIMP::IPTables::Rule.parse(rule_line)[:chain]
-          $iptables_rule_classvars[rule_type][:new_content][table][:chains][":#{chain}"] = nil unless chain.nil?
+          iptables_rules[rule_type][:new_content][table][:chains][":#{chain}"] = nil unless chain.nil?
         end
       end
 
       # Now, we have to stick on the chain names.
       # This needs to stay sorted so that we don't end up reloading
       # iptables every time.
-      output << $iptables_rule_classvars[rule_type][:new_content][table][:chains].keys.sort.collect{|key|
-        value = $iptables_rule_classvars[rule_type][:new_content][table][:chains][key]
+      output << iptables_rules[rule_type][:new_content][table][:chains].keys.sort.collect{|key|
+        value = iptables_rules[rule_type][:new_content][table][:chains][key]
         if value
           key = "#{key} #{value}"
         else
@@ -327,10 +363,10 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       }.join("\n")
 
       # Properly sort our rules.
-      output << $iptables_rule_classvars[rule_type][:new_content][table][:rules].keys.sort_by { |x|
+      output << iptables_rules[rule_type][:new_content][table][:rules].keys.sort_by { |x|
         PuppetX::SIMP::Simplib.human_sort(x)
       }.collect { |x|
-        $iptables_rule_classvars[rule_type][:new_content][table][:rules][x]
+        iptables_rules[rule_type][:new_content][table][:rules][x]
       }.join("\n")
 
       # Make sure we have a commit for each table
@@ -338,29 +374,5 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     }
 
     return PuppetX::SIMP::IPTables.new(output.join("\n")).to_s
-  end
-
-  def load_rules(table_type)
-    old_rules = ''
-
-    if File.readable?($iptables_rule_classvars[table_type][:target_file])
-      File.open($iptables_rule_classvars[table_type][:target_file],'r') { |fh|
-        old_rules = fh.read.chomp
-      }
-    end
-
-    $iptables_rule_classvars[table_type][:old_content] = old_rules
-
-    # Split them up for comparison later.
-    current_table = ''
-    old_rules.each_line do |line|
-      line.strip!
-
-      next if line =~ /^\s*$/
-      next if line[0].chr == '#'
-      next if (line[0].chr == '*') && (current_table = line[1..-1].to_sym)
-      $iptables_rule_classvars[table_type][:old_content_hash][current_table] ||= []
-      $iptables_rule_classvars[table_type][:old_content_hash][current_table] << line
-    end
   end
 end
