@@ -15,7 +15,7 @@ class iptables::install {
     ensure  => 'file',
     owner   => 'root',
     group   => 'root',
-    mode    => '0744',
+    mode    => '0755',
     content => file("${module_name}/iptables"),
     seltype => 'iptables_initrc_exec_t'
   }
@@ -41,7 +41,7 @@ class iptables::install {
       ensure  => 'file',
       owner   => 'root',
       group   => 'root',
-      mode    => '0744',
+      mode    => '0755',
       seltype => 'iptables_initrc_exec_t',
       content => file("${module_name}/ip6tables")
     }
