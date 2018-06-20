@@ -197,6 +197,7 @@ default:
   variables:
     PUPPET_VERSION: '4.10'
   script:
+    - bundle exec rake spec_clean
     - bundle exec rake beaker:suites[default]
 
 oel:
@@ -208,6 +209,7 @@ oel:
   variables:
     PUPPET_VERSION: '4.10'
   script:
+    - bundle exec rake spec_clean
     - bundle exec rake beaker:suites[default,oel]
 
 puppet5:
@@ -220,6 +222,7 @@ puppet5:
     PUPPET_VERSION: '5.0'
     BEAKER_PUPPET_COLLECTION: 'puppet5'
   script:
+    - bundle exec rake spec_clean
     - bundle exec rake beaker:suites[default]
 
 default-fips:
@@ -232,4 +235,5 @@ default-fips:
     PUPPET_VERSION: '4.10'
     BEAKER_fips: 'yes'
   script:
+    - bundle exec rake spec_clean
     - bundle exec rake beaker:suites[default]
