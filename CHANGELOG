@@ -1,3 +1,6 @@
+* Fri Sep 07 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.6
+- Drop Hiera 4 support
+
 * Thu May 17 2018 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.1.5
 - Perform deep rule comparison on rulesets that are otherwise identical
 - Remove chances for memory leaks due to the design of iptables_rule
