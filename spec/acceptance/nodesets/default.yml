@@ -11,20 +11,21 @@ HOSTS:
       - server7
       - default
     platform: el-7-x86_64
-    box :     centos/7
-    hypervisor : <%= hypervisor %>
+    box: centos/7
+    hypervisor: <%= hypervisor %>
 
   el6:
     roles:
       - server6
     platform: el-6-x86_64
-    box :     centos/6
-    hypervisor : <%= hypervisor %>
+    box: centos/6
+    hypervisor: <%= hypervisor %>
+
 CONFIG:
   type: aio
-  log_level: verbose
   vagrant_memsize: 256
   log_level: verbose
-<% if ENV['BEAKER_PUPPET_ENVIRONMENT'] -%>
-  puppet_environment: <%= ENV['BEAKER_PUPPET_ENVIRONMENT'] %>
+  synced_folder: disabled
+<% if ENV['BEAKER_PUPPET_COLLECTION'] -%>
+  puppet_collection: <%= ENV['BEAKER_PUPPET_COLLECTION'] %>
 <% end -%>
