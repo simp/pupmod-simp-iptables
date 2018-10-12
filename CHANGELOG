@@ -1,3 +1,7 @@
+* Thu Oct 11 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.1.6
+- Changed $package_ensure from 'latest' to 'installed'
+  - It will also respect `simp_options::package_ensure`
+
 * Fri Sep 07 2018 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.6
 - Drop Hiera 4 support
 

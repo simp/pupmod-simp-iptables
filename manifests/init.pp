@@ -82,7 +82,7 @@
 #
 class iptables (
   Variant[Enum['ignore'],Boolean] $enable                     = simplib::lookup('simp_options::firewall', { 'default_value' => true }),
-  String                          $ensure                     = 'latest',
+  String                          $ensure                     = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
   Boolean                         $ipv6                       = true,
   Boolean                         $class_debug                = false,
   Boolean                         $optimize_rules             = true,

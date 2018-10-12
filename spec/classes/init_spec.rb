@@ -11,7 +11,7 @@ describe 'iptables' do
         context "iptables class without any parameters" do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
-          it { is_expected.to contain_package('iptables').with_ensure('latest') }
+          it { is_expected.to contain_package('iptables').with_ensure('installed') }
           it { is_expected.to contain_service('iptables').with_ensure('running') }
           it { is_expected.to contain_service('iptables-retry').with_enable(true) }
           it { is_expected.to create_class('iptables::rules::base').with_allow_ping(true) }
