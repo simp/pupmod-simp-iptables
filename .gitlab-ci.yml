@@ -209,6 +209,7 @@ pup-current-fips-compliance:
   <<: *compliance_base
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance]'
+  allow_failure: true
 
 # FUTURE
 ## Deployment jobs
