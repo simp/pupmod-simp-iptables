@@ -204,12 +204,12 @@ pup-current-oel-fips-default:
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,oel]'
 
-pup-current-fips-compliance:
-  <<: *pup_current
-  <<: *compliance_base
-  script:
-    - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance]'
-  allow_failure: true
+# FUTURE
+#pup-current-fips-compliance:
+#  <<: *pup_current
+#  <<: *compliance_base
+#  script:
+#    - 'BEAKER_fips=yes bundle exec rake beaker:suites[compliance]'
 
 # FUTURE
 ## Deployment jobs
