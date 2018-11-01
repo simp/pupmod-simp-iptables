@@ -1,3 +1,6 @@
+* Thu Nov 01 2018 Jeanne Greulich <jeanne.greulichr@onyxpoint.com> - 6.1.6
+- static asset updates for puppet 5
+
 * Thu Oct 11 2018 Nick Miller <nick.miller@onyxpoint.com> - 6.1.6
 - Changed $package_ensure from 'latest' to 'installed'
   - It will also respect `simp_options::package_ensure`
