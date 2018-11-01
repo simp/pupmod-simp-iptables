@@ -273,7 +273,7 @@ The `ip6tables_optimize` type has the exact same parameters but affects
 
 ## Development
 
-Please see the [SIMP Contribution Guidelines](https://simp-project.atlassian.net/wiki/display/SD/Contributing+to+SIMP).
+Please read our [Contribution Guide](http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html).
 
 ### Acceptance tests
 
