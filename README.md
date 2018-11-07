@@ -25,7 +25,8 @@ IP6Tables as well as convenience defines and general system configuration
 capabilities.
 
 ## This is a SIMP module
-This module is a component of the [System Integrity Management Platform](https://github.com/NationalSecurityAgency/SIMP),
+
+This module is a component of the [System Integrity Management Platform](https://simp-project.com),
 a compliance-management framework built on Puppet.
 
 Most SIMP modules actively take advantage of this module when used within the
