@@ -1,3 +1,8 @@
+* Wed Sep 11 2019 Mark Fitch <CodePhase@users.noreply.github.com> - 6.3.2
+- Allow LOCAL-INPUT jump rule in FORWARD and INPUT chains to occur last as a
+  default action through the addition of an
+  iptables::rules::base::force_local_input parameter
+
 * Wed Aug 21 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.3.1
 - Allow users to disable adding the 'SIMP:' prefix to the comment
 - Allow users to disable comments on rules completely
