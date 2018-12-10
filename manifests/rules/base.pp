@@ -37,7 +37,7 @@ class iptables::rules::base (
 
   iptables_rule { 'global':
     table    => 'filter',
-    first    => true,
+    first    => false,
     absolute => true,
     header   => false,
     content  => '-A INPUT -j LOCAL-INPUT
