@@ -110,15 +110,15 @@ rules.
 #open TCP port 443 (HTTPS) and a custom 8443 from any IP Address
 
 iptables::listen::tcp_stateful { 'webserver':
-  client_nets => ['any'],
-  dports => ['443','8443']
+  trusted_nets => ['any'],
+  dports => [ 443 , 8443 ]
 }
 
 #open UDP port 53 (DNS) from two specific IP addresses
 
 iptables::listen::udp {'DNS':
-  client_nets => ['192.168.56.55','192.168.56.147'],
-  dports      => ['53']
+  trusted_nets => ['192.168.56.55','192.168.56.147'],
+  dports      => [ 53 ]
 }
 
 #Allow a specific machine full access to this node
@@ -129,7 +129,7 @@ iptables::add_all_listen { 'Central Management':
 
 #Allow a range of ports to be accessible from a specific IP
 iptables::listen::tcp_stateful { 'myapp':
-  client_nets => ['10.10.45.100'],
+  trusted_nets => ['10.10.45.100'],
   dports => ['1024:60000']
 }
 
