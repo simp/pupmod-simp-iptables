@@ -1,3 +1,6 @@
+* Mon Jan 21 2019 Miguel Cruz <mcruz@metrostarsystems.com> - 6.1.7
+- Fix typo in documentation
+
 * Thu Nov 01 2018 Jeanne Greulich <jeanne.greulichr@onyxpoint.com> - 6.1.6
 - static asset updates for puppet 5
 
