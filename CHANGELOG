@@ -1,3 +1,7 @@
+* Thu Mar 07 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.7
+- Update the upper bound of stdlib to < 6.0.0
+- Update a URL in the README.md
+
 * Mon Jan 21 2019 Miguel Cruz <mcruz@metrostarsystems.com> - 6.1.7
 - Fix typo in documentation
 
