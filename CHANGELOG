@@ -1,3 +1,10 @@
+* Mon Mar 25 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.8
+- Fixed bug in which port ranges specified by
+  iptables::listen::tcp_stateful::dports or iptables::listen::udp::dports
+  could be erroneously split over multiple iptables rules
+- Replaced deprecated simplib Puppet 3 function slice_array with
+  iptables::slice_ports
+
 * Mon Mar 25 2019 Joseph Sharkey <shark.bruhaha@gmail.com> - 6.1.8
 - Updated puppet template scope API from 3 to newer
 
