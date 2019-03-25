@@ -1,3 +1,6 @@
+* Mon Mar 25 2019 Joseph Sharkey <shark.bruhaha@gmail.com> - 6.1.8
+- Updated puppet template scope API from 3 to newer
+
 * Thu Mar 07 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.7
 - Update the upper bound of stdlib to < 6.0.0
 - Update a URL in the README.md
