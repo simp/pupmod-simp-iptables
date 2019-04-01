@@ -1,3 +1,7 @@
+* Mon Apr 01 2019 Jim Anderson <thesemicolons@protonmail.com> - 6.1.9
+- Added rule to drop 127.0.0.0/8 addresses as defined in
+  RFC 1122 - Section: 3.2.1.3(g).
+
 * Mon Mar 25 2019 Liz Nemsick <lnemsick.simp@gmail.com> - 6.1.8
 - Fixed bug in which port ranges specified by
   iptables::listen::tcp_stateful::dports or iptables::listen::udp::dports

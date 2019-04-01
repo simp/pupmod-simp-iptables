@@ -72,6 +72,14 @@ class iptables::rules::base (
     }
   }
 
+# Drop addresses defined in RFC 1122 - Section: 3.2.1.3(g).
+  iptables_rule { 'drop_loopback':
+    table    => 'filter',
+    order    => '22',
+    content  => '-s 127.0.0.0/8 -j DROP',
+    apply_to => 'ipv4'
+  }
+
   if $drop_broadcast {
     iptables_rule { 'drop_broadcast':
       table    => 'filter',
