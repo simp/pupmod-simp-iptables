@@ -19,12 +19,18 @@
 # @param drop_broadcast
 #   Drop all broadcast traffic to this host
 #
+# @param drop_loopback
+#   Drop all loopback traffic to this host
+#
+# @see https://tools.ietf.org/html/rfc1122#page-42 RFC 1122 Section 3.2.1.3(g)
+#
 # @param drop_multicast
 #   Drop all multicast traffic to this host
 #
 class iptables::rules::base (
   Boolean $allow_ping     = true,
   Boolean $drop_broadcast = true,
+  Boolean $drop_loopback  = true,
   Boolean $drop_multicast = true
 ){
   assert_private()
@@ -73,11 +79,13 @@ class iptables::rules::base (
   }
 
 # Drop addresses defined in RFC 1122 - Section: 3.2.1.3(g).
-  iptables_rule { 'drop_loopback':
-    table    => 'filter',
-    order    => '22',
-    content  => '-s 127.0.0.0/8 -j DROP',
-    apply_to => 'ipv4'
+  if $drop_loopback {
+    iptables_rule { 'drop_loopback':
+      table    => 'filter',
+      order    => '22',
+      content  => '-s 127.0.0.0/8 -j DROP',
+      apply_to => 'ipv4'
+    }
   }
 
   if $drop_broadcast {
