@@ -14,7 +14,7 @@
 #
 #   * This is enabled by default for RFC 1122 compliance
 #
-# @see https://tools.ietf.org/html/rfc1122#page-42 RFC 1122 Section 3.2.2.6
+#   @see https://tools.ietf.org/html/rfc1122#page-42 RFC 1122 Section 3.2.2.6
 #
 # @param drop_broadcast
 #   Drop all broadcast traffic to this host
@@ -22,7 +22,7 @@
 # @param drop_loopback
 #   Drop all loopback traffic to this host
 #
-# @see https://tools.ietf.org/html/rfc1122#page-31 RFC 1122 Section 3.2.1.3(g)
+#   @see https://tools.ietf.org/html/rfc1122#page-31 RFC 1122 Section 3.2.1.3(g)
 #
 # @param drop_multicast
 #   Drop all multicast traffic to this host
