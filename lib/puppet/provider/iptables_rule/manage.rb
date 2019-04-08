@@ -59,6 +59,18 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       :num_runs         => 0
     }
 
+    kernel_version = Facter.value(:kernelversion)
+    if kernel_version
+      if (Puppet::Util::Package.versioncmp(kernel_version, '3.7') >= 0)
+        @iptables_rules[:ip6tables][:valid_tables] << :nat
+      end
+
+      if (Puppet::Util::Package.versioncmp(kernel_version, '3') >= 0)
+        @iptables_rules[:iptables][:valid_tables] << :security
+        @iptables_rules[:ip6tables][:valid_tables] << :security
+      end
+    end
+
     @iptables_rules[:table_types].each do |table_type|
       load_rules(table_type)
     end

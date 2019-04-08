@@ -77,8 +77,7 @@
 #       443:
 #         apply_to: ipv6
 #
-# @author Trevor Vaughan <tvaughan@onyxpoint.com>
-# @author Chris Tessmer  <chris.tessmer@onyxpoint.com>
+# @author https://github.com/simp/pupmod-simp-iptables/graphs/contributors
 #
 class iptables (
   Variant[Enum['ignore'],Boolean] $enable                     = simplib::lookup('simp_options::firewall', { 'default_value' => true }),
@@ -86,7 +85,7 @@ class iptables (
   Boolean                         $ipv6                       = true,
   Boolean                         $class_debug                = false,
   Boolean                         $optimize_rules             = true,
-  Array[String]                   $ignore                     = [],
+  Array[String[1]]                $ignore                     = [],
   Boolean                         $default_rules              = true,
   Boolean                         $scanblock                  = false,
   Boolean                         $prevent_localhost_spoofing = true,
@@ -96,12 +95,14 @@ class iptables (
   simplib::assert_metadata($module_name)
 
   if $enable != 'ignore' {
-    contain '::iptables::install'
-    contain '::iptables::service'
+    contain 'iptables::install'
+    contain 'iptables::service'
 
-    if $default_rules { contain '::iptables::rules::base' }
-    if $scanblock { contain '::iptables::rules::scanblock' }
-    if $prevent_localhost_spoofing { contain '::iptables::rules::prevent_localhost_spoofing' }
+    if $default_rules { contain 'iptables::rules::base' }
+    if $scanblock { contain 'iptables::rules::scanblock' }
+    if $prevent_localhost_spoofing { contain 'iptables::rules::prevent_localhost_spoofing' }
+
+    contain 'iptables::rules::default_drop'
 
     Class['iptables::install'] -> Class['iptables::service']
 
@@ -137,5 +138,4 @@ class iptables (
   if $ports {
     iptables::ports {'iptables': ports => $ports }
   }
-
 }
