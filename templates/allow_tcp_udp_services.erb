@@ -7,7 +7,7 @@ allow_all = (trusted_nets.include?('any') || trusted_nets.include?('ALL'))
 dports = Array(@dports).flatten.map(&:to_s).uniq.sort
 all_dports = (dports.include?('any') || dports.include?('ALL'))
 
-port_slices = scope.function_slice_array([dports,max_multiport_length,':'])
+port_slices = scope.call_function('iptables::slice_ports', [dports, max_multiport_length])
 
 output_base = "-m state --state NEW"
 if @_protocol == 'tcp'
