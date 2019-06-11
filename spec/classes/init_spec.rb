@@ -67,6 +67,8 @@ describe 'iptables' do
             it { is_expected.to create_iptables__listen__tcp_stateful('port_80').with({ :apply_to => 'auto'}) }
             it { is_expected.to create_iptables__listen__udp('port_53').with({ :apply_to => 'auto'}) }
             it { is_expected.to create_iptables__listen__tcp_stateful('port_443').with({ :apply_to => 'ipv6'}) }
+            it { is_expected.to create_iptables__listen__udp('port_88').with({ :apply_to => 'auto'}) }
+            it { is_expected.to create_iptables__listen__tcp_stateful('port_88').with({ :apply_to => 'auto'}) }
           end
           context 'a hash containing an invalid parameter' do
             let(:hieradata){ 'iptables__ports_bad_param' }

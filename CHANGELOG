@@ -1,3 +1,6 @@
+* Mon Jun 10 2019 Steven Pritchard <steven.pritchard@onyxpoint.com> - 6.2.1
+- Allow 'proto' in iptables::ports to be an array
+
 * Mon Apr 08 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.0
 - Added 'iptables_default_policy' for modifying the default policy of the
   'filter' table on either IPv4 or IPv6.
