@@ -17,12 +17,17 @@ describe "iptables::ports", :type => :define do
             },
             '443' => {
               'apply_to' => 'ipv6'
-            }
+            },
+            '88' => {
+              'proto' => ['udp','tcp']
+            },
           }
         }}
         it { is_expected.to create_iptables__listen__tcp_stateful('port_80').with(apply_to: 'auto') }
         it { is_expected.to create_iptables__listen__udp('port_53').with(apply_to: 'auto') }
         it { is_expected.to create_iptables__listen__tcp_stateful('port_443').with(apply_to: 'ipv6') }
+        it { is_expected.to create_iptables__listen__udp('port_88').with({ :apply_to => 'auto'}) }
+        it { is_expected.to create_iptables__listen__tcp_stateful('port_88').with({ :apply_to => 'auto'}) }
       end
 
       context 'containing a defaults section' do

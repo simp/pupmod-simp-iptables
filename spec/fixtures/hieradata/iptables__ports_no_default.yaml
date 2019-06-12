@@ -5,3 +5,7 @@ iptables::ports:
     proto: udp
   443:
     apply_to: ipv6
+  88:
+    proto:
+      - udp
+      - tcp
