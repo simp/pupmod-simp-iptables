@@ -7,15 +7,16 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-4: true
-      nist_800_53_rev4:CM-7:b: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      nist_800_53:rev4:CM-7:b: true
       disa_stig: true
       RHEL-07-040920: true
       RHEL-07-040820: true
       SRG-OS-000480-GPOS-00227: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-4
       - CM-7:b
       disa_stig:
@@ -32,13 +33,14 @@ checks:
       value: []
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-4: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
       disa_stig: true
       RHEL-07-040920: true
       SRG-OS-000480-GPOS-00227: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-4
       disa_stig:
       - RHEL-07-040920
@@ -50,13 +52,14 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-4: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
       disa_stig: true
       RHEL-07-040920: true
       SRG-OS-000480-GPOS-00227: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-4
       disa_stig:
       - RHEL-07-040920
@@ -68,13 +71,14 @@ checks:
       value: true
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-4: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
       disa_stig: true
       RHEL-07-040920: true
       SRG-OS-000480-GPOS-00227: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-4
       disa_stig:
       - RHEL-07-040920
@@ -86,14 +90,15 @@ checks:
       value: false
     type: puppet-class-parameter
     controls:
-      nist_800_53_rev4:AC-4: true
-      nist_800_53_rev4:IR-4: true
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      nist_800_53:rev4:IR-4: true
       disa_stig: true
       RHEL-07-040920: true
       SRG-OS-000480-GPOS-00227: true
       cci:CCI-000366: true
     identifiers:
-      nist_800_53_rev4:
+      nist_800_53:rev4:
       - AC-4
       - IR-4
       disa_stig:
