@@ -1,9 +1,7 @@
 ---
 fixtures:
   repositories:
-    compliance_markup:
-      repo: "https://github.com/simp/pupmod-simp-compliance_markup"
-      branch: "testing_hotfix_06062019"
+    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib
   symlinks:
