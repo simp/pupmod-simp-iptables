@@ -37,7 +37,8 @@ describe 'iptables' do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables::rules::base') }
           it { is_expected.to create_iptables_rule('global').with_apply_to('all') }
-          it { is_expected.to create_iptables_rule('allow_lo').with_apply_to('all') }
+          it { is_expected.to create_iptables_rule('allow_lo_input').with_apply_to('all') }
+          it { is_expected.to create_iptables_rule('allow_lo_output').with_apply_to('all') }
           it { is_expected.to create_iptables_rule('allow_v4_echo_request').with_apply_to('ipv4') }
           it { is_expected.to create_iptables_rule('drop_all').with_apply_to('all') }
           it { is_expected.to create_iptables_rule('drop_broadcast').with_apply_to('ipv4') }
