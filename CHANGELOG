@@ -1,3 +1,7 @@
+* Fri Jun 21 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.2.2
+- Add rule to allow outbound communication over OUTPUT to the loopback device
+  by default.
+
 * Mon Jun 10 2019 Steven Pritchard <steven.pritchard@onyxpoint.com> - 6.2.1
 - Allow 'proto' in iptables::ports to be an array
 

@@ -45,10 +45,18 @@ class iptables::rules::base (
     apply_to =>  'all'
   }
 
-  iptables_rule { 'allow_lo':
+  iptables_rule { 'allow_lo_input':
     table    => 'filter',
     order    => '2',
     content  => '-i lo -j ACCEPT',
+    apply_to => 'all'
+  }
+
+  iptables_rule { 'allow_lo_output':
+    table    => 'filter',
+    order    => '2',
+    header   => false,
+    content  => '-A OUTPUT -o lo -j ACCEPT',
     apply_to => 'all'
   }
 
