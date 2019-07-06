@@ -35,7 +35,8 @@ addons:
 
 before_install:
   - rm -f Gemfile.lock
-  - gem install -v '~> 1.16' bundler
+  - for x in ${HOME}/.rvm/gems/*; do gem uninstall -I -x -i "${x}" -v '>= 1.17' bundler || true; gem uninstall -I -x -i "${x}@global" -v '>= 1.17' bundler || true; done
+  - gem install -v '~> 1.17' bundler
 
 global:
   - STRICT_VARIABLES=yes
@@ -91,7 +92,6 @@ jobs:
       before_deploy:
         - "export PUPMOD_METADATA_VERSION=`ruby -r json -e \"puts JSON.parse(File.read('metadata.json')).fetch('version')\"`"
         - '[[ $TRAVIS_TAG =~ ^simp-${PUPMOD_METADATA_VERSION}$|^${PUPMOD_METADATA_VERSION}$ ]]'
-
       deploy:
         - provider: releases
           api_key:

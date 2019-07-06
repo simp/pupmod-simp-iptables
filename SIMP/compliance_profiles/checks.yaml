@@ -1,0 +1,107 @@
+---
+version: 2.0.0
+checks:
+  oval:com.puppet.forge.simp.iptables.default_rules:
+    settings:
+      parameter: iptables::default_rules
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      nist_800_53:rev4:CM-7:b: true
+      disa_stig: true
+      RHEL-07-040920: true
+      RHEL-07-040820: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-4
+      - CM-7:b
+      disa_stig:
+      - RHEL-07-040920
+      - RHEL-07-040820
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
+    oval-ids:
+    - xccdf_org:ssgproject:content_rule_set_firewalld_default_zone
+    - set_firewalld_default_zone
+  oval:com.puppet.forge.simp.iptables.ignore:
+    settings:
+      parameter: iptables::ignore
+      value: []
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      disa_stig: true
+      RHEL-07-040920: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-4
+      disa_stig:
+      - RHEL-07-040920
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
+  oval:com.puppet.forge.simp.iptables.optimize_rules:
+    settings:
+      parameter: iptables::optimize_rules
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      disa_stig: true
+      RHEL-07-040920: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-4
+      disa_stig:
+      - RHEL-07-040920
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
+  oval:com.puppet.forge.simp.iptables.prevent_localhost_spoofing:
+    settings:
+      parameter: iptables::prevent_localhost_spoofing
+      value: true
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      disa_stig: true
+      RHEL-07-040920: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-4
+      disa_stig:
+      - RHEL-07-040920
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
+  oval:com.puppet.forge.simp.iptables.scanblock:
+    settings:
+      parameter: iptables::scanblock
+      value: false
+    type: puppet-class-parameter
+    controls:
+      nist_800_53:rev4: true
+      nist_800_53:rev4:AC-4: true
+      nist_800_53:rev4:IR-4: true
+      disa_stig: true
+      RHEL-07-040920: true
+      SRG-OS-000480-GPOS-00227: true
+      cci:CCI-000366: true
+    identifiers:
+      nist_800_53:rev4:
+      - AC-4
+      - IR-4
+      disa_stig:
+      - RHEL-07-040920
+      - SRG-OS-000480-GPOS-00227
+      - CCI-000366
