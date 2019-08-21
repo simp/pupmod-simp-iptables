@@ -16,9 +16,6 @@
 # @param filter_forward
 # @param filter_output
 #
-# @param silence_warnings
-#   Do not print warnings related to settings that do not apply to the target
-#
 class iptables::rules::default_drop (
   Optional[Boolean] $filter_input   = undef,
   Optional[Boolean] $filter_forward = undef,
