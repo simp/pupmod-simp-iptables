@@ -1,3 +1,5 @@
+require 'puppet/parameter/boolean'
+
 Puppet::Type.newtype(:iptables_rule) do
   @doc = "Authoritatively manage iptables rules.  This type is
           atomic, either all rules work, or the old rules are
@@ -14,15 +16,43 @@ Puppet::Type.newtype(:iptables_rule) do
     desc "The name of the rule. Simply used for creating the unique fragments."
   end
 
+  newparam(:include_comment, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+    desc 'Whether or not to include the value in the $comment paramter'
+
+    defaultto(:true)
+  end
+
+  newparam(:comment_header) do
+    desc 'A header to prepend to all comments for easy visual rule tracking'
+
+    defaultto 'SIMP:'
+  end
+
   newparam(:comment) do
-    desc "A comment to add to the rule. 'SIMP:' Will be prepended to the comment for tracking."
+    desc <<-EOM
+      A comment to add to the rule.
+
+      The value of $comment_header will be prepended.
+
+      Empty comments (no content and no header) will be discarded.
+
+      Content will be truncated at 255 characters, including the header.
+    EOM
     defaultto ""
 
     munge do |value|
-      # IPTables can only take comments up to 256 characters.
-      value = ('SIMP: ' + value).strip
+      if resource[:include_comment]
+        if resource[:comment_header] && !resource[:comment_header].empty?
+          value = "#{resource[:comment_header]} #{value}"
+        end
 
-      value[0..255]
+        # IPTables can only take comments up to 256 characters.
+        value = value[0..255].strip
+      else
+        value = ''
+      end
+
+      value
     end
   end
 

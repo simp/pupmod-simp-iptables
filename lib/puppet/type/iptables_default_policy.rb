@@ -48,6 +48,8 @@ Puppet::Type.newtype(:iptables_default_policy) do
   end
 
   newproperty(:policy) do
+    desc 'The IPTables JUMP policy to apply'
+
     newvalues 'ACCEPT', 'DROP', 'accept', 'drop'
 
     defaultto 'DROP'
