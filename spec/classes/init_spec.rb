@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe 'iptables' do
   context  'supported operating systems' do
-    on_supported_os.each do |os, facts|
+    on_supported_os.each do |os, os_facts|
       let(:facts) do
-        facts
+        os_facts
       end
 
       context "on #{os}" do
@@ -33,6 +33,27 @@ describe 'iptables' do
           it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(false) }
         end
 
+        context "iptables class with 'firewalld' enabled" do
+          let(:facts){
+            os_facts.merge({
+              :simplib__firewalls => ['iptables', 'firewalld']
+            })
+          }
+
+          let(:params){{
+            enable: 'firewalld'
+          }}
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to create_class('firewalld') }
+          it { is_expected.to create_class('iptables::firewalld::shim') }
+          it { is_expected.to create_exec('firewalld::complete-reload').with_onlyif('/bin/false') }
+          it { is_expected.to create_exec('firewalld::set_log_denied').with_command('firewall-cmd --set-log-denied unicast && firewall-cmd --reload') }
+          it { is_expected.to create_exec('firewalld::set_log_denied').with_unless('[ $(firewall-cmd --get-log-denied) = unicast ]') }
+          it { is_expected.to create_exec('lockdown_firewalld').with_command('firewall-cmd --lockdown-on') }
+          it { is_expected.to create_exec('lockdown_firewalld').with_unless('firewall-cmd --query-lockdown') }
+        end
+
         context "iptables::rules::base" do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables::rules::base') }
@@ -50,7 +71,7 @@ describe 'iptables' do
         end
 
         context "default spoofing prevention" do
-          let (:facts) { facts.merge( ipv6_enabled: true ) }
+          let (:facts) { os_facts.merge( ipv6_enabled: true ) }
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
@@ -58,7 +79,7 @@ describe 'iptables' do
 
         context 'with a provided iptables::ports hash' do
           context 'containing a defaults section' do
-            let(:hieradata){ 'iptables__ports' }
+            let(:hieradata){ 'iptables__ports_default' }
             it { is_expected.to create_iptables__listen__tcp_stateful('port_80').with({ :apply_to => 'ipv4'}) }
             it { is_expected.to create_iptables__listen__udp('port_53').with({ :apply_to => 'ipv4'}) }
             it { is_expected.to create_iptables__listen__tcp_stateful('port_443').with({ :apply_to => 'ipv6'}) }

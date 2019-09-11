@@ -3,6 +3,8 @@ require 'spec_helper_acceptance'
 test_name "ignore interface"
 
 hosts.each do |host|
+  next unless host[:roles].include?('iptables')
+
   describe "ignore iptables rules on #{host}" do
     context 'apply rules and toggle iptables::ignore' do
 

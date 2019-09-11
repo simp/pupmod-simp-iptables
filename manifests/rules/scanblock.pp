@@ -108,7 +108,9 @@ class iptables::rules::scanblock (
     $_rttl = '--rttl'
   }
   else {
+    # lint:ignore:empty_string_assignment
     $_rttl = ''
+    # lint:endignore
   }
 
   if $enable {

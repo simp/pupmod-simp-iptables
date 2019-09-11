@@ -3,6 +3,8 @@ require 'spec_helper_acceptance'
 test_name 'iptables::rules::default_drop'
 
 hosts.each do |host|
+  next unless host[:roles].include?('iptables')
+
   describe 'iptables::rules::default_drop' do
     let(:manifest) { 'include iptables' }
 

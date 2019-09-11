@@ -9,7 +9,7 @@ class iptables::install {
   assert_private()
 
   # IPV4-only stuff
-  package { 'iptables': ensure => $::iptables::ensure }
+  package { 'iptables': ensure => $iptables::ensure }
 
   file { '/etc/init.d/iptables':
     ensure  => 'file',
@@ -35,7 +35,7 @@ class iptables::install {
   Package['iptables'] -> File['/etc/init.d/iptables']
   Package['iptables'] -> File['/etc/init.d/iptables-retry']
 
-  if $::iptables::ipv6 and $facts['ipv6_enabled'] {
+  if $iptables::ipv6 and $facts['ipv6_enabled'] {
     # IPV6-only stuff
     file { '/etc/init.d/ip6tables':
       ensure  => 'file',
@@ -55,17 +55,15 @@ class iptables::install {
       content => file("${module_name}/ip6tables-retry")
     }
 
-    case $facts['os']['name'] {
-      'RedHat','CentOS','OracleLinux': {
-        if $facts['os']['release']['major'] > '6' {
-          Package['iptables'] -> File['/etc/init.d/ip6tables']
-          Package['iptables'] -> File['/etc/init.d/ip6tables-retry']
-        }
-        else {
-          package { 'iptables-ipv6': ensure => $::iptables::ensure }
-          Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables']
-          Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
-        }
+    if $facts['os']['name'] in ['RedHat','CentOS','OracleLinux'] {
+      if $facts['os']['release']['major'] > '6' {
+        Package['iptables'] -> File['/etc/init.d/ip6tables']
+        Package['iptables'] -> File['/etc/init.d/ip6tables-retry']
+      }
+      else {
+        package { 'iptables-ipv6': ensure => $iptables::ensure }
+        Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables']
+        Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
       }
     }
   }

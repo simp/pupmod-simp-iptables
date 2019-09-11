@@ -1,3 +1,19 @@
+* Fri Oct 18 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0
+- Experimental firewalld support
+  - Added support for voxpupuli/firewalld
+  - Added an `iptables::firewalld_shim` class for configuring firewalld in
+    accordance with the current iptables configuration.
+  - Added auto-translation capabilities to convert current calls to the
+    `iptables::rule` defined type to firewalld rulesets.
+  - No work has been done to convert the advanced capabilities such as
+    scanblock.
+  - Will automatically use firewalld in EL 8
+  - Allows optional enabling of firewalld in EL 7 by either setting
+    `iptables::use_firewalld` to `true`
+  - IPv6 is not currently supported due to needing to move the auto-detection
+    logic to a higher level. Preferrably, this will go into the upstream
+    firewalld module.
+
 * Wed Sep 11 2019 Mark Fitch <CodePhase@users.noreply.github.com> - 6.3.1
 - Allow LOCAL-INPUT jump rule in FORWARD and INPUT chains to occur last as a
   default action through the addition of an

@@ -1,0 +1,3 @@
+---
+simp_options::firewall: firewalld
+iptables::use_firewalld: true

@@ -62,17 +62,29 @@
 #   Set to ``any`` to allow all networks
 #
 define iptables::listen::all (
-  Boolean                          $first        = false,
-  Boolean                          $absolute     = false,
-  Integer[0]                       $order        = 11,
-  Enum['ipv4','ipv6','all','auto'] $apply_to     = 'auto',
-  Simplib::Netlist                 $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
+  Boolean           $first        = false,
+  Boolean           $absolute     = false,
+  Integer[0]        $order        = 11,
+  Iptables::ApplyTo $apply_to     = 'auto',
+  Simplib::Netlist  $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
 ){
-  iptables_rule { "all_${name}":
-    first    => $first,
-    absolute => $absolute,
-    order    => $order,
-    apply_to => $apply_to,
-    content  => template("${module_name}/allow_all_services.erb")
+  include 'iptables'
+
+  if $iptables::use_firewalld {
+    iptables::firewalld::rule { "all_${name}":
+      trusted_nets => $trusted_nets,
+      protocol     => 'all',
+      order        => $order,
+      apply_to     => $apply_to
+    }
+  }
+  else {
+    iptables_rule { "all_${name}":
+      first    => $first,
+      absolute => $absolute,
+      order    => $order,
+      apply_to => $apply_to,
+      content  => template("${module_name}/allow_all_services.erb")
+    }
   }
 }

@@ -6,7 +6,7 @@ describe "iptables::ports", :type => :define do
       let(:facts) do
         facts
       end
-      let(:title) { 'iptables' }
+      let(:title) { 'iptables_test' }
 
       context 'a hash without a default section' do
         let(:params) {{
