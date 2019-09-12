@@ -27,17 +27,24 @@
 # @param drop_multicast
 #   Drop all multicast traffic to this host
 #
+# @param force_local_input
+#   Require that all traffic traverse the LOCAL-INPUT chain
+#
+#   * If set to `false`, will put LOCAL-INPUT at the bottom of the INPUT
+#     traversal stack so that other chains may easily be added above.
+#
 class iptables::rules::base (
-  Boolean $allow_ping     = true,
-  Boolean $drop_broadcast = true,
-  Boolean $drop_loopback  = true,
-  Boolean $drop_multicast = true
+  Boolean $allow_ping        = true,
+  Boolean $drop_broadcast    = true,
+  Boolean $drop_loopback     = true,
+  Boolean $drop_multicast    = true,
+  Boolean $force_local_input = true
 ){
   assert_private()
 
   iptables_rule { 'global':
     table    => 'filter',
-    first    => true,
+    first    => $force_local_input,
     absolute => true,
     header   => false,
     content  => '-A INPUT -j LOCAL-INPUT
