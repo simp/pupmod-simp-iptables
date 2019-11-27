@@ -102,7 +102,7 @@ define iptables::firewalld::rule (
   # bind it to.
   if $_dports and $_allow_from_all {
     firewalld_service { "simp_${name}":
-      zone    => 'simp',
+      zone    => '99_simp',
       require => Service['firewalld']
     }
   }
@@ -182,6 +182,13 @@ define iptables::firewalld::rule (
               }
             )
 
+            if $_allow_from_all {
+              $_source = '0.0.0.0/0'
+            }
+            else {
+              $_source = { 'ipset' => $_ipset_name }
+            }
+
             # We need this because the underlying types can't handle Arrays
             $_unique_name = regsubst(
                 join([
@@ -192,16 +199,14 @@ define iptables::firewalld::rule (
                 ], '_'),
               '_+', '_', 'G')
 
-simplib::debug::inspect($_unique_name)
-
             if $protocol == 'icmp' {
               firewalld_rich_rule { $_unique_name:
                 ensure     => 'present',
                 family     => $_ip_family,
-                source     => { 'ipset' => $_ipset_name },
+                source     => $_source,
                 icmp_block => $_icmp_block,
                 action     => 'accept',
-                zone       => 'simp',
+                zone       => '99_simp',
                 require    => Service['firewalld']
               }
             }
@@ -219,10 +224,10 @@ simplib::debug::inspect($_unique_name)
               firewalld_rich_rule { $_unique_name:
                 ensure  => 'present',
                 family  => $_ip_family,
-                source  => { 'ipset' => $_ipset_name },
+                source  => $_source,
                 service => $_rich_rule_svc,
                 action  => 'accept',
-                zone    => 'simp',
+                zone    => '99_simp',
                 require => Service['firewalld']
               }
             }

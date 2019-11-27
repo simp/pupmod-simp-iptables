@@ -25,12 +25,12 @@
 # @param default_zone
 #   The 'default zone' to set on the system.
 #
-#   This is set to ``simp`` so that regular, alternative, zone manipulation can
-#   occur without interference.
+#   This is set to ``99_simp`` so that regular, alternative, zone manipulation
+#   can occur without interference.
 #
-#   **IMPORTANT:** If this is set to anything besides ``simp``, all rules in
+#   **IMPORTANT:** If this is set to anything besides ``99_simp``, all rules in
 #   this module will **NOT** apply to the default zone! This module is set to
-#   only populate ``simp`` zone rules.
+#   only populate ``99_simp`` zone rules.
 #
 # @param log_denied
 #   What types of logs to process for denied packets.
@@ -54,7 +54,7 @@ class iptables::firewalld::shim (
   Boolean                                              $enable               = true,
   Boolean                                              $complete_reload      = false,
   Boolean                                              $lockdown             = true,
-  String[1]                                            $default_zone         = 'simp',
+  String[1]                                            $default_zone         = '99_simp',
   Enum['off', 'all','unicast','broadcast','multicast'] $log_denied           = 'unicast',
   Boolean                                              $enable_tidy          = true,
   # lint:ignore:2sp_soft_tabs
@@ -81,7 +81,7 @@ class iptables::firewalld::shim (
       Exec <| command == 'firewall-cmd --complete-reload' |> { onlyif => '/bin/false' }
     }
 
-    firewalld_zone { 'simp':
+    firewalld_zone { '99_simp':
       ensure           => 'present',
       purge_rich_rules => true,
       purge_services   => true,
@@ -100,8 +100,8 @@ class iptables::firewalld::shim (
       ]
     }
 
-    if $default_zone == 'simp' {
-      Firewalld_zone['simp'] -> Exec['firewalld::set_default_zone']
+    if $default_zone == '99_simp' {
+      Firewalld_zone['99_simp'] -> Exec['firewalld::set_default_zone']
     }
 
     ensure_resource('exec', 'firewalld::set_log_denied', {
