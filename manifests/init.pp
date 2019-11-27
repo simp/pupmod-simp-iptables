@@ -104,8 +104,7 @@ class iptables (
 
       if $ports {
         iptables::ports {'firewalld':
-          ports   => $ports,
-          require => Class['firewalld']
+          ports => $ports
         }
       }
     }
@@ -152,12 +151,12 @@ class iptables (
           require  => Class['iptables::install']
         }
       }
-    }
 
-    if $ports {
-      iptables::ports {'iptables':
-        ports   => $ports,
-        require => Class['iptables::install']
+      if $ports {
+        iptables::ports {'iptables':
+          ports   => $ports,
+          require => Class['iptables::install']
+        }
       }
     }
   }

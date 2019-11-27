@@ -67,7 +67,7 @@ class iptables::firewalld::shim (
   String[1]                                            $tidy_prefix          = 'simp_',
   Integer[1]                                           $tidy_minutes         = 10,
   Array[Optional[String[1]]]                           $simp_zone_interfaces = [],
-  Enum['%%REJECT%%', 'DROP']                           $simp_zone_target     = 'DROP'
+  Enum['default', 'ACCEPT', 'REJECT', 'DROP']          $simp_zone_target     = 'DROP'
 ) {
   if $enable {
     simplib::assert_optional_dependency($module_name, 'puppet/firewalld')

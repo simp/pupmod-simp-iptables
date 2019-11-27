@@ -50,12 +50,13 @@ describe "iptables::listen::all", :type => :define do
 
               it { is_expected.not_to create_firewalld__custom_service("simp_all_#{title}") }
               it { is_expected.not_to create_firewalld_service("simp_all_#{title}") }
+              it { is_expected.to create_firewalld_ipset('simp-YBi8gcbxcIq0JuB3tmmajXBuPA') }
               it {
-                is_expected.to create_firewalld_rich_rule("11_simp_all_#{title}_ipv4_0_0_0_0_0").with(
+                is_expected.to create_firewalld_rich_rule("simp_11_all_#{title}_simp-YBi8gcbxcIq0JuB3tmmajXBuPA").with(
                   {
                     :ensure  => 'present',
                     :family  => 'ipv4',
-                    :source  => '0.0.0.0/0',
+                    :source  => { 'ipset' => 'simp-YBi8gcbxcIq0JuB3tmmajXBuPA' },
                     :service => nil,
                     :action  => 'accept',
                     :zone    => 'simp',

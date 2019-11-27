@@ -130,89 +130,101 @@ define iptables::firewalld::rule (
       if ($apply_to == 'all') or ($apply_to == 'auto') or ($apply_to == $_ip_family) {
 
         # Determine what can go into an IPSet and what can't
-        $_split_entries = $_trusted_nets_hash[$_ip_family].reduce({'base' => [], 'ipset' => []}) |$memo, $x| {
+        $_split_entries = $_trusted_nets_hash[$_ip_family].reduce({'hash:ip' => [], 'hash:net' => []}) |$memo, $x| {
           $_data = $x[-1]
           if (($_ip_family == 'ipv4') and ($_data['netmask']['cidr'] == 32)) or
             (($_ip_family == 'ipv6') and ($_data['netmask']['cidr'] == 128)) {
             {
-              'base' => $memo['base'],
-              'ipset'   => $memo['ipset'] + $_data['address']
+              # firewall-cmd can't handle bracketed addresses for IPv6
+              'hash:ip'  => $memo['hash:ip'] + $_data['address'].regsubst('\[|\]', '', 'G'),
+              'hash:net' => $memo['hash:net']
             }
           }
           else {
             {
-              'base' => $memo['base'] + "${_data['address']}/${_data['netmask']['cidr']}",
-              'ipset'   => $memo['ipset']
+              'hash:ip'  => $memo['hash:ip'],
+              'hash:net' => $memo['hash:net'] + "${_data['address']}/${_data['netmask']['cidr']}"
             }
           }
         }
 
-        if empty($_split_entries['ipset']) {
-          $_sources = $_split_entries['base']
-        }
-        else {
-          # Create a unique ipset based on the bare addresses
-          #
-          # This is done so that we do not end up with a million ipsets for every call
-          #
-          # The length is limited due to apparent limitations in the ipset name
-          $_ipset_family = $_ip_family ? { 'ipv6' => 'inet6', default => 'inet' }
+        # Create unique ipsets based on the bare addresses and ranges
+        #
+        # This is done so that we do not end up with a million rules for every
+        # call and so that we can reuse as many ipsets as possible.
+        #
+        # The length is limited due to apparent limitations in the ipset name
+        #
+        # The firewalld_ipset type should probably be updated to do "the
+        # right thing" if it can figure it out
+        #
+        $_split_entries.each |$_ipset_type, $_ipset_entries| {
+          unless empty($_ipset_entries) {
+            $_ipset_family = $_ip_family ? { 'ipv6' => 'inet6', default => 'inet' }
 
-          $_ipset_name = join(['simp', $_ipset_family, seeded_rand_string(20, join([$name] + sort(unique($_trusted_nets)),''))], '_')[0,31]
-          ensure_resource('firewalld_ipset', $_ipset_name,
-            {
-              'entries' => $_split_entries['ipset'],
-              'options' => {
-                'family' =>  $_ipset_family
-              },
-              require   => Service['firewalld']
-            }
-          )
+            $_ipset_name = join(
+              [
+                'simp',
+                seeded_rand_string(
+                  26,
+                  join([$_ipset_family, $_ipset_type] + sort(unique($_trusted_nets)),'')
+                )
+              ], '-')[0,31]
 
-          $_sources = ($_split_entries['base'] + [{ 'ipset' => $_ipset_name }])
-        }
+            ensure_resource('firewalld_ipset', $_ipset_name,
+              {
+                'entries' => $_ipset_entries,
+                'type'    => $_ipset_type,
+                'options' => {
+                  'family' => $_ipset_family
+                },
+                require   => Service['firewalld']
+              }
+            )
 
-        $_sources.each |$_source| {
-          # We need this because the underlying types can't handle Arrays
+            # We need this because the underlying types can't handle Arrays
+            $_unique_name = regsubst(
+                join([
+                  'simp',
+                  $order,
+                  $name,
+                  $_ipset_name
+                ], '_'),
+              '_+', '_', 'G')
 
-          $_unique_name = regsubst(join([
-            $order,
-            'simp',
-            $name,
-            $_ip_family,
-            simplib::to_string($_source).regsubst('[^0-9a-z ]', '_', 'GI')
-          ], '_'), '_+', '_', 'G')
+simplib::debug::inspect($_unique_name)
 
-          if $protocol == 'icmp' {
-            firewalld_rich_rule { $_unique_name:
-              ensure     => 'present',
-              family     => $_ip_family,
-              source     => $_source,
-              icmp_block => $_icmp_block,
-              action     => 'accept',
-              zone       => 'simp',
-              require    => Service['firewalld']
-            }
-          }
-          else {
-            # If we don't have any ports, then we don't have a service to
-            # bind to. This probably means that we were called in a way to
-            # allow all traffic to a specific IP address.
-            if $_dports {
-              $_rich_rule_svc = "simp_${name}"
+            if $protocol == 'icmp' {
+              firewalld_rich_rule { $_unique_name:
+                ensure     => 'present',
+                family     => $_ip_family,
+                source     => { 'ipset' => $_ipset_name },
+                icmp_block => $_icmp_block,
+                action     => 'accept',
+                zone       => 'simp',
+                require    => Service['firewalld']
+              }
             }
             else {
-              $_rich_rule_svc = undef
-            }
+              # If we don't have any ports, then we don't have a service to
+              # bind to. This probably means that we were called in a way to
+              # allow all traffic to a specific IP address.
+              if $_dports {
+                $_rich_rule_svc = "simp_${name}"
+              }
+              else {
+                $_rich_rule_svc = undef
+              }
 
-            firewalld_rich_rule { $_unique_name:
-              ensure  => 'present',
-              family  => $_ip_family,
-              source  => $_source,
-              service => $_rich_rule_svc,
-              action  => 'accept',
-              zone    => 'simp',
-              require => Service['firewalld']
+              firewalld_rich_rule { $_unique_name:
+                ensure  => 'present',
+                family  => $_ip_family,
+                source  => { 'ipset' => $_ipset_name },
+                service => $_rich_rule_svc,
+                action  => 'accept',
+                zone    => 'simp',
+                require => Service['firewalld']
+              }
             }
           }
         }
