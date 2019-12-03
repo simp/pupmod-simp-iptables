@@ -38,27 +38,27 @@ describe "iptables::listen::icmp", :type => :define do
             it { is_expected.to create_iptables__listen__icmp(title) }
 
             it {
-              is_expected.to create_firewalld_rich_rule("11_simp_icmp_#{title}_ipv4_10_0_2_0_24").with(
+              is_expected.to create_firewalld_rich_rule("simp_11_icmp_#{title}_simp-sLxKcJ8Jr7GgDOF54KlBvQR2Yc").with(
                 {
                   :ensure     => 'present',
                   :family     => 'ipv4',
                   :icmp_block => ['8'],
-                  :source     => '10.0.2.0/24',
+                  :source     => { 'ipset' => 'simp-sLxKcJ8Jr7GgDOF54KlBvQR2Yc' },
                   :action     => 'accept',
-                  :zone       => 'simp'
+                  :zone       => '99_simp'
                 }
               )
             }
 
             it {
-              is_expected.to create_firewalld_rich_rule("11_simp_icmp_#{title}_ipv6_ipset_simp_inet6_9nJdyQWwFic2bZPsGnwH_").with(
+              is_expected.to create_firewalld_rich_rule("simp_11_icmp_#{title}_simp-l7zVcqWPK6oo3saymLCPHgjuhp").with(
                 {
                   :ensure     => 'present',
                   :family     => 'ipv6',
                   :icmp_block => ['8'],
-                  :source     => {'ipset' => 'simp_inet6_9nJdyQWwFic2bZPsGnwH'},
+                  :source     => {'ipset' => 'simp-l7zVcqWPK6oo3saymLCPHgjuhp'},
                   :action     => 'accept',
-                  :zone       => 'simp'
+                  :zone       => '99_simp'
                 }
               )
             }

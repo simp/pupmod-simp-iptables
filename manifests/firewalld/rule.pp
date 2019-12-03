@@ -125,7 +125,6 @@ define iptables::firewalld::rule (
     # We need to perform the correct action based on each IP Address family
     # in the $_trusted_nets Array
     $_trusted_nets_hash.keys.each |$_ip_family| {
-
       # Only activate on the correct type of IP address
       if ($apply_to == 'all') or ($apply_to == 'auto') or ($apply_to == $_ip_family) {
 
@@ -171,22 +170,23 @@ define iptables::firewalld::rule (
                 )
               ], '-')[0,31]
 
-            ensure_resource('firewalld_ipset', $_ipset_name,
-              {
-                'entries' => $_ipset_entries,
-                'type'    => $_ipset_type,
-                'options' => {
-                  'family' => $_ipset_family
-                },
-                require   => Service['firewalld']
-              }
-            )
 
             if $_allow_from_all {
-              $_source = '0.0.0.0/0'
+              $_source = $_ipset_entries[0]
             }
             else {
               $_source = { 'ipset' => $_ipset_name }
+
+              ensure_resource('firewalld_ipset', $_ipset_name,
+                {
+                  'entries' => $_ipset_entries,
+                  'type'    => $_ipset_type,
+                  'options' => {
+                    'family' => $_ipset_family
+                  },
+                  require   => Service['firewalld']
+                }
+              )
             }
 
             # We need this because the underlying types can't handle Arrays

@@ -38,27 +38,27 @@ describe "iptables::listen::udp", :type => :define do
             it { is_expected.to create_iptables__listen__udp(title).with_dports(params[:dports]) }
 
             it {
-              is_expected.to create_firewalld_rich_rule("11_simp_udp_#{title}_ipv4_10_0_2_0_24").with(
+              is_expected.to create_firewalld_rich_rule("simp_11_udp_#{title}_simp-sLxKcJ8Jr7GgDOF54KlBvQR2Yc").with(
                 {
-                  :ensure     => 'present',
-                  :family     => 'ipv4',
-                  :source     => '10.0.2.0/24',
+                  :ensure  => 'present',
+                  :family  => 'ipv4',
+                  :source  => { 'ipset' => 'simp-sLxKcJ8Jr7GgDOF54KlBvQR2Yc' },
                   :service => "simp_udp_#{title}",
-                  :action     => 'accept',
-                  :zone       => 'simp'
+                  :action  => 'accept',
+                  :zone    => '99_simp'
                 }
               )
             }
 
             it {
-              is_expected.to create_firewalld_rich_rule("11_simp_udp_#{title}_ipv6_ipset_simp_inet6_g5CUBb7QqeTGMJST9A7U_").with(
+              is_expected.to create_firewalld_rich_rule("simp_11_udp_#{title}_simp-l7zVcqWPK6oo3saymLCPHgjuhp").with(
                 {
-                  :ensure     => 'present',
-                  :family     => 'ipv6',
-                  :source     => {'ipset' => 'simp_inet6_g5CUBb7QqeTGMJST9A7U'},
+                  :ensure  => 'present',
+                  :family  => 'ipv6',
+                  :source  => {'ipset' => 'simp-l7zVcqWPK6oo3saymLCPHgjuhp'},
                   :service => "simp_udp_#{title}",
-                  :action     => 'accept',
-                  :zone       => 'simp'
+                  :action  => 'accept',
+                  :zone    => '99_simp'
                 }
               )
             }
