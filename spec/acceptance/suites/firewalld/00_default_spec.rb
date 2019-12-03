@@ -32,13 +32,13 @@ hosts.each do |host|
       end
 
       if host.file_exist?('/etc/firewalld')
-        it 'should have "simp" as the default zone' do
+        it 'should have "99_simp" as the default zone' do
           default_zone = on(host, 'firewall-cmd --get-default-zone').output.strip
-          expect(default_zone).to match('simp')
+          expect(default_zone).to eq('99_simp')
         end
 
-        it 'should have the "simp_tcp_allow_sshd" service in the "simp" zone' do
-          simp_services = on(host, 'firewall-cmd --list-services --zone=simp').output.strip.split(/\s+/)
+        it 'should have the "simp_tcp_allow_sshd" service in the "99_simp" zone' do
+          simp_services = on(host, 'firewall-cmd --list-services --zone=99_simp').output.strip.split(/\s+/)
           expect(simp_services).to include('simp_tcp_allow_sshd')
         end
       else
@@ -75,35 +75,46 @@ hosts.each do |host|
           apply_manifest_on(host, manifest, :catch_changes => true)
         end
 
-        it 'should have the "simp_tcp_allow_sshd" service in the "simp" zone' do
-          simp_services = on(host, 'firewall-cmd --list-services --zone=simp').output.strip.split(/\s+/)
+        it 'should have the "simp_tcp_allow_sshd" service in the "99_simp" zone' do
+          simp_services = on(host, 'firewall-cmd --list-services --zone=99_simp').output.strip.split(/\s+/)
           expect(simp_services).to include('simp_tcp_allow_sshd')
         end
 
         it 'should have an appropriate ruleset configured' do
-          rulesets = on(host, 'firewall-cmd --list-rich-rules --zone=simp').output.strip.lines
+          rulesets = on(host, 'firewall-cmd --list-rich-rules --zone=99_simp').output.strip.lines
 
           target_ruleset = rulesets.grep(%r("simp_tcp_allow_tcp_listen"))
 
           expect(target_ruleset.size).to eq(2)
 
-          expect(target_ruleset).to include(match(%r{1\.2\.3\.0/24}))
+          hash_ip_ipset = 'simp-gEi0qMBFhbv6eiaWYmkwap62GS'
+          hash_net_ipset = 'simp-j07oVIg3S8ccSfyQGfBvCdqsCv'
 
-          ruleset_ipset = target_ruleset.grep(/ipset=/).first.match('ipset="(.+?)"')[1]
+          expect(target_ruleset).to include(match(%r{ipset="#{hash_ip_ipset}"}))
+          expect(target_ruleset).to include(match(%r{ipset="#{hash_net_ipset}"}))
 
-          expect(ruleset_ipset).to_not be_empty
+          hash_ip_ipset_contents = on(host, "firewall-cmd --info-ipset=#{hash_ip_ipset}").output
 
-          ipset = on(host, "firewall-cmd --info-ipset=#{ruleset_ipset}").output
+          hash_ip_ipset_contents = hash_ip_ipset_contents.lines.delete_if{|x| x !~ /: /}
 
-          ipset = ipset.lines.delete_if{|x| x !~ /: /}
+          expect(hash_ip_ipset_contents).to_not be_empty
 
-          expect(ipset).to_not be_empty
+          hash_ip_ipset_contents = Hash[hash_ip_ipset_contents.map{|x| x.strip.split(': ')}]
+          hash_ip_ipset_contents['entries'] = hash_ip_ipset_contents['entries'].split(/\s+/)
 
-          ipset = Hash[ipset.map{|x| x.strip.split(': ')}]
-          ipset['entries'] = ipset['entries'].split(/\s+/)
+          expect(hash_ip_ipset_contents['entries']).to include(match(%r{3\.4\.5\.6}))
+          expect(hash_ip_ipset_contents['entries']).to include(match(%r{5\.6\.7\.8}))
 
-          expect(ipset['entries']).to include(match(%r{3\.4\.5\.6}))
-          expect(ipset['entries']).to include(match(%r{5\.6\.7\.8}))
+          hash_net_ipset_contents = on(host, "firewall-cmd --info-ipset=#{hash_net_ipset}").output
+
+          hash_net_ipset_contents = hash_net_ipset_contents.lines.delete_if{|x| x !~ /: /}
+
+          expect(hash_net_ipset_contents).to_not be_empty
+
+          hash_net_ipset_contents = Hash[hash_net_ipset_contents.map{|x| x.strip.split(': ')}]
+          hash_net_ipset_contents['entries'] = hash_net_ipset_contents['entries'].split(/\s+/)
+
+          expect(hash_net_ipset_contents['entries']).to include(match(%r{1\.2\.3\.0/24}))
         end
       end
 
@@ -127,35 +138,46 @@ hosts.each do |host|
           apply_manifest_on(host, manifest, :catch_changes => true)
         end
 
-        it 'should have the "simp_tcp_allow_sshd" service in the "simp" zone' do
-          simp_services = on(host, 'firewall-cmd --list-services --zone=simp').output.strip.split(/\s+/)
+        it 'should have the "simp_tcp_allow_sshd" service in the "99_simp" zone' do
+          simp_services = on(host, 'firewall-cmd --list-services --zone=99_simp').output.strip.split(/\s+/)
           expect(simp_services).to include('simp_tcp_allow_sshd')
         end
 
         it 'should have an appropriate ruleset configured' do
-          rulesets = on(host, 'firewall-cmd --list-rich-rules --zone=simp').output.strip.lines
+          rulesets = on(host, 'firewall-cmd --list-rich-rules --zone=99_simp').output.strip.lines
 
           target_ruleset = rulesets.grep(%r("simp_udp_allow_udp_listen"))
 
           expect(target_ruleset.size).to eq(2)
 
-          expect(target_ruleset).to include(match(%r{2\.0\.0\.0/8}))
+          hash_ip_ipset = 'simp-BahW5mYEj6huIkJdFkE4gS68zH'
+          hash_net_ipset = 'simp-ijfIJaYoC8b8MC3CPSwRFKY6h9'
 
-          ruleset_ipset = target_ruleset.grep(/ipset=/).first.match('ipset="(.+?)"')[1]
+          expect(target_ruleset).to include(match(%r{ipset="#{hash_ip_ipset}"}))
+          expect(target_ruleset).to include(match(%r{ipset="#{hash_net_ipset}"}))
 
-          expect(ruleset_ipset).to_not be_empty
+          hash_ip_ipset_contents = on(host, "firewall-cmd --info-ipset=#{hash_ip_ipset}").output
 
-          ipset = on(host, "firewall-cmd --info-ipset=#{ruleset_ipset}").output
+          hash_ip_ipset_contents = hash_ip_ipset_contents.lines.delete_if{|x| x !~ /: /}
 
-          ipset = ipset.lines.delete_if{|x| x !~ /: /}
+          expect(hash_ip_ipset_contents).to_not be_empty
 
-          expect(ipset).to_not be_empty
+          hash_ip_ipset_contents = Hash[hash_ip_ipset_contents.map{|x| x.strip.split(': ')}]
+          hash_ip_ipset_contents['entries'] = hash_ip_ipset_contents['entries'].split(/\s+/)
 
-          ipset = Hash[ipset.map{|x| x.strip.split(': ')}]
-          ipset['entries'] = ipset['entries'].split(/\s+/)
+          expect(hash_ip_ipset_contents['entries']).to include(match(%r{3\.4\.5\.6}))
+          expect(hash_ip_ipset_contents['entries']).to include(match(%r{5\.6\.7\.8}))
 
-          expect(ipset['entries']).to include(match(%r{3\.4\.5\.6}))
-          expect(ipset['entries']).to include(match(%r{5\.6\.7\.8}))
+          hash_net_ipset_contents = on(host, "firewall-cmd --info-ipset=#{hash_net_ipset}").output
+
+          hash_net_ipset_contents = hash_net_ipset_contents.lines.delete_if{|x| x !~ /: /}
+
+          expect(hash_net_ipset_contents).to_not be_empty
+
+          hash_net_ipset_contents = Hash[hash_net_ipset_contents.map{|x| x.strip.split(': ')}]
+          hash_net_ipset_contents['entries'] = hash_net_ipset_contents['entries'].split(/\s+/)
+
+          expect(hash_net_ipset_contents['entries']).to include(match(%r{2\.0\.0\.0/8}))
         end
       end
     end
