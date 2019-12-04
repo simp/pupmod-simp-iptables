@@ -91,7 +91,7 @@ define iptables::firewalld::rule (
   # These cases indicate that only a service should be added to the zone and
   # not an ipset since it will allow from anywhere and the rest of the
   # matches are irrelevant at that point.
-  if ['0.0.0.0/0', '::/0', '[::]/0', 'ALL'].any |$x| { $x in $_trusted_nets } {
+  if ['0.0.0.0/0', '::/0', '[::]/0', 'ALL', 'any'].any |$x| { $x in $_trusted_nets } {
     $_allow_from_all = true
   }
   else {
