@@ -148,7 +148,7 @@ define iptables::firewalld::rule (
             (($_ip_family == 'ipv6') and ($_data['netmask']['cidr'] == 128)) {
             {
               # firewall-cmd can't handle bracketed addresses for IPv6
-              'hash:ip'  => $memo['hash:ip'] + $_data['address'].regsubst('\[|\]', '', 'G'),
+              'hash:ip'  => $memo['hash:ip'] + $_data['address'],
               'hash:net' => $memo['hash:net']
             }
           }
