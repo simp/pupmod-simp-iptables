@@ -95,7 +95,7 @@ describe "iptables::listen::all", :type => :define do
                   {
                     :ensure  => 'present',
                     :family  => 'ipv6',
-                    :source  => '[::]/0',
+                    :source  => '::/0',
                     :service => nil,
                     :action  => 'accept',
                     :zone    => '99_simp',
