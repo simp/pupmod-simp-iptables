@@ -119,7 +119,20 @@ define iptables::firewalld::rule (
       }
     }
     else {
-      $_trusted_nets_hash = simplib::ip::family_hash($_trusted_nets)
+      $_tmp_nets_hash = simplib::ip::family_hash($_trusted_nets)
+
+      if $_tmp_nets_hash['unknown'] {
+
+        $_msg_string = join($_tmp_nets_hash['unknown'].keys, ', ')
+
+        notify { "${module_name}::firewalld::rule - hostname warning":
+          message  => "Firewalld cannot handle hostnames and the following were found in 'trusted_nets': '${_msg_string}'",
+          withpath => true,
+          loglevel => 'warning'
+        }
+      }
+
+      $_trusted_nets_hash = $_tmp_nets_hash.delete('unknown')
     }
 
     # We need to perform the correct action based on each IP Address family

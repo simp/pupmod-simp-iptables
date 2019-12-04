@@ -36,8 +36,33 @@ describe "iptables::listen::all", :type => :define do
           ]
         }
 
+        let(:hostnames) {
+          [
+            'foo.bar.baz',
+            'i.like.cheese'
+          ]
+        }
+
         context 'firewalld mode' do
           let(:hieradata) { 'firewall__firewalld' }
+
+          context "with hostnames in the address list" do
+            let( :title  ){ 'hostnames' }
+
+            let(:params){{
+              :trusted_nets => ipv4_nets + hostnames + ipv6_nets
+            }}
+
+            it { is_expected.to compile.with_all_deps }
+            it { is_expected.to create_notify('iptables::firewalld::rule - hostname warning').with(
+                {
+                  :message => /foo\.bar\.baz, i\.like\.cheese/,
+                  :withpath => true,
+                  :loglevel => 'warning'
+                }
+              )
+            }
+          end
 
           context "with '0.0.0.0/0' in the address list" do
             context 'all protocols' do
