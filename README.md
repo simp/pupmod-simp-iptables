@@ -161,7 +161,7 @@ This module has preliminary support for acting as a pass-through to various
 To put ``firewalld`` into a mode that is consistent with the current
 ``iptables`` configuration, an ``iptables::firewalld_shim`` class was created.
 
-Using any of the ``iptables::rule::*`` defined types will work seamlessly in
+Using any of the ``iptables::listen::*`` defined types will work seamlessly in
 ``firewalld`` mode but direct calls to ``iptables::rule`` will fail.
 
 Additionally, calls to any of the native types included in this module will
