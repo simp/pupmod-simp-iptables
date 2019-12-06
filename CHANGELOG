@@ -1,10 +1,9 @@
 * Fri Oct 18 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0
-- Experimental firewalld support
+- **Experimental** firewalld support
   - Added support for voxpupuli/firewalld
   - Added an `iptables::firewalld_shim` class for configuring firewalld in
     accordance with the current iptables configuration.
-  - Added auto-translation capabilities to convert current calls to the
-    `iptables::rule` defined type to firewalld rulesets.
+  - Ensure that the iptables::listen::* will work in firewalld mode
   - No work has been done to convert the advanced capabilities such as
     scanblock.
   - Will automatically use firewalld in EL 8

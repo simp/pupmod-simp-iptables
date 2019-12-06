@@ -240,14 +240,14 @@ Data type: `String[1]`
 
 The 'default zone' to set on the system.
 
-This is set to ``simp`` so that regular, alternative, zone manipulation can
-occur without interference.
+This is set to ``99_simp`` so that regular, alternative, zone manipulation
+can occur without interference.
 
-**IMPORTANT:** If this is set to anything besides ``simp``, all rules in
+**IMPORTANT:** If this is set to anything besides ``99_simp``, all rules in
 this module will **NOT** apply to the default zone! This module is set to
-only populate ``simp`` zone rules.
+only populate ``99_simp`` zone rules.
 
-Default value: 'simp'
+Default value: '99_simp'
 
 ##### `log_denied`
 
@@ -306,7 +306,7 @@ Default value: []
 
 ##### `simp_zone_target`
 
-Data type: `Enum['%%REJECT%%', 'DROP']`
+Data type: `Enum['default', 'ACCEPT', 'REJECT', 'DROP']`
 
 
 
@@ -1266,22 +1266,6 @@ The following parameters are available in the `iptables::rule` defined type.
 Data type: `String`
 
 The **exact** content of the rule that should be added
-
-* If this module is run in ``firewalld`` mode, this needs to contain a JSON
-  string that can include, but is not limited to:
-
-  * dports
-  * trusted_nets
-  * protocol
-  * icmp_blocks
-
-* In ``firewalld`` mode, the following parameters will be ignored:
-
-  * table
-  * first
-  * absolute
-  * order
-  * header
 
 ##### `table`
 

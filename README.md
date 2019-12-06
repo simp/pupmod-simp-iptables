@@ -161,10 +161,11 @@ This module has preliminary support for acting as a pass-through to various
 To put ``firewalld`` into a mode that is consistent with the current
 ``iptables`` configuration, an ``iptables::firewalld_shim`` class was created.
 
-Additionally, auto-translation capabilities were added to the ``iptables::rule``
-defined type so that most existing code that uses this module will continue to
-work seamlessly. However, you will have issues if you use the native types, so
-test carefully.
+Using any of the ``iptables::rule::*`` defined types will work seamlessly in
+``firewalld`` mode but direct calls to ``iptables::rule`` will fail.
+
+Additionally, calls to any of the native types included in this module will
+result in undefined behavior and is not advised.
 
 #### Enabling Firewalld Mode (experimental)
 
