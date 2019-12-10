@@ -125,7 +125,7 @@ define iptables::firewalld::rule (
 
         $_msg_string = join($_tmp_nets_hash['unknown'].keys, ', ')
 
-        notify { "${module_name}::firewalld::rule - hostname warning":
+        notify { "${module_name}::firewalld::rule[$name] - hostname warning":
           message  => "Firewalld cannot handle hostnames and the following were found in 'trusted_nets': '${_msg_string}'",
           withpath => true,
           loglevel => 'warning'
