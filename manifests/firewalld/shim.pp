@@ -1,9 +1,13 @@
-# These items mimic components in the actual `firewalld` module but set them to
-# safer defaults per the usual "authoritative control" idea of SIMP.
+# This is a `firewalld` profile that sets "safe" defaults as is usual in SIMP
+# modules.
 #
-# Since the `firewalld` module is designed to be Hiera-driven, this was more
-# understandable and safer than encapsulating the entire module in the
-# `iptables` module directly.
+# If you want to override any element not present in the `firewalld` class
+# resource below then you should use Hiera directly on the `firewalld` class.
+#
+# ## Class Resources
+#
+# The following class resources are used in this code:
+#   - firewalld
 #
 # @param enable
 #   Activate the firewalld shim capabilties.
@@ -51,14 +55,14 @@
 #   purposes of tidying.
 #
 class iptables::firewalld::shim (
-  Boolean                                              $enable               = true,
-  Boolean                                              $complete_reload      = false,
-  Boolean                                              $lockdown             = true,
-  String[1]                                            $default_zone         = '99_simp',
-  Enum['off', 'all','unicast','broadcast','multicast'] $log_denied           = 'unicast',
-  Boolean                                              $enable_tidy          = true,
+  Boolean                                              $enable          = true,
+  Boolean                                              $complete_reload = false,
+  Boolean                                              $lockdown        = true,
+  String[1]                                            $default_zone    = '99_simp',
+  Enum['off', 'all','unicast','broadcast','multicast'] $log_denied      = 'unicast',
+  Boolean                                              $enable_tidy     = true,
   # lint:ignore:2sp_soft_tabs
-  Array[Stdlib::Absolutepath]                          $tidy_dirs            = [
+  Array[Stdlib::Absolutepath]                          $tidy_dirs       = [
                                                                                  '/etc/firewalld/icmptypes',
                                                                                  '/etc/firewalld/ipsets',
                                                                                  '/etc/firewalld/services'
@@ -72,9 +76,16 @@ class iptables::firewalld::shim (
   if $enable {
     simplib::assert_optional_dependency($module_name, 'puppet/firewalld')
 
-    include firewalld
-
     Exec { path => '/usr/bin:/bin' }
+
+    # Upstream module only takes yes/no values
+    $_lockdown_xlat = $lockdown ? { true => 'yes', default => 'no' }
+
+    class { 'firewalld':
+      lockdown     => $_lockdown_xlat,
+      default_zone => $default_zone,
+      log_denied   => $log_denied
+    }
 
     unless $complete_reload {
       # This breaks all firewall connections and should never be done unless forced
@@ -91,47 +102,8 @@ class iptables::firewalld::shim (
       require          => Service['firewalld']
     }
 
-    exec { 'firewalld::set_default_zone':
-      command => "firewall-cmd --set-default-zone ${default_zone}",
-      unless  => "[ \$(firewall-cmd --get-default-zone) = ${default_zone} ]",
-      require => [
-        Service['firewalld'],
-        Exec['firewalld::reload']
-      ]
-    }
-
     if $default_zone == '99_simp' {
       Firewalld_zone['99_simp'] -> Exec['firewalld::set_default_zone']
-    }
-
-    ensure_resource('exec', 'firewalld::set_log_denied', {
-      'command' => "firewall-cmd --set-log-denied ${log_denied} && firewall-cmd --reload",
-      'unless'  => "[ $(firewall-cmd --get-log-denied) = ${log_denied} ]",
-      require => [
-        Service['firewalld'],
-        Exec['firewalld::reload']
-      ]
-    })
-
-    if $lockdown {
-      exec { 'lockdown_firewalld':
-        command => 'firewall-cmd --lockdown-on',
-        unless  => 'firewall-cmd --query-lockdown',
-        require => [
-          Service['firewalld'],
-          Exec['firewalld::reload']
-        ]
-      }
-    }
-    else {
-      exec { 'unlock_firewalld':
-        command => 'firewall-cmd --lockdown-off',
-        onlyif  => 'firewall-cmd --query-lockdown',
-        require => [
-          Service['firewalld'],
-          Exec['firewalld::reload']
-        ]
-      }
     }
 
     if $enable_tidy {

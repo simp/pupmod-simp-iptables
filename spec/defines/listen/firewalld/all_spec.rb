@@ -54,7 +54,7 @@ describe "iptables::listen::all", :type => :define do
             }}
 
             it { is_expected.to compile.with_all_deps }
-            it { is_expected.to create_notify('iptables::firewalld::rule - hostname warning').with(
+            it { is_expected.to create_notify("iptables::firewalld::rule[all_#{title}] - hostname warning").with(
                 {
                   :message => /foo\.bar\.baz, i\.like\.cheese/,
                   :withpath => true,
