@@ -61,9 +61,6 @@
 #       * 11-20 -> Pure accept rules
 #       * 22-30 -> Logging and rejection rules
 #
-# @param comment
-#   An informative comment to prepend to the rule
-#
 # @param header
 #   Automatically add the line header ``-A LOCAL-INPUT``
 #
@@ -76,22 +73,33 @@
 #   * auto -> Try to figure it out from the rule, will **not** pick ``all``
 #
 define iptables::rule (
-  String                           $content,
-  String                           $table    = 'filter',
-  Boolean                          $first    = false,
-  Boolean                          $absolute = false,
-  Integer[0]                       $order    = 11,
-  String                           $comment  = '',
-  Boolean                          $header   = true,
-  Enum['ipv4','ipv6','all','auto'] $apply_to = 'auto'
+  String            $content,
+  String            $table    = 'filter',
+  Boolean           $first    = false,
+  Boolean           $absolute = false,
+  Integer[0]        $order    = 11,
+  Boolean           $header   = true,
+  Iptables::ApplyTo $apply_to = 'auto'
 ) {
-  iptables_rule { $name:
-    table    => $table,
-    absolute => $absolute,
-    first    => $first,
-    order    => $order,
-    header   => $header,
-    content  => $content,
-    apply_to => $apply_to
+  include iptables
+
+  if $iptables::use_firewalld {
+    $_caller = simplib::caller()
+
+    notify { 'iptables::rule with firewalld':
+      message  => "iptables::rule cannot be used directly in firewalld mode, please use iptables::firewalld::rule => Called from ${_caller}",
+      loglevel => 'warning'
+    }
+  }
+  else {
+    iptables_rule { $name:
+      table    => $table,
+      absolute => $absolute,
+      first    => $first,
+      order    => $order,
+      header   => $header,
+      content  => $content,
+      apply_to => $apply_to
+    }
   }
 }

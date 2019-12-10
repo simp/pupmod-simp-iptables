@@ -3,6 +3,8 @@ require 'spec_helper_acceptance'
 test_name "iptables class"
 
 hosts.each do |host|
+  next unless host[:roles].include?('iptables')
+
   describe "iptables class #{host}" do
     before(:context) do
       on(host, 'puppet module list --tree')

@@ -6,7 +6,7 @@
   end
 -%>
 HOSTS:
-  el7:
+  oel7:
     roles:
       - server7
       - default
@@ -14,11 +14,18 @@ HOSTS:
     box: onyxpoint/oel-7-x86_64
     hypervisor: <%= hypervisor %>
 
-  el6:
+  oel6:
     roles:
       - server6
     platform: el-6-x86_64
     box: onyxpoint/oel-6-x86_64
+    hypervisor: <%= hypervisor %>
+
+  oel6:
+    roles:
+      - server8
+    platform: el-8-x86_64
+    box: onyxpoint/oel-8-x86_64
     hypervisor: <%= hypervisor %>
 
 CONFIG:

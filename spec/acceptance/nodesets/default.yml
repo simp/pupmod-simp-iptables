@@ -10,6 +10,8 @@ HOSTS:
     roles:
       - server7
       - default
+      - iptables
+      - firewalld
     platform: el-7-x86_64
     box: centos/7
     hypervisor: <%= hypervisor %>
@@ -17,8 +19,18 @@ HOSTS:
   el6:
     roles:
       - server6
+      - iptables
+      - firewalld
     platform: el-6-x86_64
     box: centos/6
+    hypervisor: <%= hypervisor %>
+
+  el8:
+    roles:
+      - server8
+      - firewalld
+    platform: el-8-x86_64
+    box: generic/centos8
     hypervisor: <%= hypervisor %>
 
 CONFIG:

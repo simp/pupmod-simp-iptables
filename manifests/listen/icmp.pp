@@ -71,18 +71,31 @@
 #   Set to ``any`` to allow all networks
 #
 define iptables::listen::icmp (
-  Variant[Array[String],String]    $icmp_types,
-  Boolean                          $first        = false,
-  Boolean                          $absolute     = false,
-  Integer[0]                       $order        = 11,
-  Enum['ipv4','ipv6','all','auto'] $apply_to     = 'auto',
-  Simplib::Netlist                 $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
+  Variant[Array[String],String] $icmp_types,
+  Boolean                       $first        = false,
+  Boolean                       $absolute     = false,
+  Integer[0]                    $order        = 11,
+  Iptables::ApplyTo             $apply_to     = 'auto',
+  Simplib::Netlist              $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
 ) {
-  iptables_rule { "icmp_${name}":
-    first    => $first,
-    absolute => $absolute,
-    order    => $order,
-    apply_to => $apply_to,
-    content  => template("${module_name}/allow_icmp_services.erb")
+  include 'iptables'
+
+  if $iptables::use_firewalld {
+    iptables::firewalld::rule { "icmp_${name}":
+      trusted_nets => $trusted_nets,
+      protocol     => 'icmp',
+      icmp_blocks  => $icmp_types,
+      order        => $order,
+      apply_to     => $apply_to
+    }
+  }
+  else {
+    iptables_rule { "icmp_${name}":
+      first    => $first,
+      absolute => $absolute,
+      order    => $order,
+      apply_to => $apply_to,
+      content  => template("${module_name}/allow_icmp_services.erb")
+    }
   }
 }

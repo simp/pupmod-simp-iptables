@@ -6,6 +6,7 @@
 **Classes**
 
 * [`iptables`](#iptables): Add management of iptables with default rule optimization and a failsafe fallback mode  This class will detect conflicts with the SIMP option
+* [`iptables::firewalld::shim`](#iptablesfirewalldshim): These items mimic components in the actual `firewalld` module but set them to safer defaults per the usual "authoritative control" idea of SI
 * [`iptables::install`](#iptablesinstall): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Install the IPTables and IP6Tables compo
 * [`iptables::rules::base`](#iptablesrulesbase): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
 * [`iptables::rules::default_drop`](#iptablesrulesdefault_drop): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Manage the default policy settings of th
@@ -16,6 +17,7 @@
 
 **Defined types**
 
+* [`iptables::firewalld::rule`](#iptablesfirewalldrule): Add firewall rules via firewalld  This is primarily meant for use with the iptables::listen::* defined types. If you wish to do direct manipu
 * [`iptables::listen::all`](#iptableslistenall): Allow all protocols to all ports from a select set of networks
 * [`iptables::listen::icmp`](#iptableslistenicmp): This provides a simple way to allow ICMP ports into the system.
 * [`iptables::listen::tcp_stateful`](#iptableslistentcp_stateful): Allow access to specific ports from specific hosts or networks
@@ -34,9 +36,11 @@
 **Functions**
 
 * [`iptables::slice_ports`](#iptablesslice_ports): Split a stringified Iptables::DestPort into an Array that contain groupings of `max_length` size.
+* [`iptables::use_firewalld`](#iptablesuse_firewalld): Returns ``true`` if the client can/should use firewalld
 
 **Data types**
 
+* [`Iptables::ApplyTo`](#iptablesapplyto): Valid families to which rules should apply
 * [`Iptables::DestPort`](#iptablesdestport): An ``iptables_rule`` compatible port range or Array
 * [`Iptables::PortRange`](#iptablesportrange): An iptables-compatible Port Range
 
@@ -64,7 +68,7 @@ The following parameters are available in the `iptables` class.
 
 ##### `enable`
 
-Data type: `Variant[Enum['ignore'],Boolean]`
+Data type: `Variant[Enum['ignore','firewalld'],Boolean]`
 
 Enable IPTables
 
@@ -72,6 +76,14 @@ Enable IPTables
 * If set to ``ignore`` will stop managing IPTables
 
 Default value: simplib::lookup('simp_options::firewall', { 'default_value' => true })
+
+##### `use_firewalld`
+
+Data type: `Boolean`
+
+**EXPERIMENTAL** Enable the firewalld-passthrough capabilties
+
+Default value: iptables::use_firewalld($enable)
 
 ##### `ensure`
 
@@ -177,6 +189,129 @@ structure of the hash.
 
 Default value: `undef`
 
+### iptables::firewalld::shim
+
+These items mimic components in the actual `firewalld` module but set them to
+safer defaults per the usual "authoritative control" idea of SIMP.
+
+Since the `firewalld` module is designed to be Hiera-driven, this was more
+understandable and safer than encapsulating the entire module in the
+`iptables` module directly.
+
+#### Parameters
+
+The following parameters are available in the `iptables::firewalld::shim` class.
+
+##### `enable`
+
+Data type: `Boolean`
+
+Activate the firewalld shim capabilties.
+
+Default value: `true`
+
+##### `complete_reload`
+
+Data type: `Boolean`
+
+The current firewalld module has the capability to perform a complete reload
+of firewalld which breaks any existing connections. This is extremely
+dangerous and this class overrides and disables this capability by default.
+
+* Set to ``true`` to re-enable this capability.
+
+Default value: `false`
+
+##### `lockdown`
+
+Data type: `Boolean`
+
+Set ``firewalld`` in ``lockdown`` mode which disallows manipulation by
+applications.
+
+* This makes sense to do by default since puppet is meant to be
+  authoritative on the system.
+
+Default value: `true`
+
+##### `default_zone`
+
+Data type: `String[1]`
+
+The 'default zone' to set on the system.
+
+This is set to ``99_simp`` so that regular, alternative, zone manipulation
+can occur without interference.
+
+**IMPORTANT:** If this is set to anything besides ``99_simp``, all rules in
+this module will **NOT** apply to the default zone! This module is set to
+only populate ``99_simp`` zone rules.
+
+Default value: '99_simp'
+
+##### `log_denied`
+
+Data type: `Enum['off', 'all','unicast','broadcast','multicast']`
+
+What types of logs to process for denied packets.
+
+@see LogDenied in firewalld.conf(5)
+
+Default value: 'unicast'
+
+##### `enable_tidy`
+
+Data type: `Boolean`
+
+Enable the ``Tidy`` resources that help keep the system clean from cruft
+
+Default value: `true`
+
+##### `tidy_dirs`
+
+Data type: `Array[Stdlib::Absolutepath]`
+
+The directories to target for tidying
+
+Default value: [
+                                                                                 '/etc/firewalld/icmptypes',
+                                                                                 '/etc/firewalld/ipsets',
+                                                                                 '/etc/firewalld/services'
+                                                                               ]
+
+##### `tidy_prefix`
+
+Data type: `String[1]`
+
+The name match to use for tidying files
+
+Default value: 'simp_'
+
+##### `tidy_minutes`
+
+Data type: `Integer[1]`
+
+Number of **minutes** to consider a configuration file 'stale' for the
+purposes of tidying.
+
+Default value: 10
+
+##### `simp_zone_interfaces`
+
+Data type: `Array[Optional[String[1]]]`
+
+
+
+Default value: []
+
+##### `simp_zone_target`
+
+Data type: `Enum['default', 'ACCEPT', 'REJECT', 'DROP']`
+
+
+
+Default value: 'DROP'
+
 ### iptables::install
 
 **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
@@ -238,6 +373,17 @@ Default value: `true`
 Data type: `Boolean`
 
 Drop all multicast traffic to this host
+
+Default value: `true`
+
+##### `force_local_input`
+
+Data type: `Boolean`
+
+Require that all traffic traverse the LOCAL-INPUT chain
+
+* If set to `false`, will put LOCAL-INPUT at the bottom of the INPUT
+  traversal stack so that other chains may easily be added above.
 
 Default value: `true`
 
@@ -537,7 +683,7 @@ Enable IPTables
 * If set to ``false`` with **disable** IPTables completely
 * If set to ``ignore`` will stop managing IPTables
 
-Default value: pick(getvar('::iptables::enable'),true)
+Default value: pick(getvar('iptables::enable'),true)
 
 ##### `ipv6`
 
@@ -545,9 +691,83 @@ Data type: `Any`
 
 Also manage IP6Tables
 
-Default value: pick(getvar('::iptables::ipv6'),true)
+Default value: pick(getvar('iptables::ipv6'),true)
 
 ## Defined types
+
+### iptables::firewalld::rule
+
+Add firewall rules via firewalld
+
+This is primarily meant for use with the iptables::listen::* defined types.
+If you wish to do direct manipulation of firewalld rules it is recommended
+that you use the Hiera-native capabilities of the firewalld module directly.
+
+#### Parameters
+
+The following parameters are available in the `iptables::firewalld::rule` defined type.
+
+##### `trusted_nets`
+
+Data type: `Simplib::Netlist`
+
+The networks/hosts to which the rule applies
+
+##### `protocol`
+
+Data type: `Enum['icmp','tcp','udp','all']`
+
+The network protocol to which the rule applies
+
+##### `dports`
+
+Data type: `Optional[Iptables::DestPort]`
+
+The ports to which the rule applies
+
+Default value: `undef`
+
+##### `icmp_blocks`
+
+Data type: `Optional[Variant[Array[String],String]]`
+
+The ICMP Blocks to which the rule applies
+
+Default value: `undef`
+
+##### `order`
+
+Data type: `Integer[0]`
+
+The order in which the rule should appear
+
+Due to the way firewalld works, this may not do what you expect unless the
+version of firewalld explicitly supports it.
+
+* 1 is the minimum and 9999999 is the maximum
+
+* The following ordering ranges are suggested (but not enforced):
+
+    * 1     -> ESTABLISHED,RELATED rules
+    * 2-5   -> Standard ACCEPT/DENY rules
+    * 6-10  -> Jumps to other rule sets
+    * 11-20 -> Pure accept rules
+    * 22-30 -> Logging and rejection rules
+
+Default value: 11
+
+##### `apply_to`
+
+Data type: `Iptables::ApplyTo`
+
+The address family to which to apply this rule
+
+* ipv4 -> iptables
+* ipv6 -> ip6tables
+* all  -> Both
+* auto -> Try to figure it out from the rule, defaults to ``all``
+
+Default value: 'auto'
 
 ### iptables::listen::all
 
@@ -627,7 +847,7 @@ Default value: 11
 
 ##### `apply_to`
 
-Data type: `Enum['ipv4','ipv6','all','auto']`
+Data type: `Iptables::ApplyTo`
 
 The IPTables network type to which to apply this rule
 
@@ -739,7 +959,7 @@ Default value: 11
 
 ##### `apply_to`
 
-Data type: `Enum['ipv4','ipv6','all','auto']`
+Data type: `Iptables::ApplyTo`
 
 The IPTables network type to which to apply this rule
 
@@ -847,7 +1067,7 @@ Default value: 11
 
 ##### `apply_to`
 
-Data type: `Enum['ipv4','ipv6','all','auto']`
+Data type: `Iptables::ApplyTo`
 
 The IPTables network type to which to apply this rule
 
@@ -955,7 +1175,7 @@ Default value: 11
 
 ##### `apply_to`
 
-Data type: `Enum['ipv4','ipv6','all','auto']`
+Data type: `Iptables::ApplyTo`
 
 The IPTables network type to which to apply this rule
 
@@ -1102,14 +1322,6 @@ The order in which the rule should appear
 
 Default value: 11
 
-##### `comment`
-
-Data type: `String`
-
-An informative comment to prepend to the rule
-
-Default value: ''
-
 ##### `header`
 
 Data type: `Boolean`
@@ -1120,7 +1332,7 @@ Default value: `true`
 
 ##### `apply_to`
 
-Data type: `Enum['ipv4','ipv6','all','auto']`
+Data type: `Iptables::ApplyTo`
 
 The IPTables network type to which to apply this rule
 
@@ -1521,7 +1733,35 @@ Data type: `Integer[1]`
 
 The maximum length of each group.
 
+### iptables::use_firewalld
+
+Type: Puppet Language
+
+Returns ``true`` if the client can/should use firewalld
+
+#### `iptables::use_firewalld(Variant[String[1], Boolean] $enable = true)`
+
+Returns ``true`` if the client can/should use firewalld
+
+Returns: `Boolean`
+
+##### `enable`
+
+Data type: `Variant[String[1], Boolean]`
+
+The type of enablement to use
+
+* true      => Do the right thing based on the underlying OS
+* false     => Return `false`
+* firewalld => Force `firewalld` if available
+
 ## Data types
+
+### Iptables::ApplyTo
+
+Valid families to which rules should apply
+
+Alias of `Enum['ipv4', 'ipv6', 'all', 'auto']`
 
 ### Iptables::DestPort
 

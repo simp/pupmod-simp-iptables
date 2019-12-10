@@ -3,6 +3,8 @@ require 'spec_helper_acceptance'
 test_name 'iptables::listen::udp'
 
 hosts.each do |host|
+  next unless host[:roles].include?('iptables')
+
   describe 'iptables::listen::udp' do
     let(:manifest) {
       <<-EOS

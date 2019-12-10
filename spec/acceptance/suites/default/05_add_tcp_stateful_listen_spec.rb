@@ -3,6 +3,8 @@ require 'spec_helper_acceptance'
 test_name "iptables::listen::tcp_stateful"
 
 hosts.each do |host|
+  next unless host[:roles].include?('iptables')
+
   describe "iptables::listen::tcp_stateful" do
     let(:manifest) {
       <<-EOS

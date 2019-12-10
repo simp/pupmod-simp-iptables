@@ -24,6 +24,10 @@ This module provides native types for managing the system IPTables and
 IP6Tables as well as convenience defines and general system configuration
 capabilities.
 
+The ability to use this module to automatically shim through to firewalld is
+optionally supported for legacy systems and modules that are working on
+migrating to firewalld support.
+
 ## This is a SIMP module
 
 This module is a component of the [System Integrity Management Platform](https://simp-project.com),
@@ -149,124 +153,36 @@ iptables::rule { 'example':
 }
 ```
 
+### Firewalld Mode (experimental)
+
+This module has preliminary support for acting as a pass-through to various
+``firewalld`` capabilities using the ``voxpupuli/firewalld`` module.
+
+To put ``firewalld`` into a mode that is consistent with the current
+``iptables`` configuration, an ``iptables::firewalld_shim`` class was created.
+
+Using any of the ``iptables::listen::*`` defined types will work seamlessly in
+``firewalld`` mode but direct calls to ``iptables::rule`` will fail.
+
+Additionally, calls to any of the native types included in this module will
+result in undefined behavior and is not advised.
+
+#### Enabling Firewalld Mode (experimental)
+
+To enable ``firewalld`` mode on supported operating systems, simply set
+``iptables::use_firewalld`` to ``true`` via Hiera.
+
+**NOTE: EL 8 systems will enable ``firewalld`` mode by default.**
+
 ## Reference
 
-For the most up to date `class` and `defined type` reference, please see
-[The Project Documentation](https://https://simp.github.io/pupmod-simp-iptables/)
-
-Items that are not covered by ``puppet strings`` are listed below.
-
-### Native Types
-
-#### `iptables_rule`
-
-A managed iptables rule. This may be used to provide ultimate flexibility in
-managing the system rules.
-
-##### Parameters
-
-* name: A unique name for the rule, does not provide any other function.
-  Required
-* comment: A comment to apply to the rule. Default: No Comment
-* header: Whether or not to auto-include the table LOCAL-INPUT in the rule.
-  Default: true
-* apply_to: What version(s) of iptables to which to apply this rule. Default: 'auto'
-  If set to `auto` (the default) then we'll try to guess what you want and
-  default to ['ipv4','ipv6'].
-  If `auto` is set then each line will be evaluated as an independent rule.
-    * Any rules that have IPv4 addresses will be applied to iptables.
-    * Any rules that have IPv6 addresses will be applied to ip6tables.
-    * All other rules will be applied to *both* utilities.
-    * If in doubt, split your rules and specify your tables!
-
-* table: The name of the table to which you are adding the rule. Default:
-  'filter'
-* first: If `true`, prepend the rule to the rule set. Default: `false`
-* absolute: If `true`, ensure that the rule is at the absolute beginning or end
-  of the rule set. If multiple rules are marked as absolute then they are
-  sorted by resource name. Default: `false`
-* order: The order in which the rule should appear. 1 is the minimum and 999 is
-  the maximum. Default: '11'
-* resolve: If `true`, Puppet will resolve any hostnames in the rules prior to
-  application to prevent iptables from starting should a name change in the
-  future. Default: `true`
-* content: The full content of the rule that should be added to the rule set.
-  You may place *anything* here. Required
-
-#### iptables_optimize
-#### ip6tables_optimize
-
-This type collects all of the `iptables_rule` resources and compiles the final
-iptables rule set. By default, it will collapse rules into a single rule when
-possible to make the iptables rule set more efficient.
-
-Eventually, it will support `ipset`.
-
-The `ip6tables_optimize` type has the exact same parameters but affects
-`ip6tables` instead of `iptables`.
-
-##### Parameters
-
-* name: An arbitrary name for the resource. This resource is not meant to be
-  called more than once...
-* disable: If `true`, disable the management of iptables altogether. Default:
-  `false`
-* ignore: Ignore all *running* iptables rules matching one or more provided
-  Ruby regular expressions. The regular expressions are compared against all
-  interfaces as well as both the JUMP and CHAIN options of the running rules.
-  Anything matching these rules are excluded from the synchronization
-  comparison against the new rules.
-
-  **Caveats**
-
-  Do **NOT** include the beginning and trailing slashes in your regular
-  expressions.
-
-  If a rule has been added or removed, this setting ignored and iptables *will*
-  be restarted! If you have services which are affected by this, make sure that
-  they subscribe to `Service['iptables']`, `Service['ip6tables']`, or
-  `Class['iptables::service']` as appropriate.
-
-  **Examples**
-
-  ```
-  # Preserve all rules whose jump or chain begins with the word 'foo'
-  ignore => '^foo'
-
-  # Preserve all rules whose jump or chain begins with the word 'foo' or
-  # ends with the word 'bar'
-  ignore => ['^foo','bar$']
-  ```
-
-* optimize: If `true`, enable the optimization of the IPTables rules. Default:
-  `true`
-
-#### xt_recent
-
-##### Parameters
-
-* name: The path to the xt_recent variables to be manipulated
-* ip_list_tot: The number of addresses remembered per table. This effectively
-  becomes the maximum size of your block list. The more addresses you are
-  recording, the higher the load on your system. Default: '100'
-* ip_pkt_list_tot: The number of packets per address remembered. Default: '20'
-* ip_list_hash_size: The hash table size. 0 means to calculate it based on
-  ip_list_tot. Default: '0'
-* ip_list_perms: Permissions for /proc/net/xt_recent/* files. Default: '0640'
-* ip_list_uid: Numerical UID for ownership of /proc/net/xt_recent/* files.
-  Default: '0'
-* ip_list_gid: Numerical GID for ownership of /proc/net/xt_recent/* files.
-  Default: '0'
-
-### Data Types
-
-* Iptables::PortRange
-    * A range of ports, in IPTables format
-        * ``22:1234``
+See [REFERENCE.md](./REFERENCE.md)
 
 ## Limitations
 * IPv6 support has not been fully tested, use with caution
-* ``firewalld`` must be disabled.  The module will disable ``firewalld`` if it is present
+* ``firewalld`` must be disabled if using ``iptables``. The module will disable
+  ``firewalld`` if it is present and the module is not in ``firewalld``
+  compatibility mode.
 * This module is intended to be used on a Redhat Enterprise Linux-compatible
   distribution such as EL6 and EL7. However, any distribution that uses the
   ``/etc/sysconfig/iptables`` configuration should function properly (let us

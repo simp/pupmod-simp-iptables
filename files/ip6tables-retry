@@ -50,25 +50,25 @@ status() {
 
 case "$1" in
   start)
-	  start
-	  RETVAL=$?
-	  ;;
+    start
+    RETVAL=$?
+    ;;
   stop)
-	  stop
-	  RETVAL=$?
-	  ;;
+    stop
+    RETVAL=$?
+    ;;
   restart|force-reload)
-	  restart
-	  RETVAL=$?
-	  ;;
+    restart
+    RETVAL=$?
+    ;;
   status)
-	  status
-	  RETVAL=$?
-	  ;;
+    status
+    RETVAL=$?
+    ;;
   *)
-	  echo $"Usage: ip6tables-retry {start|stop|restart|status}"
-	  RETVAL=2
-	  ;;
+    echo $"Usage: ip6tables-retry {start|stop|restart|status}"
+    RETVAL=2
+    ;;
 esac
 
 exit $RETVAL
