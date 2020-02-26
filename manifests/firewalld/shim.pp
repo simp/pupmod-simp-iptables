@@ -41,6 +41,11 @@
 #
 #   @see LogDenied in firewalld.conf(5)
 #
+# @param firewall_backend
+#   Allows you to set the backend that firewalld will use.
+#
+#   * Currently set to 'iptables' due to bugs in nftables
+#
 # @param enable_tidy
 #   Enable the ``Tidy`` resources that help keep the system clean from cruft
 #
@@ -54,15 +59,22 @@
 #   Number of **minutes** to consider a configuration file 'stale' for the
 #   purposes of tidying.
 #
+# @param simp_zone_interfaces
+#   The network interfaces to which the underlying 99_simp zone should apply
+#
+# @param simp_zone_target
+#   The default target for the 99_simp zone
+#
 class iptables::firewalld::shim (
-  Boolean                                              $enable          = true,
-  Boolean                                              $complete_reload = false,
-  Boolean                                              $lockdown        = true,
-  String[1]                                            $default_zone    = '99_simp',
-  Enum['off', 'all','unicast','broadcast','multicast'] $log_denied      = 'unicast',
-  Boolean                                              $enable_tidy     = true,
+  Boolean                                              $enable               = true,
+  Boolean                                              $complete_reload      = false,
+  Boolean                                              $lockdown             = true,
+  String[1]                                            $default_zone         = '99_simp',
+  Enum['off', 'all','unicast','broadcast','multicast'] $log_denied           = 'unicast',
+  Enum['iptables','nftables']                          $firewall_backend     = 'iptables',
+  Boolean                                              $enable_tidy          = true,
   # lint:ignore:2sp_soft_tabs
-  Array[Stdlib::Absolutepath]                          $tidy_dirs       = [
+  Array[Stdlib::Absolutepath]                          $tidy_dirs            = [
                                                                                  '/etc/firewalld/icmptypes',
                                                                                  '/etc/firewalld/ipsets',
                                                                                  '/etc/firewalld/services'
@@ -82,9 +94,10 @@ class iptables::firewalld::shim (
     $_lockdown_xlat = $lockdown ? { true => 'yes', default => 'no' }
 
     class { 'firewalld':
-      lockdown     => $_lockdown_xlat,
-      default_zone => $default_zone,
-      log_denied   => $log_denied
+      lockdown         => $_lockdown_xlat,
+      default_zone     => $default_zone,
+      log_denied       => $log_denied,
+      firewall_backend => $firewall_backend
     }
 
     unless $complete_reload {

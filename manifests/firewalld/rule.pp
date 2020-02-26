@@ -50,6 +50,9 @@ define iptables::firewalld::rule (
 ) {
   simplib::assert_optional_dependency($module_name, 'puppet/firewalld')
 
+  # Firewalld does not handle some items well in filenames
+  $safe_name = regsubst($name, /\./, '_', 'G')
+
   if $protocol == 'icmp' {
     $_dports = undef
     $_icmp_block = Array($icmp_blocks)
@@ -74,7 +77,7 @@ define iptables::firewalld::rule (
         }
       }
 
-      firewalld::custom_service { "simp_${name}":
+      firewalld::custom_service { "simp_${safe_name}":
         short       => "simp_${name}",
         description => "SIMP ${name}",
         port        => $_dports,
@@ -101,7 +104,7 @@ define iptables::firewalld::rule (
   # It only makes sense to create this if we have been passed some ports to
   # bind it to.
   if $_dports and $_allow_from_all {
-    firewalld_service { "simp_${name}":
+    firewalld_service { "simp_${safe_name}":
       zone    => '99_simp',
       require => Service['firewalld']
     }
