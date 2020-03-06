@@ -50,8 +50,11 @@ define iptables::firewalld::rule (
 ) {
   simplib::assert_optional_dependency($module_name, 'puppet/firewalld')
 
-  # Firewalld does not handle some items well in filenames
-  $safe_name = regsubst($name, /\./, '_', 'G')
+  # Replace this with the line below it when
+  # https://github.com/simp/pupmod-simp-iptables/pull/74 is merged and released
+
+  $_safe_name = regsubst($name, '[^\w-]', '_', 'G')
+  #$_safe_name = firewalld::safe_filename($name)
 
   if $protocol == 'icmp' {
     $_dports = undef
@@ -77,7 +80,7 @@ define iptables::firewalld::rule (
         }
       }
 
-      firewalld::custom_service { "simp_${safe_name}":
+      firewalld::custom_service { "simp_${_safe_name}":
         short       => "simp_${name}",
         description => "SIMP ${name}",
         port        => $_dports,
@@ -104,7 +107,7 @@ define iptables::firewalld::rule (
   # It only makes sense to create this if we have been passed some ports to
   # bind it to.
   if $_dports and $_allow_from_all {
-    firewalld_service { "simp_${safe_name}":
+    firewalld_service { "simp_${_safe_name}":
       zone    => '99_simp',
       require => Service['firewalld']
     }
@@ -128,7 +131,7 @@ define iptables::firewalld::rule (
 
         $_msg_string = join($_tmp_nets_hash['unknown'].keys, ', ')
 
-        notify { "${module_name}::firewalld::rule[$name] - hostname warning":
+        notify { "${module_name}::firewalld::rule[$_safe_name] - hostname warning":
           message  => "Firewalld cannot handle hostnames and the following were found in 'trusted_nets': '${_msg_string}'",
           withpath => true,
           loglevel => 'warning'
@@ -210,7 +213,7 @@ define iptables::firewalld::rule (
                 join([
                   'simp',
                   $order,
-                  $name,
+                  $_safe_name,
                   $_ipset_name
                 ], '_'),
               '_+', '_', 'G')
@@ -231,7 +234,7 @@ define iptables::firewalld::rule (
               # bind to. This probably means that we were called in a way to
               # allow all traffic to a specific IP address.
               if $_dports {
-                $_rich_rule_svc = "simp_${name}"
+                $_rich_rule_svc = "simp_${_safe_name}"
               }
               else {
                 $_rich_rule_svc = undef

@@ -15,7 +15,7 @@ hosts.each do |host|
         # Ironically, if iptables applies correctly, its default settings will
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
         # define a rule that permit SSH access from the standard Vagrant subnets:
-        iptables::listen::tcp_stateful { 'allow_sshd':
+        iptables::listen::tcp_stateful { 'allow_sshd_0.0.0.0':
           trusted_nets => ['0.0.0.0/0'],
           dports       => 22,
         }
@@ -37,9 +37,9 @@ hosts.each do |host|
           expect(default_zone).to eq('99_simp')
         end
 
-        it 'should have the "simp_tcp_allow_sshd" service in the "99_simp" zone' do
+        it 'should have the "simp_tcp_allow_sshd_0_0_0_0" service in the "99_simp" zone' do
           simp_services = on(host, 'firewall-cmd --list-services --zone=99_simp').output.strip.split(/\s+/)
-          expect(simp_services).to include('simp_tcp_allow_sshd')
+          expect(simp_services).to include('simp_tcp_allow_sshd_0_0_0_0')
         end
       else
         it 'should not be running firewalld' do
@@ -75,9 +75,9 @@ hosts.each do |host|
           apply_manifest_on(host, manifest, :catch_changes => true)
         end
 
-        it 'should have the "simp_tcp_allow_sshd" service in the "99_simp" zone' do
+        it 'should have the "simp_tcp_allow_sshd_0_0_0_0" service in the "99_simp" zone' do
           simp_services = on(host, 'firewall-cmd --list-services --zone=99_simp').output.strip.split(/\s+/)
-          expect(simp_services).to include('simp_tcp_allow_sshd')
+          expect(simp_services).to include('simp_tcp_allow_sshd_0_0_0_0')
         end
 
         it 'should have an appropriate ruleset configured' do
@@ -138,9 +138,9 @@ hosts.each do |host|
           apply_manifest_on(host, manifest, :catch_changes => true)
         end
 
-        it 'should have the "simp_tcp_allow_sshd" service in the "99_simp" zone' do
+        it 'should have the "simp_tcp_allow_sshd_0_0_0_0" service in the "99_simp" zone' do
           simp_services = on(host, 'firewall-cmd --list-services --zone=99_simp').output.strip.split(/\s+/)
-          expect(simp_services).to include('simp_tcp_allow_sshd')
+          expect(simp_services).to include('simp_tcp_allow_sshd_0_0_0_0')
         end
 
         it 'should have an appropriate ruleset configured' do
