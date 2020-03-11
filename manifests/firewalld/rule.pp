@@ -50,10 +50,9 @@ define iptables::firewalld::rule (
 ) {
   simplib::assert_optional_dependency($module_name, 'puppet/firewalld')
 
-  # Replace this with the line below it when
-  # https://github.com/simp/pupmod-simp-iptables/pull/74 is merged and released
-
   $_safe_name = regsubst($name, '[^\w-]', '_', 'G')
+
+  # Saving this as a reference for when we split this off into its own module
   #$_safe_name = firewalld::safe_filename($name)
 
   if $protocol == 'icmp' {
