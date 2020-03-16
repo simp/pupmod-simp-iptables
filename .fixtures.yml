@@ -7,7 +7,7 @@ fixtures:
     compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup
     firewalld:
       repo: https://github.com/simp/pupmod-voxpupuli-firewalld
-      ref: v4.1.0
+      ref: v4.2.4
     simp_options: https://github.com/simp/pupmod-simp-simp_options
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib

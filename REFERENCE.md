@@ -6,7 +6,7 @@
 **Classes**
 
 * [`iptables`](#iptables): Add management of iptables with default rule optimization and a failsafe fallback mode  This class will detect conflicts with the SIMP option
-* [`iptables::firewalld::shim`](#iptablesfirewalldshim): These items mimic components in the actual `firewalld` module but set them to safer defaults per the usual "authoritative control" idea of SI
+* [`iptables::firewalld::shim`](#iptablesfirewalldshim): This is a `firewalld` profile that sets "safe" defaults as is usual in SIMP modules.  If you want to override any element not present in the 
 * [`iptables::install`](#iptablesinstall): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Install the IPTables and IP6Tables compo
 * [`iptables::rules::base`](#iptablesrulesbase): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
 * [`iptables::rules::default_drop`](#iptablesrulesdefault_drop): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Manage the default policy settings of th
@@ -191,12 +191,16 @@ Default value: `undef`
 
 ### iptables::firewalld::shim
 
-These items mimic components in the actual `firewalld` module but set them to
-safer defaults per the usual "authoritative control" idea of SIMP.
+This is a `firewalld` profile that sets "safe" defaults as is usual in SIMP
+modules.
 
-Since the `firewalld` module is designed to be Hiera-driven, this was more
-understandable and safer than encapsulating the entire module in the
-`iptables` module directly.
+If you want to override any element not present in the `firewalld` class
+resource below then you should use Hiera directly on the `firewalld` class.
+
+## Class Resources
+
+The following class resources are used in this code:
+  - firewalld
 
 #### Parameters
 
@@ -259,6 +263,16 @@ What types of logs to process for denied packets.
 
 Default value: 'unicast'
 
+##### `firewall_backend`
+
+Data type: `Enum['iptables','nftables']`
+
+Allows you to set the backend that firewalld will use.
+
+* Currently set to 'iptables' due to bugs in nftables
+
+Default value: 'iptables'
+
 ##### `enable_tidy`
 
 Data type: `Boolean`
@@ -300,7 +314,7 @@ Default value: 10
 
 Data type: `Array[Optional[String[1]]]`
 
-
+The network interfaces to which the underlying 99_simp zone should apply
 
 Default value: []
 
@@ -308,7 +322,7 @@ Default value: []
 
 Data type: `Enum['default', 'ACCEPT', 'REJECT', 'DROP']`
 
-
+The default target for the 99_simp zone
 
 Default value: 'DROP'
 
