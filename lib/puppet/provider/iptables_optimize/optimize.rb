@@ -31,7 +31,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
         -A LOCAL-INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
         -A LOCAL-INPUT -i lo -j ACCEPT
         -A LOCAL-INPUT -m state --state NEW -m tcp -p tcp -m multiport --dports 22 -j ACCEPT
-        -A LOCAL-INPUT -p icmpv6 --icmp-type echo-request -j ACCEPT
+        -A LOCAL-INPUT -p ipv6-icmp -m icmp6 --icmp-type 8 -j ACCEPT
         -A LOCAL-INPUT -m state --state NEW -j LOG --log-prefix "IPT:"
         -A LOCAL-INPUT -j DROP
         COMMIT
@@ -88,8 +88,10 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
   end
 
   def system_insync?
-    optimized_rules = @ipt_config[:optimized_config].report(resource[:ignore])
-    running_rules = @ipt_config[:running_config].report(resource[:ignore])
+    enable_tracking = resource[:precise_match] == :true
+
+    optimized_rules = @ipt_config[:optimized_config].optimize.report(resource[:ignore], enable_tracking)
+    running_rules = @ipt_config[:running_config].optimize.report(resource[:ignore], enable_tracking)
 
     # We only care about tables that we're managing!
     (running_rules.keys - optimized_rules.keys).each do |chain|

@@ -25,6 +25,8 @@ end
 
 group :system_tests do
   gem 'beaker'
+  gem 'net-ssh', '~> 5.0'
   gem 'beaker-rspec'
+  gem 'beaker-vagrant'
   gem 'simp-beaker-helpers', ENV.fetch('SIMP_BEAKER_HELPERS_VERSION', '~> 1.12')
 end

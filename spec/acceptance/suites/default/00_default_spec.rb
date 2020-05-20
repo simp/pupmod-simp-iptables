@@ -14,9 +14,6 @@ hosts.each do |host|
       <<-EOS
         class { 'iptables': }
 
-        # Ironically, if iptables applies correctly, its default settings will
-        # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
-        # define a rule that permit SSH access from the standard Vagrant subnets:
         iptables::listen::tcp_stateful { 'allow_sshd':
           trusted_nets => ['0.0.0.0/0'],
           dports       => 22,
@@ -129,6 +126,10 @@ EOM
           expect(stdout).to match(/-A ATTK_CHECK -m recent --set --name ATTK .*--rsource/m)
           expect(stdout).to match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
         end
+      end
+
+      it 'should be idempotent' do
+        apply_manifest_on(host, manifest_with_scanblock_enabled, :catch_changes => true)
       end
 
       it 'should add electric fence rules to ip6tables' do

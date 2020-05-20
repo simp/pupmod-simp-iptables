@@ -1,5 +1,14 @@
-# Add management of iptables with default rule optimization and a failsafe
-# fallback mode
+# @summary Manage iptables with default rule optimization and a failsafe fallback mode
+#
+# ----------
+#
+# > It is **highly recommended** that you place this module in
+# > ``firewalld`` mode if the underlying system supports it.
+# >
+# > You can do this by setting ``simp_options::firewall: firewalld` or
+# > `iptables::enable: firewalld` in Hiera
+#
+# ----------
 #
 # This class will detect conflicts with the SIMP option
 # ``simp_options::firewall`` and, if necessary, cease management of IPTables in
@@ -15,6 +24,7 @@
 # @param enable
 #   Enable IPTables
 #
+#   * If set to ``firewalld`` will enable management of the firewall via ``simp_firewalld``
 #   * If set to ``false`` will **disable** IPTables completely
 #   * If set to ``ignore`` will stop managing IPTables
 #
@@ -37,7 +47,17 @@
 #   Run the inbuilt iptables rule optimizer to collapse the rules down to as
 #   small as is reasonably possible without reordering
 #
-#   * IPsets will be eventually be incorporated
+#   * IPSets have been incorporated via the `firewalld` module
+#
+# @param precise_match
+#   Instead of matching rule counts, perform a more precise match against the
+#   running and to-be-applied rules. You may find that minor changes, such as a
+#   simple netmask change will not be enforced without enabling this option.
+#
+#   * NOTE: You **MUST** use the exact same syntax that will be returned by
+#     `iptables-save` and `ip6tables-save` if you use this option!
+#   * For example, you cannot write `echo-request` for an ICMP echo match, you
+#     must instead use `8`.
 #
 # @param ignore
 #   Regular expressions that you would like to match in order to preserve
@@ -89,6 +109,7 @@ class iptables (
   Boolean                         $ipv6                       = true,
   Boolean                         $class_debug                = false,
   Boolean                         $optimize_rules             = true,
+  Boolean                         $precise_match              = false,
   Array[String[1]]                $ignore                     = [],
   Boolean                         $default_rules              = true,
   Boolean                         $scanblock                  = false,
@@ -130,10 +151,11 @@ class iptables (
       # These are required to run if you are managing iptables with the custom
       # types at all.
       iptables_optimize { '/etc/sysconfig/iptables':
-        optimize => $optimize_rules,
-        ignore   => $ignore,
-        disable  => !$enable,
-        require  => Class['iptables::install']
+        optimize      => $optimize_rules,
+        ignore        => $ignore,
+        disable       => !$enable,
+        precise_match => $precise_match,
+        require       => Class['iptables::install']
       }
 
       if $ipv6 and $facts['ipv6_enabled'] {
@@ -145,10 +167,11 @@ class iptables (
         }
 
         ip6tables_optimize { '/etc/sysconfig/ip6tables':
-          optimize => $optimize_rules,
-          ignore   => $ignore,
-          disable  => !$enable,
-          require  => Class['iptables::install']
+          optimize      => $optimize_rules,
+          ignore        => $ignore,
+          disable       => !$enable,
+          precise_match => $precise_match,
+          require       => Class['iptables::install']
         }
       }
 
