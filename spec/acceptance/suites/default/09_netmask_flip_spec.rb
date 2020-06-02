@@ -59,7 +59,7 @@ hosts.each do |host|
               iptables_rule { 'tcp_test':
                 table   => 'filter',
                 comment => 'Test2',
-                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT'
+                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT'
               }
             EOS
           }
@@ -79,8 +79,16 @@ hosts.each do |host|
               expect(@iptables_save.grep(%r{Test1})).not_to be_empty
             end
 
+            it 'should have original netmask 24' do
+              expect(@iptables_save.grep(%r{10.0.2.0/24})).not_to be_empty
+            end
+
             it 'should not have comment Test2' do
               expect(@iptables_save.grep(%r{Test2})).to be_empty
+            end
+
+            it 'should not have updated netmask 23' do
+              expect(@iptables_save.grep(%r{10.0.2.0/23})).to be_empty
             end
           end
         end
@@ -138,7 +146,7 @@ hosts.each do |host|
               iptables_rule { 'tcp_test':
                 table   => 'filter',
                 comment => 'Test4',
-                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT'
+                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT'
               }
             EOS
           }
@@ -157,6 +165,11 @@ hosts.each do |host|
             it 'should have updated comment Test3' do
               expect(@iptables_save.grep(%r{Test4})).not_to be_empty
               expect(@iptables_save.grep(%r{Test3})).to be_empty
+            end
+
+            it 'should have updated netmask /23' do
+              expect(@iptables_save.grep(%r{10.0.2.0/23})).not_to be_empty
+              expect(@iptables_save.grep(%r{10.0.2.0/24})).to be_empty
             end
           end
         end
