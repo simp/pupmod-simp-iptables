@@ -15,6 +15,24 @@ Puppet::Type.newtype(:iptables_optimize) do
     defaultto(:false)
   end
 
+  newparam(:precise_match) do
+    desc <<-EOM
+      Instead of matching rule counts, perform a more precise match against the
+      running and to-be-applied rules. You may find that minor changes, such as
+      a simple netmask change will not be enforced without enabling this option.
+
+      This is enabled by default because it is a more correct approach.
+
+      * NOTE: You **MUST** use the exact same syntax that will be returned by
+        `iptables-save` if you enable this option!
+      * For example, you cannot write `echo-request` for an ICMP echo match, you
+        must instead use `8`.
+    EOM
+
+    newvalues(:true, :false)
+    defaultto(:true)
+  end
+
   newparam(:ignore) do
     desc <<-EOM
       Ignore all *running* iptables rules matching one or more provided Ruby
@@ -64,7 +82,10 @@ Puppet::Type.newtype(:iptables_optimize) do
         return true
       end
 
-      if Array(is) != Array(@should)
+      is_cmp = is
+      is_cmp = :true if is == :optimized
+
+      if is_cmp != should
         @rules_differ = true
       elsif !provider.system_insync?
         @running_rules_out_of_sync = true

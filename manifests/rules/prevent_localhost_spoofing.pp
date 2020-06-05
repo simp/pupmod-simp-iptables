@@ -15,7 +15,7 @@ class iptables::rules::prevent_localhost_spoofing {
       first    => true,
       header   => false,
       apply_to => 'ipv6',
-      content  => '-A PREROUTING ! -i lo -s ::1 -j DROP'
+      content  => '-A PREROUTING -i lo ! -s ::1/128 -j DROP'
     }
   }
 }

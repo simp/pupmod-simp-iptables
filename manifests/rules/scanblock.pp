@@ -114,25 +114,62 @@ class iptables::rules::scanblock (
   }
 
   if $enable {
+    if $facts['operatingsystemmajrelease'] < '7' {
+      $_v4mask = ''
+    }
+    else {
+      $_v4mask = '--mask 255.255.255.255'
+    }
+
     iptables_rule{'attk_check':
       order    => 28,
       header   => false,
-      apply_to => 'all',
+      apply_to => 'ipv4',
       # lint:ignore:only_variable_string
       content  => @("EOM")
         -A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK
         -A ATTACKED -m limit --limit ${logs_per_minute}/min -j LOG --log-prefix "IPT: (Rule ATTACKED): "
-        -A ATTACKED -m recent --set --name BANNED --rsource -j DROP
+        -A ATTACKED -m recent --set --name BANNED ${_v4mask} --rsource -j DROP
         -A ATTK_CHECK -m recent --set --name ATTK --rsource
-        -A ATTK_CHECK -m recent --update --seconds ${seconds} --hitcount ${hitcount} ${_rttl} --name ATTK --rsource -j ATTACKED
+        -A ATTK_CHECK -m recent --update --seconds ${seconds} --hitcount ${hitcount} ${_rttl} --name ATTK ${_v4mask} --rsource -j ATTACKED
         |EOM
     }
     # lint:endignore
 
     iptables_rule{'ban_check':
       order    => 7,
-      apply_to => 'all',
-      content  => "-m recent --update --seconds ${update_interval} --name BANNED --rsource -j DROP"
+      apply_to => 'ipv4',
+      content  => "-m recent --update --seconds ${update_interval} --name BANNED ${_v4mask} --rsource -j DROP"
+    }
+
+    if $facts['ipv6_enabled'] {
+      if $facts['operatingsystemmajrelease'] < '7' {
+        $_v6mask = ''
+      }
+      else {
+        $_v6mask = '--mask ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'
+      }
+
+      iptables_rule{'attk_check_v6':
+        order    => 28,
+        header   => false,
+        apply_to => 'ipv6',
+        # lint:ignore:only_variable_string
+        content  => @("EOM")
+          -A LOCAL-INPUT -m state --state NEW -j ATTK_CHECK
+          -A ATTACKED -m limit --limit ${logs_per_minute}/min -j LOG --log-prefix "IPT: (Rule ATTACKED): "
+          -A ATTACKED -m recent --set --name BANNED ${_v6mask} --rsource -j DROP
+          -A ATTK_CHECK -m recent --set --name ATTK --rsource
+          -A ATTK_CHECK -m recent --update --seconds ${seconds} --hitcount ${hitcount} ${_rttl} --name ATTK ${_v6mask} --rsource -j ATTACKED
+          |EOM
+      }
+      # lint:endignore
+
+      iptables_rule{'ban_check_v6':
+        order    => 7,
+        apply_to => 'ipv6',
+        content  => "-m recent --update --seconds ${update_interval} --name BANNED ${_v6mask} --rsource -j DROP"
+      }
     }
   }
 

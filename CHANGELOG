@@ -1,4 +1,10 @@
-* Fri Oct 18 2019 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0
+* Wed May 27 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0
+- Fixed some bugs in the 'munge' portions of the native types.
+- Improved the internal rule matching to handle most netmask and port updates.
+- Added a `exact_match` Boolean to the `iptables_optimize` and
+  `ip6tables_optimize` native types to allow for more aggressive rule matching.
+  - This change requires that inbound rules match whatever is returned by
+    `iptables-save` and/or `ip6tables-save` to prevent iptables flapping.
 - **Experimental** firewalld support
   - Added support for voxpupuli/firewalld
   - Added an `iptables::firewalld_shim` class for configuring firewalld in

@@ -5,7 +5,7 @@
 
 **Classes**
 
-* [`iptables`](#iptables): Add management of iptables with default rule optimization and a failsafe fallback mode  This class will detect conflicts with the SIMP option
+* [`iptables`](#iptables): Manage iptables with default rule optimization and a failsafe fallback mode
 * [`iptables::firewalld::shim`](#iptablesfirewalldshim): This is a `firewalld` profile that sets "safe" defaults as is usual in SIMP modules.  If you want to override any element not present in the 
 * [`iptables::install`](#iptablesinstall): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Install the IPTables and IP6Tables compo
 * [`iptables::rules::base`](#iptablesrulesbase): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
@@ -48,8 +48,15 @@
 
 ### iptables
 
-Add management of iptables with default rule optimization and a failsafe
-fallback mode
+----------
+
+> It is **highly recommended** that you place this module in
+> ``firewalld`` mode if the underlying system supports it.
+>
+> You can do this by setting ``simp_options::firewall: firewalld` or
+> `iptables::enable: firewalld` in Hiera
+
+----------
 
 This class will detect conflicts with the SIMP option
 ``simp_options::firewall`` and, if necessary, cease management of IPTables in
@@ -72,6 +79,7 @@ Data type: `Variant[Enum['ignore','firewalld'],Boolean]`
 
 Enable IPTables
 
+* If set to ``firewalld`` will enable management of the firewall via ``simp_firewalld``
 * If set to ``false`` will **disable** IPTables completely
 * If set to ``ignore`` will stop managing IPTables
 
@@ -119,9 +127,24 @@ Data type: `Boolean`
 Run the inbuilt iptables rule optimizer to collapse the rules down to as
 small as is reasonably possible without reordering
 
-* IPsets will be eventually be incorporated
+* IPSets have been incorporated via the `firewalld` module
 
 Default value: `true`
+
+##### `precise_match`
+
+Data type: `Boolean`
+
+Instead of matching rule counts, perform a more precise match against the
+running and to-be-applied rules. You may find that minor changes, such as a
+simple netmask change will not be enforced without enabling this option.
+
+* NOTE: You **MUST** use the exact same syntax that will be returned by
+  `iptables-save` and `ip6tables-save` if you use this option!
+* For example, you cannot write `echo-request` for an ICMP echo match, you
+  must instead use `8`.
+
+Default value: `false`
 
 ##### `ignore`
 
@@ -1394,6 +1417,23 @@ iptables module.
 
 Default value: `false`
 
+##### `precise_match`
+
+Valid values: `true`, `false`
+
+Instead of matching rule counts, perform a more precise match against the
+running and to-be-applied rules. You may find that minor changes, such as
+a simple netmask change will not be enforced without enabling this option.
+
+This is enabled by default because it is a more correct approach.
+
+* NOTE: You **MUST** use the exact same syntax that will be returned by
+  `ip6tables-save` if you enable this option!
+* For example, you cannot write `echo-request` for an ICMP echo match, you
+  must instead use `8`.
+
+Default value: `true`
+
 ##### `ignore`
 
 Ignore all *running* iptables rules matching one or more provided Ruby
@@ -1496,6 +1536,23 @@ iptables module.
 
 Default value: `false`
 
+##### `precise_match`
+
+Valid values: `true`, `false`
+
+Instead of matching rule counts, perform a more precise match against the
+running and to-be-applied rules. You may find that minor changes, such as
+a simple netmask change will not be enforced without enabling this option.
+
+This is enabled by default because it is a more correct approach.
+
+* NOTE: You **MUST** use the exact same syntax that will be returned by
+  `iptables-save` if you enable this option!
+* For example, you cannot write `echo-request` for an ICMP echo match, you
+  must instead use `8`.
+
+Default value: `true`
+
 ##### `ignore`
 
 Ignore all *running* iptables rules matching one or more provided Ruby
@@ -1568,7 +1625,7 @@ Empty comments (no content and no header) will be discarded.
 
 Content will be truncated at 255 characters, including the header.
 
-Default value: ""
+Default value: ''
 
 ##### `header`
 

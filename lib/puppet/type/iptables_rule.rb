@@ -38,22 +38,7 @@ Puppet::Type.newtype(:iptables_rule) do
 
       Content will be truncated at 255 characters, including the header.
     EOM
-    defaultto ""
-
-    munge do |value|
-      if resource[:include_comment]
-        if resource[:comment_header] && !resource[:comment_header].empty?
-          value = "#{resource[:comment_header]} #{value}"
-        end
-
-        # IPTables can only take comments up to 256 characters.
-        value = value[0..255].strip
-      else
-        value = ''
-      end
-
-      value
-    end
+    defaultto ''
   end
 
   newparam(:header) do
@@ -84,7 +69,7 @@ Puppet::Type.newtype(:iptables_rule) do
     defaultto 'auto'
 
     munge do |value|
-      if value == 'all' then
+      if value == 'all'
         value = ['ipv4','ipv6']
       end
       value
@@ -116,30 +101,6 @@ Puppet::Type.newtype(:iptables_rule) do
           minimum and 999 is the max."
     newvalues(/\d+/)
     defaultto '11'
-
-    munge do |value|
-      if resource[:first].to_s == 'true' then
-        debug("Setting :order to 1 due to 'first'")
-        value = '1'
-      elsif value.to_i < 1 then
-        debug("Setting :order to 1")
-        value = '1'
-      elsif value.to_i > 999 then
-        debug("Setting :order to 999")
-        value = '999'
-      end
-
-      if resource[:absolute].to_s == 'true' then
-        if resource[:first].to_s == 'true' then
-          debug("Setting :order to absolute first")
-          value = '0'
-        else
-          debug("Setting :order to absolute last")
-          value = '999'
-        end
-      end
-      value
-    end
   end
 
   newparam(:resolve) do

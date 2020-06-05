@@ -20,6 +20,24 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     defaultto(:false)
   end
 
+  newparam(:precise_match) do
+    desc <<-EOM
+      Instead of matching rule counts, perform a more precise match against the
+      running and to-be-applied rules. You may find that minor changes, such as
+      a simple netmask change will not be enforced without enabling this option.
+
+      This is enabled by default because it is a more correct approach.
+
+      * NOTE: You **MUST** use the exact same syntax that will be returned by
+        `ip6tables-save` if you enable this option!
+      * For example, you cannot write `echo-request` for an ICMP echo match, you
+        must instead use `8`.
+    EOM
+
+    newvalues(:true, :false)
+    defaultto(:true)
+  end
+
   newparam(:ignore) do
     desc <<-EOM
       Ignore all *running* iptables rules matching one or more provided Ruby
@@ -44,7 +62,7 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     EOM
 
     munge do |value|
-      if value.empty? then
+      if value.empty?
         value = []
       else
         begin
@@ -64,12 +82,14 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     defaultto :true
 
     def insync?(is)
-      if resource[:disable] == :true then
+      if resource[:disable] == :true
         debug("IP6Tables administratively disabled due to setting $disable in ip6tables_optimize")
         return true
       end
 
-      if Array(is) != Array(@should) then
+      is_cmp = is
+      is_cmp = :true if is == :optimized
+      if is_cmp != should
         @rules_differ = true
       elsif not provider.system_insync?
         @running_rules_out_of_sync = true
@@ -79,9 +99,9 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     end
 
     def change_to_s(from,to)
-      if @rules_differ then
+      if @rules_differ
         return "System rules have changed"
-      elsif @running_rules_out_of_sync then
+      elsif @running_rules_out_of_sync
         return "Active rules do not match configured rules"
       end
     end
@@ -92,7 +112,7 @@ Puppet::Type.newtype(:ip6tables_optimize) do
     resource = catalog.resources.find_all { |r|
       r.is_a?(Puppet::Type.type(:iptables_rule))
     }
-    if not resource.empty? then
+    unless resource.empty?
       req << resource
     end
     req.flatten!

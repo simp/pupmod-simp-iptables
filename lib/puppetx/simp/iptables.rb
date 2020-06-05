@@ -379,22 +379,22 @@ module PuppetX
       #
       # @return [Hash]
       #
-      def report(to_ignore=[])
+      def report(to_ignore=[], enable_tracking=true)
         result = {}
 
         tables.each do |table|
           result[table] ||= {}
 
           rules(table).each do |rule|
-            do_ignore = false
+            ignore_rule = false
             to_ignore.each do |ignore|
               if [rule.chain, rule.jump, rule.input_interface, rule.output_interface].find {|x| ignore.match(x)}
-               do_ignore = true
+               ignore_rule = true
                break
               end
             end
 
-            next if do_ignore
+            next if ignore_rule
 
             result[table][rule.chain] ||= {}
 
@@ -402,8 +402,27 @@ module PuppetX
             tgt_key = [rule.input_interface, rule.output_interface, rule.jump].compact.join('|')
 
             unless tgt_key.empty?
-              result[table][rule.chain][tgt_key] ||= 0
-              result[table][rule.chain][tgt_key] += 1
+              result[table][rule.chain][tgt_key] ||= {}
+              result[table][rule.chain][tgt_key][:count] ||= 0
+              result[table][rule.chain][tgt_key][:count] += 1
+
+              # Better effort matching that just counts which should pick up
+              # basic changes but isn't near perfect
+
+              # These get stripped out by the underlying iptables
+              listen_all = [ '0.0.0.0/0', '::/0', '::0/0' ]
+              rule_parts = rule.to_s.scan(%r{(?:\s(?:tcp|udp|udplite|icmp|esp|ah|sctp|mh|(?:\d\.|\S:).+?/\d+)|-\S+?port.+?\d+)(?:\s|$)}).map(&:strip) - listen_all
+
+              unless rule_parts.empty?
+                result[table][rule.chain][:parts] ||= Set.new
+                result[table][rule.chain][:parts] = Set.new(rule_parts)
+              end
+
+              if enable_tracking
+                # Best, but fragile, matching
+                result[table][rule.chain][:tracking] ||= Set.new
+                result[table][rule.chain][:tracking] << rule.rule_hash
+              end
             end
           end
         end

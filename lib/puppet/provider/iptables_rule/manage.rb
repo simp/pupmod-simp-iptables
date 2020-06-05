@@ -119,9 +119,18 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
         end
       end
 
-      if !resource[:comment].to_s.empty?
-        debug("Adding comment #{resource[:comment]}")
-        content_line = "#{content_line} -m comment --comment \"#{resource[:comment]}\""
+      if resource[:include_comment]
+        comment = []
+        comment << resource[:comment_header].strip unless resource[:comment_header].empty?
+        comment << resource[:comment].strip unless resource[:comment].empty?
+
+        unless comment.empty?
+          # IPTables can only take comments up to 256 characters
+          comment = comment.join(' ')[0..255]
+          debug("Adding comment #{comment}")
+
+          content_line = %{#{content_line} -m comment --comment "#{comment}"}
+        end
       end
 
       # This should be set if the resolution code below replaces the running
@@ -214,7 +223,30 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
           iptables_rules[key][:new_content][table][:chains][$1] = "#{$2} [0:0]"
         end
       }
-      iptables_rules[key][:new_content][table][:rules]["#{resource[:order]}_#{resource[:name]}"] = parsed_rule[key].join("\n")
+
+      order = resource[:order]
+      if resource[:first].to_s == 'true'
+        Puppet.debug("Setting :order to 1 due to 'first'")
+        order = '1'
+      elsif order.to_i < 1
+        Puppet.debug("Setting :order to 1")
+        order = '1'
+      elsif order.to_i > 999
+        Puppet.debug("Setting :order to 999")
+        order = '999'
+      end
+
+      if resource[:absolute].to_s == 'true'
+        if resource[:first].to_s == 'true'
+          debug("Setting :order to absolute first")
+          order = '0'
+        else
+          debug("Setting :order to absolute last")
+          order = '999'
+        end
+      end
+
+      iptables_rules[key][:new_content][table][:rules]["#{order}_#{resource[:name]}"] = parsed_rule[key].join("\n")
     end
 
     if iptables_rules[:num_runs] == iptables_rules[:num_resources]

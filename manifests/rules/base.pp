@@ -79,7 +79,7 @@ class iptables::rules::base (
     iptables_rule { 'allow_v4_echo_request':
       table    => 'filter',
       order    => '11',
-      content  => '-p icmp --icmp-type echo-request -j ACCEPT',
+      content  => '-p icmp --icmp-type 8 -j ACCEPT',
       apply_to => 'ipv4'
     }
 
@@ -87,7 +87,7 @@ class iptables::rules::base (
       iptables_rule { 'allow_v6_echo_request':
         table    => 'filter',
         order    => '11',
-        content  => '-p icmpv6 --icmpv6-type echo-request -j ACCEPT',
+        content  => '-p ipv6-icmp -m icmp6 --icmpv6-type 8 -j ACCEPT',
         apply_to => 'ipv6'
       }
     }

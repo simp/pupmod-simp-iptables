@@ -36,20 +36,23 @@ module PuppetX
             key = opt_arr.shift.gsub(/^-*/,'')
             value = []
 
-            opts[key] ||= { :value => nil, :negate => negate }
-
             while opt_arr.first && (opt_arr.first[0] != '-')
               value << opt_arr.shift
             end
 
+            negate_next = false
             if !value.empty? && (value.last.strip == '!')
               value.pop
-              negate = true
-            else
-              negate = false
+              negate_next = true
             end
 
+            next if !negate && ((value == ['0.0.0.0/0']) || (value == ['::/0']))
+
+            opts[key] ||= { :value => nil, :negate => negate }
             opts[key][:value] = value.join(' ')
+            opts[key][:value] = opts[key][:value].split(',').sort if opts[key][:value].include?(',')
+
+            negate = negate_next
           end
         end
 
@@ -132,7 +135,8 @@ module PuppetX
 
         Array(to_normalize).each do |item|
           begin
-            normalized_array << IPAddr.new(item)
+            test_addr = IPAddr.new(item)
+            normalized_array << "#{test_addr}/#{test_addr.prefix}"
           rescue ArgumentError, NoMethodError, IPAddr::InvalidAddressError
             normalized_array << item
           end
@@ -144,17 +148,19 @@ module PuppetX
       def ==(other_rule)
         return false if (other_rule.nil? || other_rule.rule_hash.nil? || other_rule.rule_hash.empty?)
 
+        return true if (rule.strip == other_rule.to_s.strip)
+
         return false if (@rule_hash.size != other_rule.rule_hash.size)
 
-        local_hash = @rule_hash.dup
-        other_hash = other_rule.rule_hash.dup
+        local_hash = Marshal.load(Marshal.dump(@rule_hash))
+        other_hash = Marshal.load(Marshal.dump(other_rule.rule_hash))
 
         local_hash.each_key do |key|
           local_hash[key][:value] = normalize_addresses(local_hash[key][:value]) if (other_hash[key] && other_hash[key][:value])
         end
 
         other_hash.each_key do |key|
-          other_hash[key][:value] = normalize_addresses(other_hash[key][:value]) if (other_hash[key] && other_hash[key][:value])
+          other_hash[key][:value] = normalize_addresses(other_hash[key][:value]) if (local_hash[key] && local_hash[key][:value])
         end
 
         return local_hash == other_hash
