@@ -8,6 +8,7 @@ fixtures:
     firewalld:
       repo: https://github.com/simp/pupmod-voxpupuli-firewalld
       ref: v4.3.0
+    simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld
     simp_options: https://github.com/simp/pupmod-simp-simp_options
     simplib: https://github.com/simp/pupmod-simp-simplib
     stdlib: https://github.com/simp/puppetlabs-stdlib

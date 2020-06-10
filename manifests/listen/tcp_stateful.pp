@@ -78,7 +78,9 @@ define iptables::listen::tcp_stateful (
   include 'iptables'
 
   if $iptables::use_firewalld {
-    iptables::firewalld::rule { "tcp_${name}":
+    simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
+
+    simp_firewalld::rule { "tcp_${name}":
       trusted_nets => $trusted_nets,
       protocol     => 'tcp',
       dports       => $dports,

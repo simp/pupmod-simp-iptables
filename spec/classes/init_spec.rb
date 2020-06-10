@@ -45,29 +45,7 @@ describe 'iptables' do
           }}
 
           it { is_expected.to compile.with_all_deps }
-          it { is_expected.to create_class('firewalld').with(
-              {
-                :lockdown     => 'yes',
-                :default_zone => '99_simp',
-                :log_denied   => 'unicast'
-              }
-            )
-          }
-          it { is_expected.to create_class('iptables::firewalld::shim') }
-          it { is_expected.to create_exec('firewalld::complete-reload').with_onlyif('/bin/false') }
-          it { is_expected.to create_firewalld_zone('99_simp').with(
-              {
-                :purge_rich_rules => true,
-                :purge_services   => true,
-                :purge_ports      => true,
-                :interfaces       => [],
-                :target           => 'DROP',
-                :require          => 'Service[firewalld]'
-              }
-            )
-          }
-
-          it { is_expected.to create_tidy('/etc/firewalld/ipsets').with_matches(['simp_']) }
+          it { is_expected.to create_class('simp_firewalld') }
         end
 
         context "iptables::rules::base" do

@@ -35,33 +35,9 @@ describe "iptables::listen::icmp", :type => :define do
               :icmp_types   => '8',
               :trusted_nets => ipv4_nets + ipv6_nets
             }}
-            it { is_expected.to create_iptables__listen__icmp(title) }
+            it { is_expected.to compile.with_all_deps }
 
-            it {
-              is_expected.to create_firewalld_rich_rule("simp_11_icmp_#{title}_simp-sLxKcJ8Jr7GgDOF54KlBvQR2Yc").with(
-                {
-                  :ensure     => 'present',
-                  :family     => 'ipv4',
-                  :icmp_block => ['8'],
-                  :source     => { 'ipset' => 'simp-sLxKcJ8Jr7GgDOF54KlBvQR2Yc' },
-                  :action     => 'accept',
-                  :zone       => '99_simp'
-                }
-              )
-            }
-
-            it {
-              is_expected.to create_firewalld_rich_rule("simp_11_icmp_#{title}_simp-l7zVcqWPK6oo3saymLCPHgjuhp").with(
-                {
-                  :ensure     => 'present',
-                  :family     => 'ipv6',
-                  :icmp_block => ['8'],
-                  :source     => {'ipset' => 'simp-l7zVcqWPK6oo3saymLCPHgjuhp'},
-                  :action     => 'accept',
-                  :zone       => '99_simp'
-                }
-              )
-            }
+            it { is_expected.to create_simp_firewalld__rule("icmp_#{title}") }
           end
         end
       end

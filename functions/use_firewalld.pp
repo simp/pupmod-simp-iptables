@@ -26,7 +26,7 @@ function iptables::use_firewalld(
 
     if $_simplib_firewalls and ('firewalld' in $_simplib_firewalls) {
       if ($enable == 'firewalld') or
-        ($_firewalld_os_list[$_os_name] and ($_firewalld_os_list[$_os_name] <= $_os_maj_rel))
+        ($_firewalld_os_list[$_os_name] and ($_os_maj_rel >= $_firewalld_os_list[$_os_name]))
       {
         $_retval = true
       }

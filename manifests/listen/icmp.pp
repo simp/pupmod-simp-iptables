@@ -81,7 +81,9 @@ define iptables::listen::icmp (
   include 'iptables'
 
   if $iptables::use_firewalld {
-    iptables::firewalld::rule { "icmp_${name}":
+    simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
+
+    simp_firewalld::rule { "icmp_${name}":
       trusted_nets => $trusted_nets,
       protocol     => 'icmp',
       icmp_blocks  => $icmp_types,
