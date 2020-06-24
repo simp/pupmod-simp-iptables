@@ -1,3 +1,7 @@
+* Wed Jun 10 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.0
+- Removed the experimental firewalld support
+- Hooked the module into the new simp/simp_firewalld module
+
 * Wed May 27 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.4.0
 - Fixed some bugs in the 'munge' portions of the native types.
 - Improved the internal rule matching to handle most netmask and port updates.

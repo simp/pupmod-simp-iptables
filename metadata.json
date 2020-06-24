@@ -1,6 +1,6 @@
 {
   "name": "simp-iptables",
-  "version": "6.4.0",
+  "version": "6.5.0",
   "author": "SIMP Team",
   "summary": "Safely manages IPTables firewall rules",
   "license": "Apache-2.0",
@@ -8,9 +8,14 @@
   "project_page": "https://github.com/simp/pupmod-simp-iptables",
   "issues_url": "https://simp-project.atlassian.net",
   "tags": [
-    "simp",
+    "compliance",
+    "disa_stig",
+    "firewall",
     "iptables",
-    "firewall"
+    "nist",
+    "nist_800-53",
+    "simp",
+    "stig"
   ],
   "dependencies": [
     {
@@ -57,8 +62,8 @@
   "simp": {
     "optional_dependencies": [
       {
-        "name": "puppet/firewalld",
-        "version_requirement": ">= 4.2.3 < 5.0.0"
+        "name": "simp/simp_firewalld",
+        "version_requirement": ">= 0.1.0 < 2.0.0"
       }
     ]
   }

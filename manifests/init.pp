@@ -121,7 +121,9 @@ class iptables (
 
   if $enable != 'ignore' {
     if $use_firewalld {
-      include 'iptables::firewalld::shim'
+      simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
+
+      include 'simp_firewalld'
 
       if $ports {
         iptables::ports {'firewalld':

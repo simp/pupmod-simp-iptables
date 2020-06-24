@@ -66,7 +66,9 @@ systems based on regular expression matches.
 
 The module manages the ``iptables`` package, service, and rules.
 
-On systems containing the ``firewalld`` service, it is ensured to be stopped.
+On systems containing the ``firewalld`` service, it is ensured to be stopped
+unless ``iptables::use_firewalld`` is set to ``true`` or ``iptables::enable`` is
+set to ``firewalld``.
 
 ### Beginning with iptables
 
@@ -153,13 +155,10 @@ iptables::rule { 'example':
 }
 ```
 
-### Firewalld Mode (experimental)
+### Firewalld Mode
 
 This module has preliminary support for acting as a pass-through to various
-``firewalld`` capabilities using the ``voxpupuli/firewalld`` module.
-
-To put ``firewalld`` into a mode that is consistent with the current
-``iptables`` configuration, an ``iptables::firewalld_shim`` class was created.
+``firewalld`` capabilities using the ``simp/simp_firewalld`` module.
 
 Using any of the ``iptables::listen::*`` defined types will work seamlessly in
 ``firewalld`` mode but direct calls to ``iptables::rule`` will fail.
@@ -167,7 +166,7 @@ Using any of the ``iptables::listen::*`` defined types will work seamlessly in
 Additionally, calls to any of the native types included in this module will
 result in undefined behavior and is not advised.
 
-#### Enabling Firewalld Mode (experimental)
+#### Enabling Firewalld Mode
 
 To enable ``firewalld`` mode on supported operating systems, simply set
 ``iptables::use_firewalld`` to ``true`` via Hiera.

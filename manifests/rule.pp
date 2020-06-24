@@ -87,7 +87,7 @@ define iptables::rule (
     $_caller = simplib::caller()
 
     notify { 'iptables::rule with firewalld':
-      message  => "iptables::rule cannot be used directly in firewalld mode, please use iptables::firewalld::rule => Called from ${_caller}",
+      message  => "iptables::rule cannot be used directly in firewalld mode, please use simp_firewalld::rule => Called from ${_caller}",
       loglevel => 'warning'
     }
   }

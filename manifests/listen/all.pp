@@ -71,7 +71,9 @@ define iptables::listen::all (
   include 'iptables'
 
   if $iptables::use_firewalld {
-    iptables::firewalld::rule { "all_${name}":
+    simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
+
+    simp_firewalld::rule { "all_${name}":
       trusted_nets => $trusted_nets,
       protocol     => 'all',
       order        => $order,

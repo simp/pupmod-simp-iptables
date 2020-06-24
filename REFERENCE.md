@@ -6,7 +6,6 @@
 **Classes**
 
 * [`iptables`](#iptables): Manage iptables with default rule optimization and a failsafe fallback mode
-* [`iptables::firewalld::shim`](#iptablesfirewalldshim): This is a `firewalld` profile that sets "safe" defaults as is usual in SIMP modules.  If you want to override any element not present in the 
 * [`iptables::install`](#iptablesinstall): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Install the IPTables and IP6Tables compo
 * [`iptables::rules::base`](#iptablesrulesbase): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
 * [`iptables::rules::default_drop`](#iptablesrulesdefault_drop): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Manage the default policy settings of th
@@ -17,7 +16,6 @@
 
 **Defined types**
 
-* [`iptables::firewalld::rule`](#iptablesfirewalldrule): Add firewall rules via firewalld  This is primarily meant for use with the iptables::listen::* defined types. If you wish to do direct manipu
 * [`iptables::listen::all`](#iptableslistenall): Allow all protocols to all ports from a select set of networks
 * [`iptables::listen::icmp`](#iptableslistenicmp): This provides a simple way to allow ICMP ports into the system.
 * [`iptables::listen::tcp_stateful`](#iptableslistentcp_stateful): Allow access to specific ports from specific hosts or networks
@@ -211,143 +209,6 @@ structure of the hash.
       apply_to: ipv6
 
 Default value: `undef`
-
-### iptables::firewalld::shim
-
-This is a `firewalld` profile that sets "safe" defaults as is usual in SIMP
-modules.
-
-If you want to override any element not present in the `firewalld` class
-resource below then you should use Hiera directly on the `firewalld` class.
-
-## Class Resources
-
-The following class resources are used in this code:
-  - firewalld
-
-#### Parameters
-
-The following parameters are available in the `iptables::firewalld::shim` class.
-
-##### `enable`
-
-Data type: `Boolean`
-
-Activate the firewalld shim capabilties.
-
-Default value: `true`
-
-##### `complete_reload`
-
-Data type: `Boolean`
-
-The current firewalld module has the capability to perform a complete reload
-of firewalld which breaks any existing connections. This is extremely
-dangerous and this class overrides and disables this capability by default.
-
-* Set to ``true`` to re-enable this capability.
-
-Default value: `false`
-
-##### `lockdown`
-
-Data type: `Boolean`
-
-Set ``firewalld`` in ``lockdown`` mode which disallows manipulation by
-applications.
-
-* This makes sense to do by default since puppet is meant to be
-  authoritative on the system.
-
-Default value: `true`
-
-##### `default_zone`
-
-Data type: `String[1]`
-
-The 'default zone' to set on the system.
-
-This is set to ``99_simp`` so that regular, alternative, zone manipulation
-can occur without interference.
-
-**IMPORTANT:** If this is set to anything besides ``99_simp``, all rules in
-this module will **NOT** apply to the default zone! This module is set to
-only populate ``99_simp`` zone rules.
-
-Default value: '99_simp'
-
-##### `log_denied`
-
-Data type: `Enum['off', 'all','unicast','broadcast','multicast']`
-
-What types of logs to process for denied packets.
-
-@see LogDenied in firewalld.conf(5)
-
-Default value: 'unicast'
-
-##### `firewall_backend`
-
-Data type: `Enum['iptables','nftables']`
-
-Allows you to set the backend that firewalld will use.
-
-* Currently set to 'iptables' due to bugs in nftables
-
-Default value: 'iptables'
-
-##### `enable_tidy`
-
-Data type: `Boolean`
-
-Enable the ``Tidy`` resources that help keep the system clean from cruft
-
-Default value: `true`
-
-##### `tidy_dirs`
-
-Data type: `Array[Stdlib::Absolutepath]`
-
-The directories to target for tidying
-
-Default value: [
-                                                                                 '/etc/firewalld/icmptypes',
-                                                                                 '/etc/firewalld/ipsets',
-                                                                                 '/etc/firewalld/services'
-                                                                               ]
-
-##### `tidy_prefix`
-
-Data type: `String[1]`
-
-The name match to use for tidying files
-
-Default value: 'simp_'
-
-##### `tidy_minutes`
-
-Data type: `Integer[1]`
-
-Number of **minutes** to consider a configuration file 'stale' for the
-purposes of tidying.
-
-Default value: 10
-
-##### `simp_zone_interfaces`
-
-Data type: `Array[Optional[String[1]]]`
-
-The network interfaces to which the underlying 99_simp zone should apply
-
-Default value: []
-
-##### `simp_zone_target`
-
-Data type: `Enum['default', 'ACCEPT', 'REJECT', 'DROP']`
-
-The default target for the 99_simp zone
-
-Default value: 'DROP'
 
 ### iptables::install
 
@@ -731,80 +592,6 @@ Also manage IP6Tables
 Default value: pick(getvar('iptables::ipv6'),true)
 
 ## Defined types
-
-### iptables::firewalld::rule
-
-Add firewall rules via firewalld
-
-This is primarily meant for use with the iptables::listen::* defined types.
-If you wish to do direct manipulation of firewalld rules it is recommended
-that you use the Hiera-native capabilities of the firewalld module directly.
-
-#### Parameters
-
-The following parameters are available in the `iptables::firewalld::rule` defined type.
-
-##### `trusted_nets`
-
-Data type: `Simplib::Netlist`
-
-The networks/hosts to which the rule applies
-
-##### `protocol`
-
-Data type: `Enum['icmp','tcp','udp','all']`
-
-The network protocol to which the rule applies
-
-##### `dports`
-
-Data type: `Optional[Iptables::DestPort]`
-
-The ports to which the rule applies
-
-Default value: `undef`
-
-##### `icmp_blocks`
-
-Data type: `Optional[Variant[Array[String],String]]`
-
-The ICMP Blocks to which the rule applies
-
-Default value: `undef`
-
-##### `order`
-
-Data type: `Integer[0]`
-
-The order in which the rule should appear
-
-Due to the way firewalld works, this may not do what you expect unless the
-version of firewalld explicitly supports it.
-
-* 1 is the minimum and 9999999 is the maximum
-
-* The following ordering ranges are suggested (but not enforced):
-
-    * 1     -> ESTABLISHED,RELATED rules
-    * 2-5   -> Standard ACCEPT/DENY rules
-    * 6-10  -> Jumps to other rule sets
-    * 11-20 -> Pure accept rules
-    * 22-30 -> Logging and rejection rules
-
-Default value: 11
-
-##### `apply_to`
-
-Data type: `Iptables::ApplyTo`
-
-The address family to which to apply this rule
-
-* ipv4 -> iptables
-* ipv6 -> ip6tables
-* all  -> Both
-* auto -> Try to figure it out from the rule, defaults to ``all``
-
-Default value: 'auto'
 
 ### iptables::listen::all
 

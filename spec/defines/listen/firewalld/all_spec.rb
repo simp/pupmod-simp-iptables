@@ -54,14 +54,7 @@ describe "iptables::listen::all", :type => :define do
             }}
 
             it { is_expected.to compile.with_all_deps }
-            it { is_expected.to create_notify("iptables::firewalld::rule[all_#{title}] - hostname warning").with(
-                {
-                  :message => /foo\.bar\.baz, i\.like\.cheese/,
-                  :withpath => true,
-                  :loglevel => 'warning'
-                }
-              )
-            }
+            it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
           end
 
           context "with '0.0.0.0/0' in the address list" do
@@ -71,38 +64,8 @@ describe "iptables::listen::all", :type => :define do
               let( :params ){{
                 :trusted_nets => ipv4_nets + ['0.0.0.0/0']
               }}
-              it { is_expected.to create_iptables__listen__all(title) }
 
-              it { is_expected.not_to create_firewalld__custom_service("simp_all_#{title}") }
-              it { is_expected.not_to create_firewalld_service("simp_all_#{title}") }
-              it { is_expected.not_to create_firewalld_ipset('simp-YBi8gcbxcIq0JuB3tmmajXBuPA') }
-              it { is_expected.not_to create_firewalld_ipset('simp-Z4NZ2BaANQcFilLyb0EOS098rm') }
-              it {
-                is_expected.to create_firewalld_rich_rule("simp_11_all_#{title}_simp-YBi8gcbxcIq0JuB3tmmajXBuPA").with(
-                  {
-                    :ensure  => 'present',
-                    :family  => 'ipv4',
-                    :source  => '0.0.0.0/0',
-                    :service => nil,
-                    :action  => 'accept',
-                    :zone    => '99_simp',
-                    :require => 'Service[firewalld]'
-                  }
-                )
-              }
-              it {
-                is_expected.to create_firewalld_rich_rule("simp_11_all_#{title}_simp-Z4NZ2BaANQcFilLyb0EOS098rm").with(
-                  {
-                    :ensure  => 'present',
-                    :family  => 'ipv6',
-                    :source  => '::/0',
-                    :service => nil,
-                    :action  => 'accept',
-                    :zone    => '99_simp',
-                    :require => 'Service[firewalld]'
-                  }
-                )
-              }
+              it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
             end
 
             context 'IPv4 only' do
@@ -113,21 +76,7 @@ describe "iptables::listen::all", :type => :define do
                 :apply_to     => 'ipv4'
               }}
 
-              it {
-                is_expected.to create_firewalld_rich_rule("simp_11_all_#{title}_simp-YBi8gcbxcIq0JuB3tmmajXBuPA").with(
-                  {
-                    :ensure  => 'present',
-                    :family  => 'ipv4',
-                    :source  => '0.0.0.0/0',
-                    :service => nil,
-                    :action  => 'accept',
-                    :zone    => '99_simp',
-                    :require => 'Service[firewalld]'
-                  }
-                )
-              }
-
-              it { is_expected.not_to create_firewalld_rich_rule("simp_11_all_#{title}_simp-Z4NZ2BaANQcFilLyb0EOS098rm") }
+              it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
             end
 
             context 'IPv6 only' do
@@ -138,21 +87,7 @@ describe "iptables::listen::all", :type => :define do
                 :apply_to     => 'ipv6'
               }}
 
-              it {
-                is_expected.not_to create_firewalld_rich_rule("simp_11_all_#{title}_simp-Z4NZ2BaANQcFilLyb0EOS098rm").with(
-                  {
-                    :ensure  => 'present',
-                    :family  => 'ipv6',
-                    :source  => '[::]/0',
-                    :service => nil,
-                    :action  => 'accept',
-                    :zone    => 'simp',
-                    :require => 'Service[firewalld]'
-                  }
-                )
-              }
-
-              it { is_expected.not_to create_firewalld_rich_rule("simp_11_all_#{title}_simp-YBi8gcbxcIq0JuB3tmmajXBuPA") }
+              it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
             end
 
             context 'IPv4 mismatched application' do
@@ -163,9 +98,7 @@ describe "iptables::listen::all", :type => :define do
                 :apply_to     => 'ipv6'
               }}
 
-              it 'has no rich rules created' do
-                expect(catalogue.resources.select{|r| r.type == 'Firewalld_rich_rule'}).to eq([])
-              end
+              it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
             end
 
             context 'IPv6 mismatched application' do
@@ -176,9 +109,7 @@ describe "iptables::listen::all", :type => :define do
                 :apply_to     => 'ipv4'
               }}
 
-              it 'has no rich rules created' do
-                expect(catalogue.resources.select{|r| r.type == 'Firewalld_rich_rule'}).to eq([])
-              end
+              it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
             end
           end
 
@@ -188,8 +119,7 @@ describe "iptables::listen::all", :type => :define do
               :trusted_nets => ipv4_nets
             }}
 
-            it { is_expected.to create_iptables__listen__all(title) }
-            it { is_expected.not_to create_firewalld__custom_service("simp_#{title}") }
+            it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
           end
 
           context "with trusted_nets in IPv6 CIDR format" do
@@ -198,8 +128,8 @@ describe "iptables::listen::all", :type => :define do
               :trusted_nets => ipv6_nets,
               :apply_to    => 'ipv6'
             }}
-            it { is_expected.to create_iptables__listen__all(title) }
-            it { is_expected.not_to create_iptables_rule("all_#{title}") }
+
+            it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
           end
         end
       end
