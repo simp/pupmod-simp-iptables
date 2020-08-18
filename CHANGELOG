@@ -1,3 +1,10 @@
+* Tue Aug 18 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.1
+- Ensure that all addresses are normalized when rules are processed
+- Remove nested looped rule normalization of addresses since it is no longer
+  required
+- Fix normalize_addresses() so that it simply grabs the netmask if present and
+  slaps on the appropriate one if not
+
 * Wed Jun 10 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.0
 - Removed the experimental firewalld support
 - Hooked the module into the new simp/simp_firewalld module

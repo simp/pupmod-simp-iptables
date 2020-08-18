@@ -14,6 +14,34 @@ module PuppetX
       # This is true if the rule has more than just a jump in it.
       attr_reader :complex
 
+      def self.normalize_addresses(to_normalize)
+        require 'ipaddr'
+
+        normalized_array = []
+
+        Array(to_normalize).each do |item|
+          # Short circuit if it's obviously not an IP address
+          if (item.count('.') == 3) || (item.count(':') > 1)
+            begin
+              test_addr = IPAddr.new(item)
+
+              # Grab the netmask from the string and assign a reasonable default
+              # if one does not exist
+              test_netmask = item.split('/')[1] || (test_addr.family == 2 ? '32' : '128')
+
+              normalized_array << "#{test_addr}/#{test_netmask}"
+            rescue ArgumentError, NoMethodError, IPAddr::InvalidAddressError
+              normalized_array << item
+            end
+          else
+            normalized_array << item
+          end
+        end
+
+        return normalized_array.first if (normalized_array.size == 1)
+        return normalized_array
+      end
+
       def self.to_hash(rule)
         require 'optparse'
         require 'shellwords'
@@ -51,6 +79,7 @@ module PuppetX
             opts[key] ||= { :value => nil, :negate => negate }
             opts[key][:value] = value.join(' ')
             opts[key][:value] = opts[key][:value].split(',').sort if opts[key][:value].include?(',')
+            opts[key][:value] = normalize_addresses(opts[key][:value])
 
             negate = negate_next
           end
@@ -128,21 +157,9 @@ module PuppetX
         return @rule
       end
 
+      # Retained for backward compatibiilty
       def normalize_addresses(to_normalize)
-        require 'ipaddr'
-
-        normalized_array = []
-
-        Array(to_normalize).each do |item|
-          begin
-            test_addr = IPAddr.new(item)
-            normalized_array << "#{test_addr}/#{test_addr.prefix}"
-          rescue ArgumentError, NoMethodError, IPAddr::InvalidAddressError
-            normalized_array << item
-          end
-        end
-
-        return normalized_array
+        self.class.normalize_addresses(to_normalize)
       end
 
       def ==(other_rule)
@@ -154,14 +171,6 @@ module PuppetX
 
         local_hash = Marshal.load(Marshal.dump(@rule_hash))
         other_hash = Marshal.load(Marshal.dump(other_rule.rule_hash))
-
-        local_hash.each_key do |key|
-          local_hash[key][:value] = normalize_addresses(local_hash[key][:value]) if (other_hash[key] && other_hash[key][:value])
-        end
-
-        other_hash.each_key do |key|
-          other_hash[key][:value] = normalize_addresses(other_hash[key][:value]) if (local_hash[key] && local_hash[key][:value])
-        end
 
         return local_hash == other_hash
       end
