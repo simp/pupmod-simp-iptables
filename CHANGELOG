@@ -1,3 +1,6 @@
+* Tue Sep 29 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.2
+- Fix README.md inaccuracies
+
 * Tue Aug 18 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.1
 - Ensure that all addresses are normalized when rules are processed
 - Remove nested looped rule normalization of addresses since it is no longer
