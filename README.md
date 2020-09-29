@@ -6,17 +6,26 @@
 
 #### Table of Contents
 
-1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with iptables](#setup)
-    * [What iptables affects](#what-iptables-affects)
-    * [Beginning with iptables](#beginning-with-iptables)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-    * [Data Types](#data-types)
-6. [Limitations - OS compatibility, etc.](#limitations)
-7. [Development - Guide for contributing to the module](#development)
-      * [Acceptance Tests - Beaker env variables](#acceptance-tests)
+<!-- vim-markdown-toc GFM -->
+
+* [Overview](#overview)
+* [This is a SIMP module](#this-is-a-simp-module)
+* [Module Description](#module-description)
+* [Setup](#setup)
+  * [What iptables affects](#what-iptables-affects)
+  * [Beginning with iptables](#beginning-with-iptables)
+    * [I want a basic secure iptables setup](#i-want-a-basic-secure-iptables-setup)
+* [Usage](#usage)
+    * [I want to open a specific port or allow access](#i-want-to-open-a-specific-port-or-allow-access)
+    * [This module doesn't cover my specific iptables rule](#this-module-doesnt-cover-my-specific-iptables-rule)
+  * [Firewalld Mode](#firewalld-mode)
+    * [Enabling Firewalld Mode](#enabling-firewalld-mode)
+* [Reference](#reference)
+* [Limitations](#limitations)
+* [Development](#development)
+  * [Acceptance tests](#acceptance-tests)
+
+<!-- vim-markdown-toc -->
 
 ## Overview
 
@@ -84,7 +93,7 @@ A basic setup with iptables will allow the following:
 ```puppet
 # Set up iptables with the default settings
 
-include '::iptables'
+include 'iptables'
 ```
 Output (to /`etc/sysconfig/iptables`)
 
@@ -129,7 +138,7 @@ iptables::listen::udp {'DNS':
 
 #Allow a specific machine full access to this node
 
-iptables::add_all_listen { 'Central Management':
+iptables::listen::all { 'Central Management':
   trusted_nets => ['10.10.35.100'],
 }
 
@@ -161,7 +170,8 @@ This module has preliminary support for acting as a pass-through to various
 ``firewalld`` capabilities using the ``simp/simp_firewalld`` module.
 
 Using any of the ``iptables::listen::*`` defined types will work seamlessly in
-``firewalld`` mode but direct calls to ``iptables::rule`` will fail.
+``firewalld`` mode but direct calls to ``iptables::rule`` will emit a warning
+letting the user know that they must switch over to ``simp_firewalld::rule``.
 
 Additionally, calls to any of the native types included in this module will
 result in undefined behavior and is not advised.
@@ -171,7 +181,7 @@ result in undefined behavior and is not advised.
 To enable ``firewalld`` mode on supported operating systems, simply set
 ``iptables::use_firewalld`` to ``true`` via Hiera.
 
-**NOTE: EL 8 systems will enable ``firewalld`` mode by default.**
+**NOTE: EL 8 systems enable ``firewalld`` mode by default.**
 
 ## Reference
 
@@ -182,7 +192,7 @@ See [REFERENCE.md](./REFERENCE.md)
 * ``firewalld`` must be disabled if using ``iptables``. The module will disable
   ``firewalld`` if it is present and the module is not in ``firewalld``
   compatibility mode.
-* This module is intended to be used on a Redhat Enterprise Linux-compatible
+* This module is intended to be used on a Red Hat Enterprise Linux-compatible
   distribution such as EL6 and EL7. However, any distribution that uses the
   ``/etc/sysconfig/iptables`` configuration should function properly (let us
   know!).
