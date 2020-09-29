@@ -93,7 +93,7 @@ A basic setup with iptables will allow the following:
 ```puppet
 # Set up iptables with the default settings
 
-include '::iptables'
+include 'iptables'
 ```
 Output (to /`etc/sysconfig/iptables`)
 
