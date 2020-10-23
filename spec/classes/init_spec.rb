@@ -91,7 +91,6 @@ describe 'iptables' do
             it { is_expected.to raise_error(/param/) }
           end
         end
-
       end
     end
   end
