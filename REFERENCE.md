@@ -49,11 +49,10 @@
 
 ----------
 
-> It is **highly recommended** that you place this module in
-> ``firewalld`` mode if the underlying system supports it.
+> It is **highly recommended** that you place this module in ``firewalld``
+> mode if the underlying system supports it.
 >
-> You can do this by setting ``simp_options::firewall: firewalld` or
-> `iptables::enable: firewalld` in Hiera
+> You can do this by setting ``iptables::use_firewalld: true`` in Hiera
 
 ----------
 
@@ -78,7 +77,7 @@ Data type: `Variant[Enum['ignore','firewalld'],Boolean]`
 
 Enable IPTables
 
-* If set to ``firewalld`` will enable management of the firewall via ``simp_firewalld``
+* If set to ``true`` will **enable** management of IPTables
 * If set to ``false`` will **disable** IPTables completely
 * If set to ``ignore`` will stop managing IPTables
 
@@ -88,7 +87,9 @@ Default value: `simplib::lookup('simp_options::firewall', { 'default_value' => t
 
 Data type: `Boolean`
 
-**EXPERIMENTAL** Enable the firewalld-passthrough capabilties
+Explicitly enable management via ``simp_firewalld``
+
+* Systems that do not have ``firewalld`` installed will fall back to ``iptables``
 
 Default value: `iptables::use_firewalld($enable)`
 

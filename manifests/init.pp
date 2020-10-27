@@ -2,11 +2,10 @@
 #
 # ----------
 #
-# > It is **highly recommended** that you place this module in
-# > ``firewalld`` mode if the underlying system supports it.
+# > It is **highly recommended** that you place this module in ``firewalld``
+# > mode if the underlying system supports it.
 # >
-# > You can do this by setting ``simp_options::firewall: firewalld` or
-# > `iptables::enable: firewalld` in Hiera
+# > You can do this by setting ``iptables::use_firewalld: true`` in Hiera
 #
 # ----------
 #
@@ -24,12 +23,14 @@
 # @param enable
 #   Enable IPTables
 #
-#   * If set to ``firewalld`` will enable management of the firewall via ``simp_firewalld``
+#   * If set to ``true`` will **enable** management of IPTables
 #   * If set to ``false`` will **disable** IPTables completely
 #   * If set to ``ignore`` will stop managing IPTables
 #
 # @param use_firewalld
-#   **EXPERIMENTAL** Enable the firewalld-passthrough capabilties
+#   Explicitly enable management via ``simp_firewalld``
+#
+#   * Systems that do not have ``firewalld`` installed will fall back to ``iptables``
 #
 # @param ensure
 #   The state that the ``package`` resources should target
@@ -120,7 +121,7 @@ class iptables (
   simplib::assert_metadata($module_name)
 
   if $enable != 'ignore' {
-    if $use_firewalld {
+    if ( 'firewalld' in pick($facts['simplib__firewalls'], 'none') ) and $use_firewalld {
       simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
       include 'simp_firewalld'
