@@ -23,7 +23,7 @@
 # @param enable
 #   Enable IPTables
 #
-#   * If set to ``firewalld`` will enable management of the firewall via ``simp_firewalld``
+#   * If set to ``true`` will **enable** management of IPTables
 #   * If set to ``false`` will **disable** IPTables completely
 #   * If set to ``ignore`` will stop managing IPTables
 #

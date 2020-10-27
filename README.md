@@ -76,8 +76,7 @@ systems based on regular expression matches.
 The module manages the ``iptables`` package, service, and rules.
 
 On systems containing the ``firewalld`` service, it is ensured to be stopped
-unless ``iptables::use_firewalld`` is set to ``true`` or ``iptables::enable`` is
-set to ``firewalld``.
+unless ``iptables::use_firewalld`` is set to ``true``.
 
 ### Beginning with iptables
 
