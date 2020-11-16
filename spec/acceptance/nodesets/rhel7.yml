@@ -8,10 +8,9 @@
 HOSTS:
   server-el7:
     roles:
-      - server
       - default
-      - master
-      - simp_server
+      - iptables
+      - firewalld
     platform:   el-7-x86_64
     box:        generic/rhel7
     hypervisor: <%= hypervisor %>

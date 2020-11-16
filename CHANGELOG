@@ -1,3 +1,8 @@
+* Mon Nov 16 2020 Liz Nemsick <lnemsick.simp@gmail.com> - 6.5.4
+- Fixed a bug in which the iptables services and rules were not
+  managed when iptables::use_firewalld was set to true on an
+  EL6 system.
+
 * Fri Oct 23 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.3
 - Ensure that systems that do not have firewalld will not attempt to configure
   it.

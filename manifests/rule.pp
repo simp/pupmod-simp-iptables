@@ -83,7 +83,7 @@ define iptables::rule (
 ) {
   include iptables
 
-  if $iptables::use_firewalld {
+  if $iptables::firewalld_mode {
     $_caller = simplib::caller()
 
     notify { 'iptables::rule with firewalld':
