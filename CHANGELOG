@@ -3,7 +3,9 @@
   managed when iptables::use_firewalld was set to true on an
   EL6 system.
 - Fixed an ordering issue with setting `xt_recent` parameters that
-  could occur on OEL7 nodes.
+  could occur on OEL7 nodes. However, there are other issues
+  with `xt_recent` on OEL that may prevent this module from
+  working on OEL in some circumstances.
 
 * Fri Oct 23 2020 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.3
 - Ensure that systems that do not have firewalld will not attempt to configure
