@@ -61,7 +61,6 @@ class iptables::rules::mod_recent (
     refreshonly => true
   }
 
-  Xt_recent['/sys/module/xt_recent/parameters'] -> File['/etc/modprobe.d/xt_recent.conf']
   File['/etc/modprobe.d/xt_recent.conf'] ~> Exec['reload xt_recent']
 
   ### End workaround for kernel panic
