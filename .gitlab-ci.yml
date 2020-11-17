@@ -321,12 +321,15 @@ pup5.5.20-fips:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
 
 pup5.5.20-oel:
+  allow_failure: true
   <<: *pup_5_5_20
   <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
   script:
     - 'bundle exec rake beaker:suites[default,oel]'
 
 pup5.5.20-oel-fips:
+  allow_failure: true
   <<: *pup_5_5_20
   <<: *acceptance_base
   <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
@@ -342,7 +345,6 @@ pup5.5.20-firewalld:
 pup5.5.20-oel-firewalld:
   <<: *pup_5_5_20
   <<: *acceptance_base
-  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
   script:
     - 'bundle exec rake beaker:suites[firewalld,oel]'
 
@@ -377,12 +379,15 @@ pup6.18.0-fips:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
 
 pup6.18.0-oel:
+  allow_failure: true
   <<: *pup_6_18_0
   <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
   script:
     - 'bundle exec rake beaker:suites[default,oel]'
 
 pup6.18.0-oel-fips:
+  allow_failure: true
   <<: *pup_6_18_0
   <<: *acceptance_base
   <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
@@ -394,3 +399,9 @@ pup6.18.0-firewalld:
   <<: *acceptance_base
   script:
     - 'bundle exec rake beaker:suites[firewalld,default]'
+
+pup6.18.0-oel-firewalld:
+  <<: *pup_6_18_0
+  <<: *acceptance_base
+  script:
+    - 'bundle exec rake beaker:suites[firewalld,oel]'

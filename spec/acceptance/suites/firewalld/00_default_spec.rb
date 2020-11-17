@@ -7,6 +7,8 @@ hosts.each do |host|
     let(:default_manifest) {
       <<-EOS
         class { 'iptables':
+          # Explicitly set this to verify that on el6 nodes the code
+          # 'does the right thing' even if the user configures otherwise.
           use_firewalld => true
         }
 
