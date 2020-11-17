@@ -3,13 +3,13 @@ require 'spec_helper_acceptance'
 test_name "iptables class in firewalld mode"
 
 hosts.each do |host|
-  next unless host[:roles].include?('firewalld')
-
   describe "iptables class #{host} in firewalld mode" do
     let(:default_manifest) {
       <<-EOS
         class { 'iptables':
-          enable => 'firewalld'
+          # Explicitly set this to verify that on el6 nodes the code
+          # 'does the right thing' even if the user configures otherwise.
+          use_firewalld => true
         }
 
         # Ironically, if iptables applies correctly, its default settings will
@@ -31,7 +31,7 @@ hosts.each do |host|
         apply_manifest_on(host, default_manifest, :catch_changes => true)
       end
 
-      if host.file_exist?('/etc/firewalld')
+      if host[:roles].include?('firewalld')
         it 'should have "99_simp" as the default zone' do
           default_zone = on(host, 'firewall-cmd --get-default-zone').output.strip
           expect(default_zone).to eq('99_simp')
@@ -49,47 +49,45 @@ hosts.each do |host|
       end
     end
 
-    if host.file_exist?('/etc/firewalld')
-      context 'TCP listen' do
-        let(:manifest) {
-          <<-EOM
-            #{default_manifest}
+    context 'TCP listen' do
+      let(:manifest) {
+        <<-EOM
+          #{default_manifest}
 
-            iptables::listen::tcp_stateful { 'allow_tcp_listen':
-              trusted_nets => ['1.2.3.4/24', '3.4.5.6', '5.6.7.8/32'],
-              dports       => 1234
-            }
-          EOM
-        }
+          iptables::listen::tcp_stateful { 'allow_tcp_listen':
+            trusted_nets => ['1.2.3.4/24', '3.4.5.6', '5.6.7.8/32'],
+            dports       => 1234
+          }
+        EOM
+      }
 
-        it 'should work with no errors' do
-          apply_manifest_on(host, manifest, :catch_failures => true)
-        end
-
-        it 'should be idempotent' do
-          apply_manifest_on(host, manifest, :catch_changes => true)
-        end
+      it 'should work with no errors' do
+        apply_manifest_on(host, manifest, :catch_failures => true)
       end
 
-      context 'UDP listen' do
-        let(:manifest) {
-          <<-EOM
-            #{default_manifest}
+      it 'should be idempotent' do
+        apply_manifest_on(host, manifest, :catch_changes => true)
+      end
+    end
 
-            iptables::listen::udp { 'allow_udp_listen':
-              trusted_nets => ['2.3.4.5/8', '3.4.5.6', '5.6.7.8/32'],
-              dports       => 2345
-            }
-          EOM
-        }
+    context 'UDP listen' do
+      let(:manifest) {
+        <<-EOM
+          #{default_manifest}
 
-        it 'should work with no errors' do
-          apply_manifest_on(host, manifest, :catch_failures => true)
-        end
+          iptables::listen::udp { 'allow_udp_listen':
+            trusted_nets => ['2.3.4.5/8', '3.4.5.6', '5.6.7.8/32'],
+            dports       => 2345
+          }
+        EOM
+      }
 
-        it 'should be idempotent' do
-          apply_manifest_on(host, manifest, :catch_changes => true)
-        end
+      it 'should work with no errors' do
+        apply_manifest_on(host, manifest, :catch_failures => true)
+      end
+
+      it 'should be idempotent' do
+        apply_manifest_on(host, manifest, :catch_changes => true)
       end
     end
   end

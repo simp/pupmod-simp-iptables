@@ -8,10 +8,8 @@
 HOSTS:
   server-el8:
     roles:
-      - server
       - default
-      - master
-      - simp_server
+      - firewalld
     platform:   el-8-x86_64
     box:        generic/rhel8
     hypervisor: <%= hypervisor %>

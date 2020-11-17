@@ -120,8 +120,9 @@ class iptables (
 
   simplib::assert_metadata($module_name)
 
+  $firewalld_mode = ( 'firewalld' in pick($facts['simplib__firewalls'], 'none') ) and $use_firewalld
   if $enable != 'ignore' {
-    if ( 'firewalld' in pick($facts['simplib__firewalls'], 'none') ) and $use_firewalld {
+    if $firewalld_mode {
       simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
       include 'simp_firewalld'
