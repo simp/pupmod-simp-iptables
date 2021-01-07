@@ -1,6 +1,6 @@
 {
   "name": "simp-iptables",
-  "version": "6.5.4",
+  "version": "6.5.5",
   "author": "SIMP Team",
   "summary": "Safely manages IPTables firewall rules",
   "license": "Apache-2.0",
@@ -31,7 +31,6 @@
     {
       "operatingsystem": "CentOS",
       "operatingsystemrelease": [
-        "6",
         "7",
         "8"
       ]
@@ -39,7 +38,6 @@
     {
       "operatingsystem": "RedHat",
       "operatingsystemrelease": [
-        "6",
         "7",
         "8"
       ]
@@ -47,7 +45,6 @@
     {
       "operatingsystem": "OracleLinux",
       "operatingsystemrelease": [
-        "6",
         "7",
         "8"
       ]

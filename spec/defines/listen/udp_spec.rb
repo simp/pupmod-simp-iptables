@@ -6,13 +6,7 @@ describe 'iptables::listen::udp', :type => :define do
       context "on #{os}" do
         let(:facts) do
           facts = os_facts.dup
-
-          if facts[:os][:release][:major] == '6'
-            facts[:simplib__firewalls] = [ 'iptables' ]
-          else
-            facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-          end
-
+          facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
           facts
         end
 
@@ -140,15 +134,7 @@ describe 'iptables::listen::udp', :type => :define do
           }}
 
           it { is_expected.to create_iptables__listen__udp('allow_udp_range').with_dports(params[:dports]) }
-
-          if os_facts[:os][:release][:major] == '6'
-            it do
-              expected = "-m state --state NEW -p udp -s 10.0.2.0 -m multiport --dports 1234,9999:20000 -j ACCEPT\n"
-              is_expected.to create_iptables_rule("udp_#{title}").with_content(expected)
-            end
-          else
-            it { is_expected.to create_simp_firewalld__rule("udp_#{title}") }
-          end
+          it { is_expected.to create_simp_firewalld__rule("udp_#{title}") }
         end
       end
     end

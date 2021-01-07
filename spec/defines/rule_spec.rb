@@ -7,13 +7,7 @@ describe 'iptables::rule', :type => :define do
     context "on #{os}" do
       let(:facts) do
         facts = os_facts.dup
-
-        if facts[:os][:release][:major] == '6'
-          facts[:simplib__firewalls] = [ 'iptables' ]
-        else
-          facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-        end
-
+        facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
         facts
       end
 
@@ -36,15 +30,10 @@ describe 'iptables::rule', :type => :define do
 
       context 'when explicitly using firewalld' do
         let(:hieradata) { 'firewall__firewalld' }
-
-        if os_facts[:os][:release][:major] == '6'
-          it { is_expected.to create_iptables_rule(title) }
-        else
-          it { is_expected.to create_notify('iptables::rule with firewalld')
-            .with_message(/cannot be used.+Called from/)
-            .with_loglevel('warning')
-          }
-        end
+        it { is_expected.to create_notify('iptables::rule with firewalld')
+          .with_message(/cannot be used.+Called from/)
+          .with_loglevel('warning')
+        }
       end
     end
   end
