@@ -70,8 +70,6 @@ describe 'iptables' do
 
         context "iptables class with 'firewalld' enabled" do
           let(:facts){
-            # this does not represent El6 accurately, but does test a
-            # code path
             os_facts.merge({
               :simplib__firewalls => ['iptables', 'firewalld']
             })

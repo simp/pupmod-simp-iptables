@@ -15,13 +15,6 @@ HOSTS:
     box: centos/7
     hypervisor: <%= hypervisor %>
 
-  el6:
-    roles:
-      - iptables
-    platform: el-6-x86_64
-    box: centos/6
-    hypervisor: <%= hypervisor %>
-
   el8:
     roles:
       - firewalld
