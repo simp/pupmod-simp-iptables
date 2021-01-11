@@ -49,20 +49,4 @@ describe 'iptables::use_firewalld' do
     end
   end
 
-  context 'when EL6' do
-    let(:os_release) { '7' }
-    let(:firewalld) { nil }
-
-    context 'when enable=true' do
-      it { is_expected.to run.with_params(true).and_return(false) }
-    end
-
-    context 'when enable=false' do
-      it { is_expected.to run.with_params(false).and_return(false) }
-    end
-
-    context 'when enable=firewalld' do
-      it { is_expected.to run.with_params('firewalld').and_return(false) }
-    end
-  end
 end

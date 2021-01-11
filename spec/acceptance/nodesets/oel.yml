@@ -15,13 +15,6 @@ HOSTS:
     box: generic/oracle7
     hypervisor: <%= hypervisor %>
 
-  oel6:
-    roles:
-      - iptables
-    platform: el-6-x86_64
-    box: onyxpoint/oel-6-x86_64
-    hypervisor: <%= hypervisor %>
-
   oel8:
     roles:
       - firewalld

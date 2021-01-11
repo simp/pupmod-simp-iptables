@@ -1,3 +1,6 @@
+* Thu Jan 07 2021 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.5.5
+- Removed EL6 support
+
 * Mon Nov 16 2020 Liz Nemsick <lnemsick.simp@gmail.com> - 6.5.4
 - Fixed a bug in which the iptables services and rules were not
   managed when iptables::use_firewalld was set to true on an

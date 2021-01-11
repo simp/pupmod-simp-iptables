@@ -14,12 +14,7 @@ describe 'iptables' do
         context "iptables class without any parameters" do
           let(:facts) do
             facts = os_facts.dup
-            if facts[:os][:release][:major] == '6'
-              facts[:simplib__firewalls] = [ 'iptables' ]
-            else
-              facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-            end
-
+            facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
             facts
           end
 
@@ -52,12 +47,7 @@ describe 'iptables' do
         context 'iptables class with use_firewalld=true' do
           let(:facts) do
             facts = os_facts.dup
-            if facts[:os][:release][:major] == '6'
-              facts[:simplib__firewalls] = [ 'iptables' ]
-            else
-              facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-            end
-
+            facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
             facts
           end
 
@@ -66,15 +56,9 @@ describe 'iptables' do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
 
-          if os_facts[:os][:release][:major] == '6'
-            it { is_expected.to_not create_class('simp_firewalld') }
-            it { is_expected.to create_class('iptables::install') }
-            it { is_expected.to create_class('iptables::service') }
-          else
-            it { is_expected.to create_class('simp_firewalld') }
-            it { is_expected.to_not create_class('iptables::install') }
-            it { is_expected.to_not create_class('iptables::service') }
-          end
+          it { is_expected.to create_class('simp_firewalld') }
+          it { is_expected.to_not create_class('iptables::install') }
+          it { is_expected.to_not create_class('iptables::service') }
         end
 
         context "iptables class with firewall enabled from hiera via 'simp_options::firewall: true'" do
@@ -86,8 +70,6 @@ describe 'iptables' do
 
         context "iptables class with 'firewalld' enabled" do
           let(:facts){
-            # this does not represent El6 accurately, but does test a
-            # code path
             os_facts.merge({
               :simplib__firewalls => ['iptables', 'firewalld']
             })

@@ -6,13 +6,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
       context "on #{os}" do
         let(:facts) do
           facts = os_facts.dup
-
-          if facts[:os][:release][:major] == '6'
-            facts[:simplib__firewalls] = [ 'iptables' ]
-          else
-            facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-          end
-
+          facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
           facts
         end
 
@@ -128,15 +122,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
           }}
 
           it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_1234').with_dports(params[:dports]) }
-
-          if os_facts[:os][:release][:major] == '6'
-            it do
-              expected = "-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234,234:567 -j ACCEPT\n"
-              is_expected.to create_iptables_rule("tcp_#{title}").with_content(expected)
-            end
-          else
-            it { is_expected.to create_simp_firewalld__rule("tcp_#{title}") }
-          end
+          it { is_expected.to create_simp_firewalld__rule("tcp_#{title}") }
         end
       end
     end
