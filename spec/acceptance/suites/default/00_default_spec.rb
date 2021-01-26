@@ -213,11 +213,8 @@ EOM
           expect(stdout).to_not match(/-A ATTACKED -m recent --set --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
           expect(stdout).to_not match(/-A ATTK_CHECK -m recent --set --name ATTK .*--rsource/m)
 
-          #FIXME Why are these ipv6 iptables rules missing for CentOS6?
-          unless os_release == '6'
-            expect(stdout).to_not match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
-            expect(stdout).to_not match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
-          end
+          expect(stdout).to_not match(/-A LOCAL-INPUT -m recent --update --seconds 3600 --name BANNED .*--rsource -m comment --comment "SIMP:" -j DROP/m)
+          expect(stdout).to_not match(/-A ATTK_CHECK -m recent --update --seconds 60 --hitcount 2 --name ATTK .*--rsource -m comment --comment "SIMP:" -j ATTACKED/m)
         end
       end
     end
