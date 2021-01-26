@@ -114,12 +114,7 @@ class iptables::rules::scanblock (
   }
 
   if $enable {
-    if $facts['operatingsystemmajrelease'] < '7' {
-      $_v4mask = ''
-    }
-    else {
-      $_v4mask = '--mask 255.255.255.255'
-    }
+    $_v4mask = '--mask 255.255.255.255'
 
     iptables_rule{'attk_check':
       order    => 28,
@@ -143,12 +138,7 @@ class iptables::rules::scanblock (
     }
 
     if $facts['ipv6_enabled'] {
-      if $facts['operatingsystemmajrelease'] < '7' {
-        $_v6mask = ''
-      }
-      else {
-        $_v6mask = '--mask ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'
-      }
+      $_v6mask = '--mask ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'
 
       iptables_rule{'attk_check_v6':
         order    => 28,
