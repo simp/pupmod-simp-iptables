@@ -7,6 +7,7 @@
 #
 class iptables::install {
   assert_private()
+  simplib::assert_metadata($module_name)
 
   # IPV4-only stuff
   package { 'iptables': ensure => $iptables::ensure }
@@ -55,16 +56,8 @@ class iptables::install {
       content => file("${module_name}/ip6tables-retry")
     }
 
-    if $facts['os']['name'] in ['RedHat','CentOS','OracleLinux'] {
-      if $facts['os']['release']['major'] > '6' {
-        Package['iptables'] -> File['/etc/init.d/ip6tables']
-        Package['iptables'] -> File['/etc/init.d/ip6tables-retry']
-      }
-      else {
-        package { 'iptables-ipv6': ensure => $iptables::ensure }
-        Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables']
-        Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
-      }
-    }
+    package { 'iptables-ipv6': ensure => $iptables::ensure }
+    Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables']
+    Package['iptables-ipv6'] -> File['/etc/init.d/ip6tables-retry']
   }
 }
