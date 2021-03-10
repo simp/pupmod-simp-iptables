@@ -1,0 +1,3 @@
+---
+iptables::install::ipv4_package: iptables
+iptables::install::ipv6_package: iptables-ipv6

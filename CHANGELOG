@@ -1,3 +1,11 @@
+* Wed Mar 10 2021 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.5.5
+- Fixed
+  - Moved the service-relevant files out of `install` and into `service`
+  - Ensure that EL8+ installs `iptables-service` instead of trying to install
+    the EL7 packages
+  - Call `iptables::install` in all enabled modes since `firewalld` may require
+    the underlying packages
+
 * Thu Jan 07 2021 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.5.5
 - Removed EL6 support
 
