@@ -122,6 +122,9 @@ class iptables (
 
   $firewalld_mode = ( 'firewalld' in pick($facts['simplib__firewalls'], 'none') ) and $use_firewalld
   if $enable != 'ignore' {
+    # This is required in case you want to put firewalld in iptables mode
+    contain 'iptables::install'
+
     if $firewalld_mode {
       simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
@@ -134,7 +137,6 @@ class iptables (
       }
     }
     else {
-      contain 'iptables::install'
       contain 'iptables::service'
 
       if $default_rules { contain 'iptables::rules::base' }

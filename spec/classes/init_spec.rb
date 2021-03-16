@@ -22,7 +22,7 @@ describe 'iptables' do
           it { is_expected.to create_class('iptables').with_enable(true) }
 
           if os_facts[:os][:release][:major] != '8'
-            it { is_expected.to contain_package('iptables').with_ensure('installed') }
+            it { is_expected.to contain_package('iptables').with_ensure('present') }
             it { is_expected.to contain_service('iptables').with_ensure('running') }
             it { is_expected.to contain_service('iptables-retry').with_enable(true) }
             it { is_expected.to create_class('iptables::rules::base').with_allow_ping(true) }
@@ -36,7 +36,9 @@ describe 'iptables' do
           else
             it { is_expected.to create_class('simp_firewalld') }
             it { is_expected.to_not create_iptables__ports('firewalld') }
-            it { is_expected.to_not create_class('iptables::install') }
+            it { is_expected.not_to contain_package('iptables') }
+            it { is_expected.not_to contain_package('iptables-ipv6') }
+            it { is_expected.to contain_package('iptables-services').with_ensure('present') }
             it { is_expected.to_not create_class('iptables::service') }
             it { is_expected.to_not create_class('iptables::rules::default_drop') }
             it { is_expected.to_not create_file('/etc/sysconfig/iptables') }
@@ -57,7 +59,7 @@ describe 'iptables' do
           it { is_expected.to create_class('iptables').with_enable(true) }
 
           it { is_expected.to create_class('simp_firewalld') }
-          it { is_expected.to_not create_class('iptables::install') }
+          it { is_expected.to create_class('iptables::install') }
           it { is_expected.to_not create_class('iptables::service') }
         end
 
