@@ -101,8 +101,9 @@ describe 'iptables' do
           it { is_expected.to create_iptables_rule('log_all').with_apply_to('all') }
         end
 
-        context 'default spoofing prevention' do
+        context 'default spoofing prevention when not using firewalld' do
           let (:facts) { os_facts.merge( ipv6_enabled: true ) }
+          let(:params) {{ :use_firewalld => false }}
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
