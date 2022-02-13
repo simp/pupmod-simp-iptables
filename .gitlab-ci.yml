@@ -356,6 +356,13 @@ pup6.pe-fips:
   script:
     - 'BEAKER_fips=yes bundle exec rake beaker:suites[default,default]'
 
+pup6.pe-amzn2:
+  <<: *pup_6_pe
+  <<: *acceptance_base
+  <<: *with_SIMP_ACCEPTANCE_MATRIX_LEVEL_3
+  script:
+    - 'bundle exec rake beaker:suites[default,amzn2]'
+
 pup6.pe-oel:
   allow_failure: true
   <<: *pup_6_pe

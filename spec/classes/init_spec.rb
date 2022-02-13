@@ -21,8 +21,13 @@ describe 'iptables' do
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
 
-          if os_facts[:os][:release][:major] != '8'
-            it { is_expected.to contain_package('iptables').with_ensure('present') }
+          if os_facts[:os][:release][:major] < '8'
+            if os_facts[:os][:name] == 'Amazon'
+              it { is_expected.to contain_package('iptables-services').with_ensure('present') }
+            else
+              it { is_expected.to contain_package('iptables').with_ensure('present') }
+            end
+
             it { is_expected.to contain_service('iptables').with_ensure('running') }
             it { is_expected.to contain_service('iptables-retry').with_enable(true) }
             it { is_expected.to create_class('iptables::rules::base').with_allow_ping(true) }
