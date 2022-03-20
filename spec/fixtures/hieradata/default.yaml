@@ -21,3 +21,5 @@ compliance_markup::enforcement:
   - 'disa_stig'
   - 'nist_800_53'
   - 'nist_800_53_rev4'
+
+simp_firewalld::firewall_backend: iptables
