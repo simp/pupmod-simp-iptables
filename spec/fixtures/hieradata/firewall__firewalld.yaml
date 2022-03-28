@@ -1,3 +1,5 @@
 ---
 simp_options::firewall: firewalld
 iptables::use_firewalld: true
+
+simp_firewalld::firewall_backend: iptables

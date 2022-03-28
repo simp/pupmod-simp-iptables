@@ -1,2 +1,4 @@
 ---
 simp_options::firewall: true
+
+simp_firewalld::firewall_backend: iptables
