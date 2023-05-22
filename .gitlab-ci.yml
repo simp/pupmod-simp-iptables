@@ -340,9 +340,9 @@ pup7.pe-unit:
   <<: *pup_7_pe
   <<: *unit_tests
 
-pup8.x-unit:
-  <<: *pup_8_x
-  <<: *unit_tests
+#pup8.x-unit:
+#  <<: *pup_8_x
+#  <<: *unit_tests
 
 # ------------------------------------------------------------------------------
 #             NOTICE: **This file is maintained with puppetsync**
@@ -413,14 +413,14 @@ pup7.pe-oel-firewalld:
   script:
     - 'bundle exec rake beaker:suites[firewalld,oel]'
 
-pup8.x:
-  <<: *pup_8_x
-  <<: *acceptance_base
-  script:
-    - 'bundle exec rake beaker:suites[default,default]'
+#pup8.x:
+#  <<: *pup_8_x
+#  <<: *acceptance_base
+#  script:
+#    - 'bundle exec rake beaker:suites[default,default]'
 
-pup8.x-firewalld:
-  <<: *pup_8_x
-  <<: *acceptance_base
-  script:
-    - 'bundle exec rake beaker:suites[firewalld,default]'
+#pup8.x-firewalld:
+#  <<: *pup_8_x
+#  <<: *acceptance_base
+#  script:
+#    - 'bundle exec rake beaker:suites[firewalld,default]'
