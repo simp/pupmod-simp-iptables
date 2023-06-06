@@ -16,7 +16,8 @@ function iptables::use_firewalld(
   $_firewalld_os_list = {
     'RedHat'      => '8',
     'CentOS'      => '8',
-    'OracleLinux' => '8'
+    'OracleLinux' => '8',
+    'Rocky'       => '8'
   }
 
   if $enable {
