@@ -23,9 +23,9 @@ describe 'iptables' do
 
           if os_facts[:os][:release][:major] < '8'
             if os_facts[:os][:name] == 'Amazon'
-              it { is_expected.to contain_package('iptables-services').with_ensure('present') }
+              it { is_expected.to contain_package('iptables-services').with_ensure(/\A(present|installed)\Z/) }
             else
-              it { is_expected.to contain_package('iptables').with_ensure('present') }
+              it { is_expected.to contain_package('iptables').with_ensure(/\A(present|installed)\Z/) }
             end
 
             it { is_expected.to contain_service('iptables').with_ensure('running') }
@@ -43,7 +43,7 @@ describe 'iptables' do
             it { is_expected.to_not create_iptables__ports('firewalld') }
             it { is_expected.not_to contain_package('iptables') }
             it { is_expected.not_to contain_package('iptables-ipv6') }
-            it { is_expected.to contain_package('iptables-services').with_ensure('present') }
+            it { is_expected.to contain_package('iptables-services').with_ensure(/\A(present|installed)\Z/) }
             it { is_expected.to_not create_class('iptables::service') }
             it { is_expected.to_not create_class('iptables::rules::default_drop') }
             it { is_expected.to_not create_file('/etc/sysconfig/iptables') }

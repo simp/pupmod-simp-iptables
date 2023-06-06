@@ -7,6 +7,6 @@ fixtures:
     simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld.git
     simp_options: https://github.com/simp/pupmod-simp-simp_options.git
     simplib: https://github.com/simp/pupmod-simp-simplib.git
-    stdlib: https://github.com/simp/puppetlabs-stdlib.git
+    stdlib: https://github.com/simp/puppetlabs-stdlib.git 
   symlinks:
     iptables: "#{source_dir}"
