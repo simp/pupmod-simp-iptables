@@ -7,22 +7,22 @@
 ### Classes
 
 * [`iptables`](#iptables): Manage iptables with default rule optimization and a failsafe fallback mode
-* [`iptables::install`](#iptablesinstall): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Install the IPTables and IP6Tables compo
-* [`iptables::rules::base`](#iptablesrulesbase): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
-* [`iptables::rules::default_drop`](#iptablesrulesdefault_drop): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Manage the default policy settings of th
-* [`iptables::rules::mod_recent`](#iptablesrulesmod_recent): A wrapper for managing the xt_recent portion of iptables settings  It is mainly meant to be a helper class but can be used alone if required.
-* [`iptables::rules::prevent_localhost_spoofing`](#iptablesrulesprevent_localhost_spoofing): Add rules that prevent external parties from being able to send spoofed packets to your system from ::1  The sysctl setting for rp_filter han
-* [`iptables::rules::scanblock`](#iptablesrulesscanblock): Provide a method for setting up an iptables electric fence  Any host that makes it past all of your allow rules will be added to the ban list
-* [`iptables::service`](#iptablesservice): Manage the IPTables and IP6Tables services
+* [`iptables::install`](#iptables--install): Install the IPTables and IP6Tables components
+* [`iptables::rules::base`](#iptables--rules--base): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
+* [`iptables::rules::default_drop`](#iptables--rules--default_drop): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Manage the default policy settings of th
+* [`iptables::rules::mod_recent`](#iptables--rules--mod_recent): A wrapper for managing the xt_recent portion of iptables settings  It is mainly meant to be a helper class but can be used alone if required.
+* [`iptables::rules::prevent_localhost_spoofing`](#iptables--rules--prevent_localhost_spoofing): Add rules that prevent external parties from being able to send spoofed packets to your system from ::1  The sysctl setting for rp_filter han
+* [`iptables::rules::scanblock`](#iptables--rules--scanblock): Provide a method for setting up an iptables electric fence  Any host that makes it past all of your allow rules will be added to the ban list
+* [`iptables::service`](#iptables--service): Manage the IPTables and IP6Tables services  This also installs fallback startup scripts that come into play should the regular processes fail
 
 ### Defined types
 
-* [`iptables::listen::all`](#iptableslistenall): Allow all protocols to all ports from a select set of networks
-* [`iptables::listen::icmp`](#iptableslistenicmp): This provides a simple way to allow ICMP ports into the system.
-* [`iptables::listen::tcp_stateful`](#iptableslistentcp_stateful): Allow access to specific ports from specific hosts or networks
-* [`iptables::listen::udp`](#iptableslistenudp): Expose UDP ports to a set of hosts
-* [`iptables::ports`](#iptablesports): A define to allow for the standardization of the  iptables::ports syntax across modules
-* [`iptables::rule`](#iptablesrule): Add rules to the IPTables configuration file   ### Result:   *filter  :INPUT DROP [0:0]  :FORWARD DROP [0:0]  :OUTPUT ACCEPT [0:0]  :LOCAL-IN
+* [`iptables::listen::all`](#iptables--listen--all): Allow all protocols to all ports from a select set of networks
+* [`iptables::listen::icmp`](#iptables--listen--icmp): This provides a simple way to allow ICMP ports into the system.
+* [`iptables::listen::tcp_stateful`](#iptables--listen--tcp_stateful): Allow access to specific ports from specific hosts or networks
+* [`iptables::listen::udp`](#iptables--listen--udp): Expose UDP ports to a set of hosts
+* [`iptables::ports`](#iptables--ports): A define to allow for the standardization of the  iptables::ports syntax across modules
+* [`iptables::rule`](#iptables--rule): Add rules to the IPTables configuration file   ### Result:   *filter  :INPUT DROP [0:0]  :FORWARD DROP [0:0]  :OUTPUT ACCEPT [0:0]  :LOCAL-IN
 
 ### Resource types
 
@@ -34,14 +34,14 @@
 
 ### Functions
 
-* [`iptables::slice_ports`](#iptablesslice_ports): Split a stringified Iptables::DestPort into an Array that contain groupings of `max_length` size.
-* [`iptables::use_firewalld`](#iptablesuse_firewalld): Returns ``true`` if the client can/should use firewalld
+* [`iptables::slice_ports`](#iptables--slice_ports): Split a stringified Iptables::DestPort into an Array that contain groupings of `max_length` size.
+* [`iptables::use_firewalld`](#iptables--use_firewalld): Returns ``true`` if the client can/should use firewalld
 
 ### Data types
 
-* [`Iptables::ApplyTo`](#iptablesapplyto): Valid families to which rules should apply
-* [`Iptables::DestPort`](#iptablesdestport): An ``iptables_rule`` compatible port range or Array
-* [`Iptables::PortRange`](#iptablesportrange): An iptables-compatible Port Range
+* [`Iptables::ApplyTo`](#Iptables--ApplyTo): Valid families to which rules should apply
+* [`Iptables::DestPort`](#Iptables--DestPort): An ``iptables_rule`` compatible port range or Array
+* [`Iptables::PortRange`](#Iptables--PortRange): An iptables-compatible Port Range
 
 ## Classes
 
@@ -71,20 +71,20 @@ manage IPTables as expected.
 
 The following parameters are available in the `iptables` class:
 
-* [`enable`](#enable)
-* [`use_firewalld`](#use_firewalld)
-* [`ensure`](#ensure)
-* [`ipv6`](#ipv6)
-* [`class_debug`](#class_debug)
-* [`optimize_rules`](#optimize_rules)
-* [`precise_match`](#precise_match)
-* [`ignore`](#ignore)
-* [`default_rules`](#default_rules)
-* [`scanblock`](#scanblock)
-* [`prevent_localhost_spoofing`](#prevent_localhost_spoofing)
-* [`ports`](#ports)
+* [`enable`](#-iptables--enable)
+* [`use_firewalld`](#-iptables--use_firewalld)
+* [`ensure`](#-iptables--ensure)
+* [`ipv6`](#-iptables--ipv6)
+* [`class_debug`](#-iptables--class_debug)
+* [`optimize_rules`](#-iptables--optimize_rules)
+* [`precise_match`](#-iptables--precise_match)
+* [`ignore`](#-iptables--ignore)
+* [`default_rules`](#-iptables--default_rules)
+* [`scanblock`](#-iptables--scanblock)
+* [`prevent_localhost_spoofing`](#-iptables--prevent_localhost_spoofing)
+* [`ports`](#-iptables--ports)
 
-##### <a name="enable"></a>`enable`
+##### <a name="-iptables--enable"></a>`enable`
 
 Data type: `Variant[Enum['ignore','firewalld'],Boolean]`
 
@@ -96,7 +96,7 @@ Enable IPTables
 
 Default value: `simplib::lookup('simp_options::firewall', { 'default_value' => true })`
 
-##### <a name="use_firewalld"></a>`use_firewalld`
+##### <a name="-iptables--use_firewalld"></a>`use_firewalld`
 
 Data type: `Boolean`
 
@@ -106,7 +106,7 @@ Explicitly enable management via ``simp_firewalld``
 
 Default value: `iptables::use_firewalld($enable)`
 
-##### <a name="ensure"></a>`ensure`
+##### <a name="-iptables--ensure"></a>`ensure`
 
 Data type: `String`
 
@@ -117,23 +117,23 @@ The state that the ``package`` resources should target
 
 Default value: `simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' })`
 
-##### <a name="ipv6"></a>`ipv6`
+##### <a name="-iptables--ipv6"></a>`ipv6`
 
 Data type: `Boolean`
 
 Also manage IP6Tables
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="class_debug"></a>`class_debug`
+##### <a name="-iptables--class_debug"></a>`class_debug`
 
 Data type: `Boolean`
 
 Print messages regarding rule comparisons
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="optimize_rules"></a>`optimize_rules`
+##### <a name="-iptables--optimize_rules"></a>`optimize_rules`
 
 Data type: `Boolean`
 
@@ -142,9 +142,9 @@ small as is reasonably possible without reordering
 
 * IPSets have been incorporated via the `firewalld` module
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="precise_match"></a>`precise_match`
+##### <a name="-iptables--precise_match"></a>`precise_match`
 
 Data type: `Boolean`
 
@@ -157,9 +157,9 @@ simple netmask change will not be enforced without enabling this option.
 * For example, you cannot write `echo-request` for an ICMP echo match, you
   must instead use `8`.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="ignore"></a>`ignore`
+##### <a name="-iptables--ignore"></a>`ignore`
 
 Data type: `Array[String[1]]`
 
@@ -172,7 +172,7 @@ running rules
 
 Default value: `[]`
 
-##### <a name="default_rules"></a>`default_rules`
+##### <a name="-iptables--default_rules"></a>`default_rules`
 
 Data type: `Boolean`
 
@@ -186,9 +186,9 @@ most systems
     * 11-20 -> Pure ``ACCEPT`` rules
     * 22-30 -> ``LOG`` and ``REJECT`` rules
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="scanblock"></a>`scanblock`
+##### <a name="-iptables--scanblock"></a>`scanblock`
 
 Data type: `Boolean`
 
@@ -196,18 +196,18 @@ Enable a technique for setting up port-based triggers that will block
 anyone connecting to the system for an hour after connection to a forbidden
 port
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="prevent_localhost_spoofing"></a>`prevent_localhost_spoofing`
+##### <a name="-iptables--prevent_localhost_spoofing"></a>`prevent_localhost_spoofing`
 
 Data type: `Boolean`
 
 Add rules to ``PREROUTING`` that will prevent spoofed packets from
 ``localhost`` addresses from reaching your system
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="ports"></a>`ports`
+##### <a name="-iptables--ports"></a>`ports`
 
 Data type: `Optional[Hash]`
 
@@ -223,18 +223,36 @@ structure of the hash.
     443:
       apply_to: ipv6
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="iptablesinstall"></a>`iptables::install`
-
-**NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
+### <a name="iptables--install"></a>`iptables::install`
 
 Install the IPTables and IP6Tables components
 
-This also installs fallback startup scripts that come into play should the
-regular processes fail to start due to a race consition with DNS.
+#### Parameters
 
-### <a name="iptablesrulesbase"></a>`iptables::rules::base`
+The following parameters are available in the `iptables::install` class:
+
+* [`ipv4_package`](#-iptables--install--ipv4_package)
+* [`ipv6_package`](#-iptables--install--ipv6_package)
+
+##### <a name="-iptables--install--ipv4_package"></a>`ipv4_package`
+
+Data type: `String[1]`
+
+The package used to manage ipv4 rules
+
+* Default from module data
+
+##### <a name="-iptables--install--ipv6_package"></a>`ipv6_package`
+
+Data type: `String[1]`
+
+The package used to manage ipv6 rules
+
+* Default from module data
+
+### <a name="iptables--rules--base"></a>`iptables::rules::base`
 
 **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 
@@ -251,13 +269,13 @@ The rules defined in here follow the following suggestion:
 
 The following parameters are available in the `iptables::rules::base` class:
 
-* [`allow_ping`](#allow_ping)
-* [`drop_broadcast`](#drop_broadcast)
-* [`drop_loopback`](#drop_loopback)
-* [`drop_multicast`](#drop_multicast)
-* [`force_local_input`](#force_local_input)
+* [`allow_ping`](#-iptables--rules--base--allow_ping)
+* [`drop_broadcast`](#-iptables--rules--base--drop_broadcast)
+* [`drop_loopback`](#-iptables--rules--base--drop_loopback)
+* [`drop_multicast`](#-iptables--rules--base--drop_multicast)
+* [`force_local_input`](#-iptables--rules--base--force_local_input)
 
-##### <a name="allow_ping"></a>`allow_ping`
+##### <a name="-iptables--rules--base--allow_ping"></a>`allow_ping`
 
 Data type: `Boolean`
 
@@ -267,17 +285,17 @@ Allow ICMP type 8 (ping) packets into the host
 
 @see https://tools.ietf.org/html/rfc1122#page-42 RFC 1122 Section 3.2.2.6
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="drop_broadcast"></a>`drop_broadcast`
+##### <a name="-iptables--rules--base--drop_broadcast"></a>`drop_broadcast`
 
 Data type: `Boolean`
 
 Drop all broadcast traffic to this host
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="drop_loopback"></a>`drop_loopback`
+##### <a name="-iptables--rules--base--drop_loopback"></a>`drop_loopback`
 
 Data type: `Boolean`
 
@@ -285,17 +303,17 @@ Drop all loopback traffic to this host
 
 @see https://tools.ietf.org/html/rfc1122#page-31 RFC 1122 Section 3.2.1.3(g)
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="drop_multicast"></a>`drop_multicast`
+##### <a name="-iptables--rules--base--drop_multicast"></a>`drop_multicast`
 
 Data type: `Boolean`
 
 Drop all multicast traffic to this host
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="force_local_input"></a>`force_local_input`
+##### <a name="-iptables--rules--base--force_local_input"></a>`force_local_input`
 
 Data type: `Boolean`
 
@@ -304,9 +322,9 @@ Require that all traffic traverse the LOCAL-INPUT chain
 * If set to `false`, will put LOCAL-INPUT at the bottom of the INPUT
   traversal stack so that other chains may easily be added above.
 
-Default value: ``true``
+Default value: `true`
 
-### <a name="iptablesrulesdefault_drop"></a>`iptables::rules::default_drop`
+### <a name="iptables--rules--default_drop"></a>`iptables::rules::default_drop`
 
 **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**
 
@@ -326,35 +344,35 @@ create your own resources
 
 The following parameters are available in the `iptables::rules::default_drop` class:
 
-* [`filter_input`](#filter_input)
-* [`filter_forward`](#filter_forward)
-* [`filter_output`](#filter_output)
+* [`filter_input`](#-iptables--rules--default_drop--filter_input)
+* [`filter_forward`](#-iptables--rules--default_drop--filter_forward)
+* [`filter_output`](#-iptables--rules--default_drop--filter_output)
 
-##### <a name="filter_input"></a>`filter_input`
-
-Data type: `Optional[Boolean]`
-
-
-
-Default value: ``undef``
-
-##### <a name="filter_forward"></a>`filter_forward`
+##### <a name="-iptables--rules--default_drop--filter_input"></a>`filter_input`
 
 Data type: `Optional[Boolean]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-##### <a name="filter_output"></a>`filter_output`
+##### <a name="-iptables--rules--default_drop--filter_forward"></a>`filter_forward`
 
 Data type: `Optional[Boolean]`
 
 
 
-Default value: ``undef``
+Default value: `undef`
 
-### <a name="iptablesrulesmod_recent"></a>`iptables::rules::mod_recent`
+##### <a name="-iptables--rules--default_drop--filter_output"></a>`filter_output`
+
+Data type: `Optional[Boolean]`
+
+
+
+Default value: `undef`
+
+### <a name="iptables--rules--mod_recent"></a>`iptables::rules::mod_recent`
 
 A wrapper for managing the xt_recent portion of iptables settings
 
@@ -365,23 +383,23 @@ required.
 
 The following parameters are available in the `iptables::rules::mod_recent` class:
 
-* [`notify_iptables`](#notify_iptables)
-* [`ip_list_tot`](#ip_list_tot)
-* [`ip_pkt_list_tot`](#ip_pkt_list_tot)
-* [`ip_list_hash_size`](#ip_list_hash_size)
-* [`ip_list_perms`](#ip_list_perms)
-* [`ip_list_uid`](#ip_list_uid)
-* [`ip_list_gid`](#ip_list_gid)
+* [`notify_iptables`](#-iptables--rules--mod_recent--notify_iptables)
+* [`ip_list_tot`](#-iptables--rules--mod_recent--ip_list_tot)
+* [`ip_pkt_list_tot`](#-iptables--rules--mod_recent--ip_pkt_list_tot)
+* [`ip_list_hash_size`](#-iptables--rules--mod_recent--ip_list_hash_size)
+* [`ip_list_perms`](#-iptables--rules--mod_recent--ip_list_perms)
+* [`ip_list_uid`](#-iptables--rules--mod_recent--ip_list_uid)
+* [`ip_list_gid`](#-iptables--rules--mod_recent--ip_list_gid)
 
-##### <a name="notify_iptables"></a>`notify_iptables`
+##### <a name="-iptables--rules--mod_recent--notify_iptables"></a>`notify_iptables`
 
 Data type: `Boolean`
 
 Notify the IPTables service when complete
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="ip_list_tot"></a>`ip_list_tot`
+##### <a name="-iptables--rules--mod_recent--ip_list_tot"></a>`ip_list_tot`
 
 Data type: `Integer[0]`
 
@@ -392,7 +410,7 @@ The number of addresses remembered per table
 
 Default value: `200`
 
-##### <a name="ip_pkt_list_tot"></a>`ip_pkt_list_tot`
+##### <a name="-iptables--rules--mod_recent--ip_pkt_list_tot"></a>`ip_pkt_list_tot`
 
 Data type: `Integer[0]`
 
@@ -400,7 +418,7 @@ The number of packets per address remembered
 
 Default value: `20`
 
-##### <a name="ip_list_hash_size"></a>`ip_list_hash_size`
+##### <a name="-iptables--rules--mod_recent--ip_list_hash_size"></a>`ip_list_hash_size`
 
 Data type: `Integer[0]`
 
@@ -410,7 +428,7 @@ Hash table size
 
 Default value: `0`
 
-##### <a name="ip_list_perms"></a>`ip_list_perms`
+##### <a name="-iptables--rules--mod_recent--ip_list_perms"></a>`ip_list_perms`
 
 Data type: `String`
 
@@ -418,7 +436,7 @@ Permissions for ``/proc/net/xt_recent/*`` files
 
 Default value: `'0640'`
 
-##### <a name="ip_list_uid"></a>`ip_list_uid`
+##### <a name="-iptables--rules--mod_recent--ip_list_uid"></a>`ip_list_uid`
 
 Data type: `Integer[0]`
 
@@ -426,7 +444,7 @@ Numerical UID for ownership of ``/proc/net/xt_recent/*`` files
 
 Default value: `0`
 
-##### <a name="ip_list_gid"></a>`ip_list_gid`
+##### <a name="-iptables--rules--mod_recent--ip_list_gid"></a>`ip_list_gid`
 
 Data type: `Integer[0]`
 
@@ -434,14 +452,14 @@ Numerical GID for ownership of ``/proc/net/xt_recent/*`` files
 
 Default value: `0`
 
-### <a name="iptablesrulesprevent_localhost_spoofing"></a>`iptables::rules::prevent_localhost_spoofing`
+### <a name="iptables--rules--prevent_localhost_spoofing"></a>`iptables::rules::prevent_localhost_spoofing`
 
 Add rules that prevent external parties from being able to send spoofed
 packets to your system from ::1
 
 The sysctl setting for rp_filter handles this for IPv4
 
-### <a name="iptablesrulesscanblock"></a>`iptables::rules::scanblock`
+### <a name="iptables--rules--scanblock"></a>`iptables::rules::scanblock`
 
 Provide a method for setting up an iptables electric fence
 
@@ -486,28 +504,28 @@ are just some useful commands.
 
 The following parameters are available in the `iptables::rules::scanblock` class:
 
-* [`enable`](#enable)
-* [`seconds`](#seconds)
-* [`hitcount`](#hitcount)
-* [`set_rttl`](#set_rttl)
-* [`update_interval`](#update_interval)
-* [`logs_per_minute`](#logs_per_minute)
-* [`ip_list_tot`](#ip_list_tot)
-* [`ip_pkt_list_tot`](#ip_pkt_list_tot)
-* [`ip_list_hash_size`](#ip_list_hash_size)
-* [`ip_list_perms`](#ip_list_perms)
-* [`ip_list_uid`](#ip_list_uid)
-* [`ip_list_gid`](#ip_list_gid)
+* [`enable`](#-iptables--rules--scanblock--enable)
+* [`seconds`](#-iptables--rules--scanblock--seconds)
+* [`hitcount`](#-iptables--rules--scanblock--hitcount)
+* [`set_rttl`](#-iptables--rules--scanblock--set_rttl)
+* [`update_interval`](#-iptables--rules--scanblock--update_interval)
+* [`logs_per_minute`](#-iptables--rules--scanblock--logs_per_minute)
+* [`ip_list_tot`](#-iptables--rules--scanblock--ip_list_tot)
+* [`ip_pkt_list_tot`](#-iptables--rules--scanblock--ip_pkt_list_tot)
+* [`ip_list_hash_size`](#-iptables--rules--scanblock--ip_list_hash_size)
+* [`ip_list_perms`](#-iptables--rules--scanblock--ip_list_perms)
+* [`ip_list_uid`](#-iptables--rules--scanblock--ip_list_uid)
+* [`ip_list_gid`](#-iptables--rules--scanblock--ip_list_gid)
 
-##### <a name="enable"></a>`enable`
+##### <a name="-iptables--rules--scanblock--enable"></a>`enable`
 
 Data type: `Boolean`
 
 Enable or disable scan blocking
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="seconds"></a>`seconds`
+##### <a name="-iptables--rules--scanblock--seconds"></a>`seconds`
 
 Data type: `Integer[0]`
 
@@ -518,7 +536,7 @@ considered an attack
 
 Default value: `60`
 
-##### <a name="hitcount"></a>`hitcount`
+##### <a name="-iptables--rules--scanblock--hitcount"></a>`hitcount`
 
 Data type: `Integer[0]`
 
@@ -527,16 +545,16 @@ attack
 
 Default value: `2`
 
-##### <a name="set_rttl"></a>`set_rttl`
+##### <a name="-iptables--rules--scanblock--set_rttl"></a>`set_rttl`
 
 Data type: `Boolean`
 
 Set this if you worry about having external parties DoS your system by
 spoofing their IP addresses
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="update_interval"></a>`update_interval`
+##### <a name="-iptables--rules--scanblock--update_interval"></a>`update_interval`
 
 Data type: `Integer[0]`
 
@@ -547,7 +565,7 @@ Block attackers for this long (in seconds)
 
 Default value: `3600`
 
-##### <a name="logs_per_minute"></a>`logs_per_minute`
+##### <a name="-iptables--rules--scanblock--logs_per_minute"></a>`logs_per_minute`
 
 Data type: `Integer[0]`
 
@@ -557,7 +575,7 @@ How many logs to send given logs_per_minute connections per minute
 
 Default value: `5`
 
-##### <a name="ip_list_tot"></a>`ip_list_tot`
+##### <a name="-iptables--rules--scanblock--ip_list_tot"></a>`ip_list_tot`
 
 Data type: `Integer[0]`
 
@@ -568,7 +586,7 @@ The number of addresses remembered per table
 
 Default value: `200`
 
-##### <a name="ip_pkt_list_tot"></a>`ip_pkt_list_tot`
+##### <a name="-iptables--rules--scanblock--ip_pkt_list_tot"></a>`ip_pkt_list_tot`
 
 Data type: `Integer[0]`
 
@@ -576,7 +594,7 @@ The number of packets per address remembered
 
 Default value: `20`
 
-##### <a name="ip_list_hash_size"></a>`ip_list_hash_size`
+##### <a name="-iptables--rules--scanblock--ip_list_hash_size"></a>`ip_list_hash_size`
 
 Data type: `Integer[0]`
 
@@ -586,7 +604,7 @@ Hash table size
 
 Default value: `0`
 
-##### <a name="ip_list_perms"></a>`ip_list_perms`
+##### <a name="-iptables--rules--scanblock--ip_list_perms"></a>`ip_list_perms`
 
 Data type: `String`
 
@@ -594,7 +612,7 @@ Permissions for ``/proc/net/xt_recent/*`` files
 
 Default value: `'0640'`
 
-##### <a name="ip_list_uid"></a>`ip_list_uid`
+##### <a name="-iptables--rules--scanblock--ip_list_uid"></a>`ip_list_uid`
 
 Data type: `Integer[0]`
 
@@ -602,7 +620,7 @@ Numerical ``UID`` for ownership of ``/proc/net/xt_recent/*`` files
 
 Default value: `0`
 
-##### <a name="ip_list_gid"></a>`ip_list_gid`
+##### <a name="-iptables--rules--scanblock--ip_list_gid"></a>`ip_list_gid`
 
 Data type: `Integer[0]`
 
@@ -610,18 +628,21 @@ Numerical ``GID`` for ownership of ``/proc/net/xt_recent/*`` files
 
 Default value: `0`
 
-### <a name="iptablesservice"></a>`iptables::service`
+### <a name="iptables--service"></a>`iptables::service`
 
 Manage the IPTables and IP6Tables services
+
+This also installs fallback startup scripts that come into play should the
+regular processes fail to start due to a race condition with DNS.
 
 #### Parameters
 
 The following parameters are available in the `iptables::service` class:
 
-* [`enable`](#enable)
-* [`ipv6`](#ipv6)
+* [`enable`](#-iptables--service--enable)
+* [`ipv6`](#-iptables--service--ipv6)
 
-##### <a name="enable"></a>`enable`
+##### <a name="-iptables--service--enable"></a>`enable`
 
 Data type: `Any`
 
@@ -632,7 +653,7 @@ Enable IPTables
 
 Default value: `pick(getvar('iptables::enable'),true)`
 
-##### <a name="ipv6"></a>`ipv6`
+##### <a name="-iptables--service--ipv6"></a>`ipv6`
 
 Data type: `Any`
 
@@ -642,7 +663,7 @@ Default value: `pick(getvar('iptables::ipv6'),true)`
 
 ## Defined types
 
-### <a name="iptableslistenall"></a>`iptables::listen::all`
+### <a name="iptables--listen--all"></a>`iptables::listen::all`
 
 Allow all protocols to all ports from a select set of networks
 
@@ -679,21 +700,21 @@ COMMIT
 
 The following parameters are available in the `iptables::listen::all` defined type:
 
-* [`first`](#first)
-* [`absolute`](#absolute)
-* [`order`](#order)
-* [`apply_to`](#apply_to)
-* [`trusted_nets`](#trusted_nets)
+* [`first`](#-iptables--listen--all--first)
+* [`absolute`](#-iptables--listen--all--absolute)
+* [`order`](#-iptables--listen--all--order)
+* [`apply_to`](#-iptables--listen--all--apply_to)
+* [`trusted_nets`](#-iptables--listen--all--trusted_nets)
 
-##### <a name="first"></a>`first`
+##### <a name="-iptables--listen--all--first"></a>`first`
 
 Data type: `Boolean`
 
 Prepend this rule to the rule set
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="absolute"></a>`absolute`
+##### <a name="-iptables--listen--all--absolute"></a>`absolute`
 
 Data type: `Boolean`
 
@@ -704,9 +725,9 @@ setting of ``first``
 * If ``first`` is false, this rule will be at the bottom of the list
 * For all ``absolute`` rules, alphabetical sorting still takes place
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="order"></a>`order`
+##### <a name="-iptables--listen--all--order"></a>`order`
 
 Data type: `Integer[0]`
 
@@ -724,7 +745,7 @@ The order in which the rule should appear
 
 Default value: `11`
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables--listen--all--apply_to"></a>`apply_to`
 
 Data type: `Iptables::ApplyTo`
 
@@ -737,7 +758,7 @@ The IPTables network type to which to apply this rule
 
 Default value: `'auto'`
 
-##### <a name="trusted_nets"></a>`trusted_nets`
+##### <a name="-iptables--listen--all--trusted_nets"></a>`trusted_nets`
 
 Data type: `Simplib::Netlist`
 
@@ -747,7 +768,7 @@ Set to ``any`` to allow all networks
 
 Default value: `simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })`
 
-### <a name="iptableslistenicmp"></a>`iptables::listen::icmp`
+### <a name="iptables--listen--icmp"></a>`iptables::listen::icmp`
 
 This provides a simple way to allow ICMP ports into the system.
 
@@ -788,14 +809,14 @@ COMMIT
 
 The following parameters are available in the `iptables::listen::icmp` defined type:
 
-* [`icmp_types`](#icmp_types)
-* [`first`](#first)
-* [`absolute`](#absolute)
-* [`order`](#order)
-* [`apply_to`](#apply_to)
-* [`trusted_nets`](#trusted_nets)
+* [`icmp_types`](#-iptables--listen--icmp--icmp_types)
+* [`first`](#-iptables--listen--icmp--first)
+* [`absolute`](#-iptables--listen--icmp--absolute)
+* [`order`](#-iptables--listen--icmp--order)
+* [`apply_to`](#-iptables--listen--icmp--apply_to)
+* [`trusted_nets`](#-iptables--listen--icmp--trusted_nets)
 
-##### <a name="icmp_types"></a>`icmp_types`
+##### <a name="-iptables--listen--icmp--icmp_types"></a>`icmp_types`
 
 Data type: `Variant[Array[String],String]`
 
@@ -804,15 +825,15 @@ The iptables-compatible ICMP types that should be allowed
 * You can list the ICMP types with ``iptables -p icmp -h``
 * Set to ``any`` to allow **all** ICMP types
 
-##### <a name="first"></a>`first`
+##### <a name="-iptables--listen--icmp--first"></a>`first`
 
 Data type: `Boolean`
 
 Prepend this rule to the rule set
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="absolute"></a>`absolute`
+##### <a name="-iptables--listen--icmp--absolute"></a>`absolute`
 
 Data type: `Boolean`
 
@@ -823,9 +844,9 @@ setting of ``first``
 * If ``first`` is false, this rule will be at the bottom of the list
 * For all ``absolute`` rules, alphabetical sorting still takes place
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="order"></a>`order`
+##### <a name="-iptables--listen--icmp--order"></a>`order`
 
 Data type: `Integer[0]`
 
@@ -843,7 +864,7 @@ The order in which the rule should appear
 
 Default value: `11`
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables--listen--icmp--apply_to"></a>`apply_to`
 
 Data type: `Iptables::ApplyTo`
 
@@ -856,7 +877,7 @@ The IPTables network type to which to apply this rule
 
 Default value: `'auto'`
 
-##### <a name="trusted_nets"></a>`trusted_nets`
+##### <a name="-iptables--listen--icmp--trusted_nets"></a>`trusted_nets`
 
 Data type: `Simplib::Netlist`
 
@@ -866,7 +887,7 @@ Set to ``any`` to allow all networks
 
 Default value: `simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })`
 
-### <a name="iptableslistentcp_stateful"></a>`iptables::listen::tcp_stateful`
+### <a name="iptables--listen--tcp_stateful"></a>`iptables::listen::tcp_stateful`
 
 Allow access to specific ports from specific hosts or networks
 
@@ -906,28 +927,28 @@ COMMIT
 
 The following parameters are available in the `iptables::listen::tcp_stateful` defined type:
 
-* [`dports`](#dports)
-* [`first`](#first)
-* [`absolute`](#absolute)
-* [`order`](#order)
-* [`apply_to`](#apply_to)
-* [`trusted_nets`](#trusted_nets)
+* [`dports`](#-iptables--listen--tcp_stateful--dports)
+* [`first`](#-iptables--listen--tcp_stateful--first)
+* [`absolute`](#-iptables--listen--tcp_stateful--absolute)
+* [`order`](#-iptables--listen--tcp_stateful--order)
+* [`apply_to`](#-iptables--listen--tcp_stateful--apply_to)
+* [`trusted_nets`](#-iptables--listen--tcp_stateful--trusted_nets)
 
-##### <a name="dports"></a>`dports`
+##### <a name="-iptables--listen--tcp_stateful--dports"></a>`dports`
 
 Data type: `Iptables::DestPort`
 
 The ports that you want to expose
 
-##### <a name="first"></a>`first`
+##### <a name="-iptables--listen--tcp_stateful--first"></a>`first`
 
 Data type: `Boolean`
 
 Prepend this rule to the rule set
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="absolute"></a>`absolute`
+##### <a name="-iptables--listen--tcp_stateful--absolute"></a>`absolute`
 
 Data type: `Boolean`
 
@@ -938,9 +959,9 @@ setting of ``first``
 * If ``first`` is false, this rule will be at the bottom of the list
 * For all ``absolute`` rules, alphabetical sorting still takes place
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="order"></a>`order`
+##### <a name="-iptables--listen--tcp_stateful--order"></a>`order`
 
 Data type: `Integer[0]`
 
@@ -958,7 +979,7 @@ The order in which the rule should appear
 
 Default value: `11`
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables--listen--tcp_stateful--apply_to"></a>`apply_to`
 
 Data type: `Iptables::ApplyTo`
 
@@ -971,7 +992,7 @@ The IPTables network type to which to apply this rule
 
 Default value: `'auto'`
 
-##### <a name="trusted_nets"></a>`trusted_nets`
+##### <a name="-iptables--listen--tcp_stateful--trusted_nets"></a>`trusted_nets`
 
 Data type: `Simplib::Netlist`
 
@@ -981,7 +1002,7 @@ Set to ``any`` to allow all networks
 
 Default value: `simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })`
 
-### <a name="iptableslistenudp"></a>`iptables::listen::udp`
+### <a name="iptables--listen--udp"></a>`iptables::listen::udp`
 
 Expose UDP ports to a set of hosts
 
@@ -1021,28 +1042,28 @@ COMMIT
 
 The following parameters are available in the `iptables::listen::udp` defined type:
 
-* [`dports`](#dports)
-* [`first`](#first)
-* [`absolute`](#absolute)
-* [`order`](#order)
-* [`apply_to`](#apply_to)
-* [`trusted_nets`](#trusted_nets)
+* [`dports`](#-iptables--listen--udp--dports)
+* [`first`](#-iptables--listen--udp--first)
+* [`absolute`](#-iptables--listen--udp--absolute)
+* [`order`](#-iptables--listen--udp--order)
+* [`apply_to`](#-iptables--listen--udp--apply_to)
+* [`trusted_nets`](#-iptables--listen--udp--trusted_nets)
 
-##### <a name="dports"></a>`dports`
+##### <a name="-iptables--listen--udp--dports"></a>`dports`
 
 Data type: `Iptables::DestPort`
 
 The ports that you want to expose
 
-##### <a name="first"></a>`first`
+##### <a name="-iptables--listen--udp--first"></a>`first`
 
 Data type: `Boolean`
 
 Prepend this rule to the rule set
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="absolute"></a>`absolute`
+##### <a name="-iptables--listen--udp--absolute"></a>`absolute`
 
 Data type: `Boolean`
 
@@ -1053,9 +1074,9 @@ setting of ``first``
 * If ``first`` is false, this rule will be at the bottom of the list
 * For all ``absolute`` rules, alphabetical sorting still takes place
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="order"></a>`order`
+##### <a name="-iptables--listen--udp--order"></a>`order`
 
 Data type: `Integer[0]`
 
@@ -1073,7 +1094,7 @@ The order in which the rule should appear
 
 Default value: `11`
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables--listen--udp--apply_to"></a>`apply_to`
 
 Data type: `Iptables::ApplyTo`
 
@@ -1086,7 +1107,7 @@ The IPTables network type to which to apply this rule
 
 Default value: `'auto'`
 
-##### <a name="trusted_nets"></a>`trusted_nets`
+##### <a name="-iptables--listen--udp--trusted_nets"></a>`trusted_nets`
 
 Data type: `Simplib::Netlist`
 
@@ -1096,7 +1117,7 @@ Set to ``any`` to allow all networks
 
 Default value: `simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })`
 
-### <a name="iptablesports"></a>`iptables::ports`
+### <a name="iptables--ports"></a>`iptables::ports`
 
 A define to allow for the standardization of the
  iptables::ports syntax across modules
@@ -1105,9 +1126,9 @@ A define to allow for the standardization of the
 
 The following parameters are available in the `iptables::ports` defined type:
 
-* [`ports`](#ports)
+* [`ports`](#-iptables--ports--ports)
 
-##### <a name="ports"></a>`ports`
+##### <a name="-iptables--ports--ports"></a>`ports`
 
 Data type: `Hash`
 
@@ -1127,7 +1148,7 @@ structure of the hash.
         - udp
         - tcp
 
-### <a name="iptablesrule"></a>`iptables::rule`
+### <a name="iptables--rule"></a>`iptables::rule`
 
 Add rules to the IPTables configuration file
 
@@ -1163,21 +1184,21 @@ iptables::rule { 'example':
 
 The following parameters are available in the `iptables::rule` defined type:
 
-* [`content`](#content)
-* [`table`](#table)
-* [`first`](#first)
-* [`absolute`](#absolute)
-* [`order`](#order)
-* [`header`](#header)
-* [`apply_to`](#apply_to)
+* [`content`](#-iptables--rule--content)
+* [`table`](#-iptables--rule--table)
+* [`first`](#-iptables--rule--first)
+* [`absolute`](#-iptables--rule--absolute)
+* [`order`](#-iptables--rule--order)
+* [`header`](#-iptables--rule--header)
+* [`apply_to`](#-iptables--rule--apply_to)
 
-##### <a name="content"></a>`content`
+##### <a name="-iptables--rule--content"></a>`content`
 
 Data type: `String`
 
 The **exact** content of the rule that should be added
 
-##### <a name="table"></a>`table`
+##### <a name="-iptables--rule--table"></a>`table`
 
 Data type: `String`
 
@@ -1193,15 +1214,15 @@ The name of the table you are adding to
 
 Default value: `'filter'`
 
-##### <a name="first"></a>`first`
+##### <a name="-iptables--rule--first"></a>`first`
 
 Data type: `Boolean`
 
 Prepend this rule to the rule set
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="absolute"></a>`absolute`
+##### <a name="-iptables--rule--absolute"></a>`absolute`
 
 Data type: `Boolean`
 
@@ -1212,9 +1233,9 @@ setting of ``first``
 * If ``first`` is false, this rule will be at the bottom of the list
 * For all ``absolute`` rules, alphabetical sorting still takes place
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="order"></a>`order`
+##### <a name="-iptables--rule--order"></a>`order`
 
 Data type: `Integer[0]`
 
@@ -1232,15 +1253,15 @@ The order in which the rule should appear
 
 Default value: `11`
 
-##### <a name="header"></a>`header`
+##### <a name="-iptables--rule--header"></a>`header`
 
 Data type: `Boolean`
 
 Automatically add the line header ``-A LOCAL-INPUT``
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables--rule--apply_to"></a>`apply_to`
 
 Data type: `Iptables::ApplyTo`
 
@@ -1265,7 +1286,7 @@ The following properties are available in the `ip6tables_optimize` type.
 
 ##### `optimize`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Whether or not to optimize
 
@@ -1275,22 +1296,22 @@ Default value: `true`
 
 The following parameters are available in the `ip6tables_optimize` type.
 
-* [`disable`](#disable)
-* [`ignore`](#ignore)
-* [`name`](#name)
-* [`precise_match`](#precise_match)
-* [`provider`](#provider)
+* [`disable`](#-ip6tables_optimize--disable)
+* [`ignore`](#-ip6tables_optimize--ignore)
+* [`name`](#-ip6tables_optimize--name)
+* [`precise_match`](#-ip6tables_optimize--precise_match)
+* [`provider`](#-ip6tables_optimize--provider)
 
-##### <a name="disable"></a>`disable`
+##### <a name="-ip6tables_optimize--disable"></a>`disable`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 This is a way to authoritatively disable the application of the
 iptables module.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="ignore"></a>`ignore`
+##### <a name="-ip6tables_optimize--ignore"></a>`ignore`
 
 Ignore all *running* iptables rules matching one or more provided Ruby
 regexes. The regexes are compared against the jump and chain options, as
@@ -1312,15 +1333,15 @@ Examples:
   # ends with the word 'bar'
   ignore => ['^foo','bar$']
 
-##### <a name="name"></a>`name`
+##### <a name="-ip6tables_optimize--name"></a>`name`
 
 namevar
 
 A name variable, doesn't really do anything
 
-##### <a name="precise_match"></a>`precise_match`
+##### <a name="-ip6tables_optimize--precise_match"></a>`precise_match`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Instead of matching rule counts, perform a more precise match against the
 running and to-be-applied rules. You may find that minor changes, such as
@@ -1333,9 +1354,9 @@ This is enabled by default because it is a more correct approach.
 * For example, you cannot write `echo-request` for an ICMP echo match, you
   must instead use `8`.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="provider"></a>`provider`
+##### <a name="-ip6tables_optimize--provider"></a>`provider`
 
 The specific backend to use for this `ip6tables_optimize` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
@@ -1360,13 +1381,13 @@ Default value: `DROP`
 
 The following parameters are available in the `iptables_default_policy` type.
 
-* [`apply_to`](#apply_to)
-* [`chain`](#chain)
-* [`name`](#name)
-* [`provider`](#provider)
-* [`table`](#table)
+* [`apply_to`](#-iptables_default_policy--apply_to)
+* [`chain`](#-iptables_default_policy--chain)
+* [`name`](#-iptables_default_policy--name)
+* [`provider`](#-iptables_default_policy--provider)
+* [`table`](#-iptables_default_policy--table)
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables_default_policy--apply_to"></a>`apply_to`
 
 Valid values: `ipv4`, `ipv6`, `all`
 
@@ -1375,22 +1396,22 @@ What version(s) of iptables to which to apply this rule.
 
 Default value: `all`
 
-##### <a name="chain"></a>`chain`
+##### <a name="-iptables_default_policy--chain"></a>`chain`
 
 namevar
 
 The targeted chain
 
-##### <a name="name"></a>`name`
+##### <a name="-iptables_default_policy--name"></a>`name`
 
 A name of the form <table>:<chain> to which the resource will be applied
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iptables_default_policy--provider"></a>`provider`
 
 The specific backend to use for this `iptables_default_policy` resource. You will seldom need to specify this --- Puppet
 will usually discover the appropriate provider for your platform.
 
-##### <a name="table"></a>`table`
+##### <a name="-iptables_default_policy--table"></a>`table`
 
 namevar
 
@@ -1406,7 +1427,7 @@ The following properties are available in the `iptables_optimize` type.
 
 ##### `optimize`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Whether or not to optimize
 
@@ -1416,22 +1437,22 @@ Default value: `true`
 
 The following parameters are available in the `iptables_optimize` type.
 
-* [`disable`](#disable)
-* [`ignore`](#ignore)
-* [`name`](#name)
-* [`precise_match`](#precise_match)
-* [`provider`](#provider)
+* [`disable`](#-iptables_optimize--disable)
+* [`ignore`](#-iptables_optimize--ignore)
+* [`name`](#-iptables_optimize--name)
+* [`precise_match`](#-iptables_optimize--precise_match)
+* [`provider`](#-iptables_optimize--provider)
 
-##### <a name="disable"></a>`disable`
+##### <a name="-iptables_optimize--disable"></a>`disable`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 This is a way to authoritatively disable the application of the
 iptables module.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="ignore"></a>`ignore`
+##### <a name="-iptables_optimize--ignore"></a>`ignore`
 
 Ignore all *running* iptables rules matching one or more provided Ruby
 regexes. The regexes are compared against the jump and chain options, as
@@ -1453,15 +1474,15 @@ Examples:
   # ends with the word 'bar'
   ignore => ['^foo','bar$']
 
-##### <a name="name"></a>`name`
+##### <a name="-iptables_optimize--name"></a>`name`
 
 namevar
 
 The path to the target file to be optimized. Mainly used for ensuring that the file comes after the optimization.
 
-##### <a name="precise_match"></a>`precise_match`
+##### <a name="-iptables_optimize--precise_match"></a>`precise_match`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Instead of matching rule counts, perform a more precise match against the
 running and to-be-applied rules. You may find that minor changes, such as
@@ -1474,9 +1495,9 @@ This is enabled by default because it is a more correct approach.
 * For example, you cannot write `echo-request` for an ICMP echo match, you
   must instead use `8`.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iptables_optimize--provider"></a>`provider`
 
 The specific backend to use for this `iptables_optimize` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
@@ -1501,31 +1522,31 @@ The content of the rule that should be added
 
 The following parameters are available in the `iptables_rule` type.
 
-* [`absolute`](#absolute)
-* [`apply_to`](#apply_to)
-* [`comment`](#comment)
-* [`comment_header`](#comment_header)
-* [`first`](#first)
-* [`header`](#header)
-* [`include_comment`](#include_comment)
-* [`name`](#name)
-* [`order`](#order)
-* [`provider`](#provider)
-* [`resolve`](#resolve)
-* [`table`](#table)
+* [`absolute`](#-iptables_rule--absolute)
+* [`apply_to`](#-iptables_rule--apply_to)
+* [`comment`](#-iptables_rule--comment)
+* [`comment_header`](#-iptables_rule--comment_header)
+* [`first`](#-iptables_rule--first)
+* [`header`](#-iptables_rule--header)
+* [`include_comment`](#-iptables_rule--include_comment)
+* [`name`](#-iptables_rule--name)
+* [`order`](#-iptables_rule--order)
+* [`provider`](#-iptables_rule--provider)
+* [`resolve`](#-iptables_rule--resolve)
+* [`table`](#-iptables_rule--table)
 
-##### <a name="absolute"></a>`absolute`
+##### <a name="-iptables_rule--absolute"></a>`absolute`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Set to 'true' if you want the rule to be the absolute
 first or last. This is relative and places items in
 alphabetical order if multiple absolute first/lasts are
 specified.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="apply_to"></a>`apply_to`
+##### <a name="-iptables_rule--apply_to"></a>`apply_to`
 
 Valid values: `ipv4`, `ipv6`, `all`, `auto`
 
@@ -1544,7 +1565,7 @@ independent rule.
 
 Default value: `auto`
 
-##### <a name="comment"></a>`comment`
+##### <a name="-iptables_rule--comment"></a>`comment`
 
 A comment to add to the rule.
 
@@ -1556,44 +1577,44 @@ Content will be truncated at 255 characters, including the header.
 
 Default value: `''`
 
-##### <a name="comment_header"></a>`comment_header`
+##### <a name="-iptables_rule--comment_header"></a>`comment_header`
 
 A header to prepend to all comments for easy visual rule tracking
 
 Default value: `SIMP:`
 
-##### <a name="first"></a>`first`
+##### <a name="-iptables_rule--first"></a>`first`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Set to 'true' if you want to prepend your rule.
 
-Default value: ``false``
+Default value: `false`
 
-##### <a name="header"></a>`header`
+##### <a name="-iptables_rule--header"></a>`header`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Whether or not to auto-include the table LOCAL-INPUT in
 the rule.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="include_comment"></a>`include_comment`
+##### <a name="-iptables_rule--include_comment"></a>`include_comment`
 
-Valid values: ``true``, ``false``, `yes`, `no`
+Valid values: `true`, `false`, `yes`, `no`
 
 Whether or not to include the value in the $comment paramter
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="name"></a>`name`
+##### <a name="-iptables_rule--name"></a>`name`
 
 namevar
 
 The name of the rule. Simply used for creating the unique fragments.
 
-##### <a name="order"></a>`order`
+##### <a name="-iptables_rule--order"></a>`order`
 
 Valid values: `/\d+/`
 
@@ -1602,14 +1623,14 @@ minimum and 999 is the max.
 
 Default value: `11`
 
-##### <a name="provider"></a>`provider`
+##### <a name="-iptables_rule--provider"></a>`provider`
 
 The specific backend to use for this `iptables_rule` resource. You will seldom need to specify this --- Puppet will
 usually discover the appropriate provider for your platform.
 
-##### <a name="resolve"></a>`resolve`
+##### <a name="-iptables_rule--resolve"></a>`resolve`
 
-Valid values: ``true``, ``false``
+Valid values: `true`, `false`
 
 Whether or not to use DNS resolution to identify hostnames
 in IPTables statements.
@@ -1621,9 +1642,9 @@ to go into either iptables or ip6tables correctly.
 With this enabled, the IP address that is resolved will be
 added to IPTables and not the hostname itself.
 
-Default value: ``true``
+Default value: `true`
 
-##### <a name="table"></a>`table`
+##### <a name="-iptables_rule--table"></a>`table`
 
 The name of the table that you are adding to.
 
@@ -1693,23 +1714,23 @@ Default value: `20`
 
 The following parameters are available in the `xt_recent` type.
 
-* [`name`](#name)
-* [`provider`](#provider)
+* [`name`](#-xt_recent--name)
+* [`provider`](#-xt_recent--provider)
 
-##### <a name="name"></a>`name`
+##### <a name="-xt_recent--name"></a>`name`
 
 namevar
 
 The path to the xt_recent variables to be manipulated
 
-##### <a name="provider"></a>`provider`
+##### <a name="-xt_recent--provider"></a>`provider`
 
 The specific backend to use for this `xt_recent` resource. You will seldom need to specify this --- Puppet will usually
 discover the appropriate provider for your platform.
 
 ## Functions
 
-### <a name="iptablesslice_ports"></a>`iptables::slice_ports`
+### <a name="iptables--slice_ports"></a>`iptables::slice_ports`
 
 Type: Ruby 4.x API
 
@@ -1736,7 +1757,7 @@ Data type: `Integer[1]`
 
 The maximum length of each group.
 
-### <a name="iptablesuse_firewalld"></a>`iptables::use_firewalld`
+### <a name="iptables--use_firewalld"></a>`iptables::use_firewalld`
 
 Type: Puppet Language
 
@@ -1760,33 +1781,21 @@ The type of enablement to use
 
 ## Data types
 
-### <a name="iptablesapplyto"></a>`Iptables::ApplyTo`
+### <a name="Iptables--ApplyTo"></a>`Iptables::ApplyTo`
 
 Valid families to which rules should apply
 
-Alias of
+Alias of `Enum['ipv4', 'ipv6', 'all', 'auto']`
 
-```puppet
-Enum['ipv4', 'ipv6', 'all', 'auto']
-```
-
-### <a name="iptablesdestport"></a>`Iptables::DestPort`
+### <a name="Iptables--DestPort"></a>`Iptables::DestPort`
 
 An ``iptables_rule`` compatible port range or Array
 
-Alias of
+Alias of `Variant[Simplib::Port, Iptables::PortRange, Array[Variant[Simplib::Port, Iptables::PortRange]]]`
 
-```puppet
-Variant[Simplib::Port, Iptables::PortRange, Array[Variant[Simplib::Port, Iptables::PortRange]]]
-```
-
-### <a name="iptablesportrange"></a>`Iptables::PortRange`
+### <a name="Iptables--PortRange"></a>`Iptables::PortRange`
 
 An iptables-compatible Port Range
 
-Alias of
-
-```puppet
-Pattern['^([0-5]?\d?\d?\d?\d|6[0-4]\d\d\d|65[0-4]\d\d|655[0-2]\d|6553[0-5]):([0-5]?\d?\d?\d?\d|6[0-4]\d\d\d|65[0-4]\d\d|655[0-2]\d|6553[0-5])$']
-```
+Alias of `Pattern['^([0-5]?\d?\d?\d?\d|6[0-4]\d\d\d|65[0-4]\d\d|655[0-2]\d|6553[0-5]):([0-5]?\d?\d?\d?\d|6[0-4]\d\d\d|65[0-4]\d\d|655[0-2]\d|6553[0-5])$']`
 
