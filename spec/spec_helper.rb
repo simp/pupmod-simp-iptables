@@ -1,6 +1,7 @@
 require 'puppetlabs_spec_helper/module_spec_helper'
 require 'rspec-puppet'
 require 'simp/rspec-puppet-facts'
+require 'rspec/mocks/standalone'
 include Simp::RspecPuppetFacts
 
 require 'pathname'
