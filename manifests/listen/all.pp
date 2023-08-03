@@ -70,7 +70,7 @@ define iptables::listen::all (
 ){
   include 'iptables'
 
-  if $iptables::firewalld_mode {
+  if $iptables::use_firewalld {
     simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
     simp_firewalld::rule { "all_${name}":

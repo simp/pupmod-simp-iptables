@@ -117,15 +117,13 @@ class iptables (
   Boolean                         $prevent_localhost_spoofing = true,
   Optional[Hash]                  $ports                      = undef
 ) {
-
   simplib::assert_metadata($module_name)
 
-  $firewalld_mode = ( 'firewalld' in pick($facts['simplib__firewalls'], 'none') ) and $use_firewalld
   if $enable != 'ignore' {
     # This is required in case you want to put firewalld in iptables mode
     contain 'iptables::install'
 
-    if $firewalld_mode {
+    if $use_firewalld {
       simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
       include 'simp_firewalld'
@@ -135,8 +133,7 @@ class iptables (
           ports => $ports
         }
       }
-    }
-    else {
+    } else {
       contain 'iptables::service'
 
       if $default_rules { contain 'iptables::rules::base' }
