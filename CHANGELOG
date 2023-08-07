@@ -1,3 +1,6 @@
+* Mon Aug 07 2023 Steven Pritchard <steve@sicura.us> - 6.9.0
+- Remove extra gating logic in `iptables` class
+
 * Mon Jun 12 2023 Chris Tessmer <chris.tessmer@onyxpoint.com> - 6.8.0
 - Add RockyLinux 8 support
 
