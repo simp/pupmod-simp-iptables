@@ -1,3 +1,7 @@
+* Mon Aug 07 2023 Steven Pritchard <steve@sicura.us> - 7.0.0
+- Use firewalld by default
+  - Set `iptables::use_firewalld` to `false` to continue to use iptables
+
 * Wed Sep 06 2023 Steven Pritchard <steve@sicura.us> - 6.10.0
 - Add support for Puppet 8 and stdlib 9
 - Drop support for Puppet 6
