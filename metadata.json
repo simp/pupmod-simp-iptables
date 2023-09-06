@@ -1,6 +1,6 @@
 {
   "name": "simp-iptables",
-  "version": "6.10.0",
+  "version": "6.11.0",
   "author": "SIMP Team",
   "summary": "Safely manages IPTables firewall rules",
   "license": "Apache-2.0",
@@ -57,6 +57,12 @@
     },
     {
       "operatingsystem": "Rocky",
+      "operatingsystemrelease": [
+        "8"
+      ]
+    },
+    {
+      "operatingsystem": "AlmaLinux",
       "operatingsystemrelease": [
         "8"
       ]
