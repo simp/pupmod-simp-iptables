@@ -1,3 +1,6 @@
+* Wed Sep 06 2023 Steven Pritchard <steve@sicura.us> - 6.11.0
+- Add AlmaLinux 8 support
+
 * Wed Sep 06 2023 Steven Pritchard <steve@sicura.us> - 6.10.0
 - Add support for Puppet 8 and stdlib 9
 - Drop support for Puppet 6
