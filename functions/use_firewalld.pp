@@ -1,4 +1,4 @@
-# Returns ``true`` if the client can/should use firewalld
+# **DEPRECATED** Returns ``true`` if the client can/should use firewalld
 #
 # @param enable
 #   The type of enablement to use
