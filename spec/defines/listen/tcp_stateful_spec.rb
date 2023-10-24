@@ -20,7 +20,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
 
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_1234').with_dports(params[:dports]) }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it do
                 expected = "-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234,234:567 -j ACCEPT\n"
                 is_expected.to create_iptables_rule("tcp_#{title}").with_content(expected)
@@ -40,7 +40,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
 
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_1234').with_dports(1234) }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
              it { is_expected.to create_iptables_rule("tcp_#{title}") }
             else
               it { is_expected.to create_simp_firewalld__rule("tcp_#{title}") }
@@ -58,7 +58,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_more_than_10_ports').with_dports((101..111).to_a)
             }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               # does it create the correct rule?
               it {
                 is_expected.to create_iptables_rule("tcp_#{title}").with_content(/ --dports 101,102,103,104,105,106,107,108,109,110,111 -j ACCEPT/) }
@@ -77,7 +77,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_more_than_15_ports').with_dports((101..121).to_a)
             }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it do
                 expected = <<-EOM
 -m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 101,102,103,104,105,106,107,108,109,110,111,112,113,114,115 -j ACCEPT
@@ -100,7 +100,7 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_port_range').with_dports('150:300')
             }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it do
                 expected = <<-EOM
 -m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 150:300 -j ACCEPT

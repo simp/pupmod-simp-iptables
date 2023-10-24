@@ -1,3 +1,6 @@
+* Tue Oct 24 2023 Steven Pritchard <steve@sicura.us> - 6.13.0
+- Add EL9 support
+
 * Wed Oct 11 2023 Steven Pritchard <steve@sicura.us> - 6.12.0
 - [puppetsync] Updates for Puppet 8
   - These updates may include the following:
