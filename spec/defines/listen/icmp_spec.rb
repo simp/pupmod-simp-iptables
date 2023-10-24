@@ -20,7 +20,7 @@ describe 'iptables::listen::icmp', :type => :define do
 
             it { is_expected.to create_iptables__listen__icmp('allow_icmp_1234') }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it { is_expected.to create_iptables_rule("icmp_#{title}") }
             else
               it { is_expected.to create_simp_firewalld__rule("icmp_#{title}") }
@@ -37,7 +37,7 @@ describe 'iptables::listen::icmp', :type => :define do
 
             it { is_expected.to create_iptables__listen__icmp('allow_icmp_1234') }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it { is_expected.to create_iptables_rule("icmp_#{title}") }
             else
               it { is_expected.to create_simp_firewalld__rule("icmp_#{title}") }

@@ -18,7 +18,7 @@ describe 'iptables::rule', :type => :define do
       }}
 
       context 'by default' do
-        if os_facts[:os][:release][:major] != '8'
+        if os_facts[:os][:release][:major].to_i < 8
           it { is_expected.to create_iptables_rule(title) }
         else
           it { is_expected.to create_notify('iptables::rule with firewalld')

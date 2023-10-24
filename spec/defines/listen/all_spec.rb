@@ -19,7 +19,7 @@ describe 'iptables::listen::all', :type => :define do
 
             it { is_expected.to create_iptables__listen__all('allow_all_1234') }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it { is_expected.to create_iptables_rule("all_#{title}") }
             else
               it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
@@ -35,7 +35,7 @@ describe 'iptables::listen::all', :type => :define do
 
             it { is_expected.to create_iptables__listen__all('allow_all_1234') }
 
-            if os_facts[:os][:release][:major] != '8'
+            if os_facts[:os][:release][:major].to_i < 8
               it { is_expected.to create_iptables_rule("all_#{title}") }
             else
               it { is_expected.to create_simp_firewalld__rule("all_#{title}") }
