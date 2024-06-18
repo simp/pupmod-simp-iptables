@@ -7,7 +7,7 @@ iptables_default_policy_type = Puppet::Type.type(:iptables_default_policy)
 describe iptables_default_policy_type do
   before(:each) do
     @catalog = Puppet::Resource::Catalog.new
-    Puppet::Type::Iptables_default_policy.any_instance.stubs(:catalog).returns(@catalog)
+    allow(Puppet::Type::Iptables_default_policy.any_instance).to receive(:catalog).and_return(@catalog)
   end
 
   context ':name' do
