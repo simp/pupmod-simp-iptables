@@ -145,7 +145,7 @@ COMMIT
             chain,
             policy
           ]
-        ).returns true
+        ).and_return true
 
         allow(provider).to receive(:needs_sync).and_return(['ipv4'])
 
@@ -177,7 +177,7 @@ COMMIT
             chain,
             policy
           ]
-        ).returns true
+        ).and_return true
 
         allow(provider).to receive(:needs_sync).and_return(['ipv6'])
 
@@ -209,7 +209,7 @@ COMMIT
             chain,
             policy
           ]
-        ).returns true
+        ).and_return true
 
         allow(provider.class).to receive(:iptables).with(
           [
@@ -219,7 +219,7 @@ COMMIT
             chain,
             policy
           ]
-        ).returns true
+        ).and_return true
 
         allow(provider).to receive(:needs_sync).and_return(['ipv4', 'ipv6'])
 
