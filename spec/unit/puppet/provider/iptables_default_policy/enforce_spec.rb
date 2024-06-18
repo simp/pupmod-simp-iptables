@@ -149,7 +149,7 @@ COMMIT
 
         allow(provider).to receive(:needs_sync).and_return(['ipv4'])
 
-        provider.class.expects(:ip6tables).never
+        expect(provider.class).not_to receive(:ip6tables)
 
         provider.flush
       end
@@ -181,7 +181,7 @@ COMMIT
 
         allow(provider).to receive(:needs_sync).and_return(['ipv6'])
 
-        provider.class.expects(:iptables).never
+        expect(provider.class).not_to receive(:iptables)
 
         provider.flush
       end
