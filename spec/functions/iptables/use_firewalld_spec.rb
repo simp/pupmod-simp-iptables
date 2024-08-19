@@ -2,53 +2,46 @@
 require 'spec_helper'
 
 describe 'iptables::use_firewalld' do
-  let(:facts) {{
-    :simplib__firewalls => [
-      'iptables',
-      firewalld
-    ],
-    :os => {
-      'name' => 'RedHat',
-      'release' => {
-        'major' => os_release
-      }
-    }
-  }}
-
-  ['8', '9'].each do |major|
-    context "when EL#{major}" do
-      let(:os_release) { major }
-      let(:firewalld) { 'firewalld' }
+  on_supported_os.each do |os, os_facts|
+    context "on #{os}" do
+      let(:facts) do
+        os_facts.merge(
+          'simplib__firewalls' => [
+            'iptables',
+            'firewalld',
+          ],
+        )
+      end
 
       context 'when enable=true' do
-        it { is_expected.to run.with_params(true).and_return(true) }
+        it do
+          if Puppet[:strict] == :error
+            is_expected.to run.with_params(true).and_raise_error(%r{iptables::use_firewalld is deprecated})
+          else
+            is_expected.to run.with_params(true).and_return((facts[:os][:name] == 'Amazon' && facts[:os][:release][:major] == '2') ? false : true)
+          end
+        end
       end
 
       context 'when enable=false' do
-        it { is_expected.to run.with_params(false).and_return(false) }
+        it do
+          if Puppet[:strict] == :error
+            is_expected.to run.with_params(false).and_raise_error(%r{iptables::use_firewalld is deprecated})
+          else
+            is_expected.to run.with_params(false).and_return(false)
+          end
+        end
       end
 
       context 'when enable=firewalld' do
-        it { is_expected.to run.with_params('firewalld').and_return(true) }
+        it do
+          if Puppet[:strict] == :error
+            is_expected.to run.with_params('firewalld').and_raise_error(%r{iptables::use_firewalld is deprecated})
+          else
+            is_expected.to run.with_params('firewalld').and_return(true)
+          end
+        end
       end
     end
   end
-
-  context 'when EL7' do
-    let(:os_release) { '7' }
-    let(:firewalld) { 'firewalld' }
-
-    context 'when enable=true' do
-      it { is_expected.to run.with_params(true).and_return(false) }
-    end
-
-    context 'when enable=false' do
-      it { is_expected.to run.with_params(false).and_return(false) }
-    end
-
-    context 'when enable=firewalld' do
-      it { is_expected.to run.with_params('firewalld').and_return(true) }
-    end
-  end
-
 end

@@ -87,10 +87,18 @@ describe 'iptables' do
           }}
 
           it { is_expected.to compile.with_all_deps }
-          it { is_expected.to create_class('simp_firewalld') }
+          it do
+            if facts[:os][:name] == 'Amazon' && facts[:os][:release][:major] == '2'
+              is_expected.not_to contain_class('simp_firewalld')
+            else
+              is_expected.to contain_class('simp_firewalld')
+            end
+          end
         end
 
         context "iptables::rules::base" do
+          let(:params) { { use_firewalld: false } }
+
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables::rules::base') }
           it { is_expected.to create_iptables_rule('global').with_apply_to('all') }

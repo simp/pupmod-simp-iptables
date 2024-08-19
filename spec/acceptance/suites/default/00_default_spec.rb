@@ -3,7 +3,17 @@ require 'spec_helper_acceptance'
 test_name "iptables class"
 
 hosts.each do |host|
-  next unless host[:roles].include?('iptables')
+  unless host[:roles].include?('iptables')
+    describe 'iptables' do
+      context host.to_s do
+        it 'skips default test suite' do
+          true
+        end
+      end
+    end
+
+    next
+  end
 
   describe "iptables class #{host}" do
     before(:context) do
@@ -148,7 +158,21 @@ EOM
 
       it 'should configure xt_recent kernel module using hieradata overrides' do
         set_hieradata_on(host, hieradata_with_overrides)
-        apply_manifest_on(host, manifest_with_scanblock_enabled, :catch_failures => true)
+
+        # FIXME: On at least Amazon Linux 2, this will fail with a number of errors:
+        # Error: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_tot
+        # Error: /Stage[main]/Iptables::Rules::Mod_recent/Xt_recent[/sys/module/xt_recent/parameters]/ip_list_tot: change from '200' to 400 failed: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_tot
+        # Error: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_pkt_list_tot
+        # Error: /Stage[main]/Iptables::Rules::Mod_recent/Xt_recent[/sys/module/xt_recent/parameters]/ip_pkt_list_tot: change from '20' to 40 failed: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_pkt_list_tot
+        # Error: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_perms
+        # Error: /Stage[main]/Iptables::Rules::Mod_recent/Xt_recent[/sys/module/xt_recent/parameters]/ip_list_perms: change from '0640' to '0644' failed: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_perms
+        pending 'https://github.com/simp/pupmod-simp-iptables/issues/129'
+        apply_manifest_on(host, manifest_with_scanblock_enabled, catch_failures: false)
+
+        # Reboot to ensure that the settings change takes effect
+        host.reboot
+
+        apply_manifest_on(host, manifest_with_scanblock_enabled, catch_failures: true)
 
         on(host, "cat /etc/modprobe.d/xt_recent.conf", :acceptable_exit_codes => 0) do
           expected = "options xt_recent ip_list_tot=400 ip_pkt_list_tot=40 ip_list_hash_size=256" +

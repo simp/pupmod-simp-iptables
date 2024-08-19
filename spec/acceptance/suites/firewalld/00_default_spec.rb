@@ -6,12 +6,6 @@ hosts.each do |host|
   describe "iptables class #{host} in firewalld mode" do
     let(:default_manifest) {
       <<-EOS
-        class { 'iptables':
-          # Explicitly set this to verify that on el6 nodes the code
-          # 'does the right thing' even if the user configures otherwise.
-          use_firewalld => true
-        }
-
         # Ironically, if iptables applies correctly, its default settings will
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
         # define a rule that permit SSH access from the standard Vagrant subnets:

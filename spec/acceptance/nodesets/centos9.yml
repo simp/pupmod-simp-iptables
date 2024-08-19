@@ -1,13 +1,13 @@
 ---
 HOSTS:
-  rocky9:
+  centos9:
     roles:
       - default
       - firewalld
     platform: el-9-x86_64
-    box: generic/rocky9
+    box: generic/centos9s
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: rocky-linux-cloud/rocky-linux-9
+    family: centos-cloud/centos-stream-9
     gce_machine_type: n1-standard-1
 CONFIG:
   type: aio
