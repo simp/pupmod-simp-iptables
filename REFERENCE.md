@@ -35,7 +35,7 @@
 ### Functions
 
 * [`iptables::slice_ports`](#iptables--slice_ports): Split a stringified Iptables::DestPort into an Array that contain groupings of `max_length` size.
-* [`iptables::use_firewalld`](#iptables--use_firewalld): Returns ``true`` if the client can/should use firewalld
+* [`iptables::use_firewalld`](#iptables--use_firewalld): **DEPRECATED** Returns ``true`` if the client can/should use firewalld
 
 ### Data types
 
@@ -104,7 +104,7 @@ Explicitly enable management via ``simp_firewalld``
 
 * Systems that do not have ``firewalld`` installed will fall back to ``iptables``
 
-Default value: `iptables::use_firewalld($enable)`
+Default value: `true`
 
 ##### <a name="-iptables--ensure"></a>`ensure`
 
@@ -1761,11 +1761,11 @@ The maximum length of each group.
 
 Type: Puppet Language
 
-Returns ``true`` if the client can/should use firewalld
+**DEPRECATED** Returns ``true`` if the client can/should use firewalld
 
 #### `iptables::use_firewalld(Variant[String[1], Boolean] $enable = true)`
 
-Returns ``true`` if the client can/should use firewalld
+**DEPRECATED** Returns ``true`` if the client can/should use firewalld
 
 Returns: `Boolean`
 

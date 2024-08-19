@@ -1,17 +1,15 @@
 ---
 HOSTS:
-  rocky9:
+  almalinux9:
     roles:
       - default
       - firewalld
     platform: el-9-x86_64
-    box: generic/rocky9
-    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: rocky-linux-cloud/rocky-linux-9
-    gce_machine_type: n1-standard-1
+    box: almalinux/9
+    hypervisor: <%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>
 CONFIG:
   type: aio
-  vagrant_memsize: 1024
+  vagrant_memsize: 2048
   log_level: verbose
   synced_folder: disabled
   puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"

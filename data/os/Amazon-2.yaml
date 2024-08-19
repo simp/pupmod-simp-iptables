@@ -1,3 +1,4 @@
 ---
 iptables::install::ipv4_package: iptables-services
 iptables::install::ipv6_package: iptables-services
+iptables::use_firewalld: false

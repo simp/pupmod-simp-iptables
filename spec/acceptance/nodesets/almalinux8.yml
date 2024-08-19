@@ -1,0 +1,14 @@
+---
+HOSTS:
+  almalinux8:
+    roles:
+      - default
+      - firewalld
+    platform: el-8-x86_64
+    box: almalinux/8
+    hypervisor: <%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>
+CONFIG:
+  type: aio
+  log_level: verbose
+  synced_folder: disabled
+  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
