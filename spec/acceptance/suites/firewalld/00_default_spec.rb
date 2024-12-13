@@ -1,10 +1,10 @@
 require 'spec_helper_acceptance'
 
-test_name "iptables class in firewalld mode"
+test_name 'iptables class in firewalld mode'
 
 hosts.each do |host|
   describe "iptables class #{host} in firewalld mode" do
-    let(:default_manifest) {
+    let(:default_manifest) do
       <<-EOS
         # Ironically, if iptables applies correctly, its default settings will
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
@@ -14,40 +14,40 @@ hosts.each do |host|
           dports       => 22,
         }
       EOS
-    }
+    end
 
     let(:hieradata) {{ 'simp_firewalld::enable' => true }}
 
     context 'default parameters' do
-      it 'should work with no errors' do
+      it 'works with no errors' do
         set_hieradata_on(host, hieradata)
-        apply_manifest_on(host, default_manifest, :catch_failures => true)
+        apply_manifest_on(host, default_manifest, catch_failures: true)
       end
 
-      it 'should be idempotent' do
-        apply_manifest_on(host, default_manifest, :catch_changes => true)
+      it 'is idempotent' do
+        apply_manifest_on(host, default_manifest, catch_changes: true)
       end
 
       if host[:roles].include?('firewalld')
-        it 'should have "99_simp" as the default zone' do
+        it 'has "99_simp" as the default zone' do
           default_zone = on(host, 'firewall-cmd --get-default-zone').output.strip
           expect(default_zone).to eq('99_simp')
         end
       else
-        it 'should not be running firewalld' do
-          svc = YAML.load(on(host, 'puppet resource service firewalld --to_yaml').output)
+        it 'is not running firewalld' do
+          svc = YAML.safe_load(on(host, 'puppet resource service firewalld --to_yaml').output)
           expect(svc['service']['firewalld']['ensure']).to match('stopped')
         end
 
-        it 'should be running iptables' do
-          svc = YAML.load(on(host, 'puppet resource service iptables --to_yaml').output)
+        it 'is running iptables' do
+          svc = YAML.safe_load(on(host, 'puppet resource service iptables --to_yaml').output)
           expect(svc['service']['iptables']['ensure']).to match('running')
         end
       end
     end
 
     context 'TCP listen' do
-      let(:manifest) {
+      let(:manifest) do
         <<-EOM
           #{default_manifest}
 
@@ -56,20 +56,20 @@ hosts.each do |host|
             dports       => 1234
           }
         EOM
-      }
-
-      it 'should work with no errors' do
-        set_hieradata_on(host, hieradata)
-        apply_manifest_on(host, manifest, :catch_failures => true)
       end
 
-      it 'should be idempotent' do
-        apply_manifest_on(host, manifest, :catch_changes => true)
+      it 'works with no errors' do
+        set_hieradata_on(host, hieradata)
+        apply_manifest_on(host, manifest, catch_failures: true)
+      end
+
+      it 'is idempotent' do
+        apply_manifest_on(host, manifest, catch_changes: true)
       end
     end
 
     context 'UDP listen' do
-      let(:manifest) {
+      let(:manifest) do
         <<-EOM
           #{default_manifest}
 
@@ -78,14 +78,14 @@ hosts.each do |host|
             dports       => 2345
           }
         EOM
-      }
-
-      it 'should work with no errors' do
-        apply_manifest_on(host, manifest, :catch_failures => true)
       end
 
-      it 'should be idempotent' do
-        apply_manifest_on(host, manifest, :catch_changes => true)
+      it 'works with no errors' do
+        apply_manifest_on(host, manifest, catch_failures: true)
+      end
+
+      it 'is idempotent' do
+        apply_manifest_on(host, manifest, catch_changes: true)
       end
     end
   end

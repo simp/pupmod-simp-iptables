@@ -8,15 +8,15 @@ Puppet::Type.newtype(:iptables_rule) do
   def initialize(args)
     super
 
-    self[:tag] = ['iptables','ip6tables']
+    self[:tag] = ['iptables', 'ip6tables']
   end
 
   newparam(:name) do
     isnamevar
-    desc "The name of the rule. Simply used for creating the unique fragments."
+    desc 'The name of the rule. Simply used for creating the unique fragments.'
   end
 
-  newparam(:include_comment, :boolean => true, :parent => Puppet::Parameter::Boolean) do
+  newparam(:include_comment, boolean: true, parent: Puppet::Parameter::Boolean) do
     desc 'Whether or not to include the value in the $comment paramter'
 
     defaultto(:true)
@@ -44,7 +44,7 @@ Puppet::Type.newtype(:iptables_rule) do
   newparam(:header) do
     desc "Whether or not to auto-include the table LOCAL-INPUT in
           the rule."
-    newvalues(:true,:false)
+    newvalues(:true, :false)
     defaultto 'true'
 
     munge do |value|
@@ -65,25 +65,25 @@ Puppet::Type.newtype(:iptables_rule) do
             ip6tables.
           - All other rules will be applied to *both* utilities.
           - If in doubt, split your rules and specify your tables!"
-    newvalues(:ipv4,:ipv6,:all,:auto)
+    newvalues(:ipv4, :ipv6, :all, :auto)
     defaultto 'auto'
 
     munge do |value|
       if value == 'all'
-        value = ['ipv4','ipv6']
+        value = ['ipv4', 'ipv6']
       end
       value
     end
   end
 
   newparam(:table) do
-    desc "The name of the table that you are adding to."
+    desc 'The name of the table that you are adding to.'
     defaultto :filter
   end
 
   newparam(:first) do
     desc "Set to 'true' if you want to prepend your rule."
-    newvalues(:true,:false)
+    newvalues(:true, :false)
     defaultto :false
   end
 
@@ -92,14 +92,14 @@ Puppet::Type.newtype(:iptables_rule) do
           first or last. This is relative and places items in
           alphabetical order if multiple absolute first/lasts are
           specified."
-    newvalues(:true,:false)
+    newvalues(:true, :false)
     defaultto :false
   end
 
   newparam(:order) do
     desc "The order in which the rule should appear. 1 is the
           minimum and 999 is the max."
-    newvalues(/\d+/)
+    newvalues(%r{\d+})
     defaultto '11'
   end
 
@@ -114,20 +114,18 @@ Puppet::Type.newtype(:iptables_rule) do
           With this enabled, the IP address that is resolved will be
           added to IPTables and not the hostname itself."
 
-    newvalues(:true,:false)
+    newvalues(:true, :false)
     defaultto :true
   end
 
   newproperty(:content) do
-    desc "The content of the rule that should be added"
-    newvalues(/\w+/)
+    desc 'The content of the rule that should be added'
+    newvalues(%r{\w+})
 
     def change_to_s(current_value, new_value)
-      if current_value && current_value.is_a?(Array) && !current_value.empty?
-        return "#{current_value.join(' and ')} rules changed."
-      else
-        super
-      end
+      return "#{current_value.join(' and ')} rules changed." if current_value&.is_a?(Array) && !current_value.empty?
+
+      super
     end
   end
 end

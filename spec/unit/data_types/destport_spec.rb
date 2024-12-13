@@ -3,7 +3,8 @@ require 'spec_helper'
 if Puppet.version.to_f >= 4.5
   describe 'iptables_destport', type: :class do
     describe 'valid handling' do
-      let(:pre_condition) {%(
+      let(:pre_condition) do
+        %(
         class #{class_name} (
           Iptables::DestPort $param
         ){ }
@@ -11,24 +12,25 @@ if Puppet.version.to_f >= 4.5
         class { '#{class_name}':
           param => #{param}
         }
-      )}
+      )
+      end
 
       context 'with valid ranges' do
         [
           22,
           '65534:65535',
           [80, 443],
-          ['1234:1236', 22, '59:300']
+          ['1234:1236', 22, '59:300'],
         ].each do |param|
-          let(:param){
+          let(:param) do
             if param.is_a?(String)
               param = "'#{param}'"
             end
 
             param
-          }
+          end
 
-          it "should work with #{param}" do
+          it "works with #{param}" do
             is_expected.to compile
           end
         end
@@ -38,19 +40,19 @@ if Puppet.version.to_f >= 4.5
         [
           '22',
           '65534:65536',
-          [80, 65537],
-          ['1234:1236', 555555, '59:300']
+          [80, 65_537],
+          ['1234:1236', 555_555, '59:300'],
         ].each do |param|
-          let(:param){
+          let(:param) do
             if param.is_a?(String)
               param = "'#{param}'"
             end
 
             param
-          }
+          end
 
-          it "should fail on #{param}" do
-            is_expected.to compile.and_raise_error(/parameter 'param' .* expects/)
+          it "fails on #{param}" do
+            is_expected.to compile.and_raise_error(%r{parameter 'param' .* expects})
           end
         end
       end

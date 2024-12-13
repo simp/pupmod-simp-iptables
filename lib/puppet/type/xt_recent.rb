@@ -1,5 +1,5 @@
 Puppet::Type.newtype(:xt_recent) do
-  @doc =<<-EOM
+  @doc = <<-EOM
     Sets the various options on the running xt_recent kernel module.
 
     If the module needs to be loaded, attempts to load the module.
@@ -7,13 +7,13 @@ Puppet::Type.newtype(:xt_recent) do
 
   newparam(:name) do
     isnamevar
-    desc "The path to the xt_recent variables to be manipulated"
+    desc 'The path to the xt_recent variables to be manipulated'
 
     validate do |value|
       require 'pathname'
 
-      if not Pathname.new(value).absolute? then
-        fail Puppet::Error, "'name' must be an absolute path, got: '#{value}'"
+      unless Pathname.new(value).absolute?
+        raise Puppet::Error, "'name' must be an absolute path, got: '#{value}'"
       end
     end
   end
@@ -25,7 +25,7 @@ Puppet::Type.newtype(:xt_recent) do
       more addresses means more load on your system.
     EOM
 
-    newvalues(/^\d+$/)
+    newvalues(%r{^\d+$})
     defaultto '100'
   end
 
@@ -34,7 +34,7 @@ Puppet::Type.newtype(:xt_recent) do
       The number of packets per address remembered.
     EOM
 
-    newvalues(/^\d+$/)
+    newvalues(%r{^\d+$})
     defaultto '20'
   end
 
@@ -43,7 +43,7 @@ Puppet::Type.newtype(:xt_recent) do
       Hash table size. 0 means to calculate it based on ip_list_tot.
     EOM
 
-    newvalues(/^\d+$/)
+    newvalues(%r{^\d+$})
     defaultto '0'
   end
 
@@ -52,7 +52,7 @@ Puppet::Type.newtype(:xt_recent) do
       Permissions for /proc/net/xt_recent/* files.
     EOM
 
-    newvalues(/^[0-7]{4}$/)
+    newvalues(%r{^[0-7]{4}$})
     defaultto '0640'
   end
 
@@ -61,7 +61,7 @@ Puppet::Type.newtype(:xt_recent) do
       Numerical UID for ownership of /proc/net/xt_recent/* files.
     EOM
 
-    newvalues(/^\d+$/)
+    newvalues(%r{^\d+$})
     defaultto '0'
   end
 
@@ -70,7 +70,7 @@ Puppet::Type.newtype(:xt_recent) do
       Numerical GID for ownership of /proc/net/xt_recent/* files.
     EOM
 
-    newvalues(/^\d+$/)
+    newvalues(%r{^\d+$})
     defaultto '0'
   end
 

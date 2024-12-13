@@ -1,7 +1,7 @@
 require 'spec_helper.rb'
 
-describe 'iptables::listen::tcp_stateful', :type => :define do
-  context  'supported operating systems' do
+describe 'iptables::listen::tcp_stateful', type: :define do
+  context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
         let(:facts) do
@@ -12,11 +12,13 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
 
         context 'with default firewall settings' do
           context 'with trusted_nets in IPv4 CIDR format' do
-            let( :title  ){ 'allow_tcp_1234' }
-            let( :params ){{
-              :trusted_nets => ['10.0.2.0/24'],
-              :dports      => [1234, '234:567']
-            }}
+            let(:title) { 'allow_tcp_1234' }
+            let(:params) do
+              {
+                trusted_nets: ['10.0.2.0/24'],
+             dports: [1234, '234:567']
+              }
+            end
 
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_1234').with_dports(params[:dports]) }
 
@@ -31,17 +33,19 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
           end
 
           context 'with trusted_nets in IPv6 CIDR format' do
-            let( :title  ){ 'allow_tcp_1234' }
-            let( :params ){{
-              :trusted_nets => ['fe80::/64'],
-              :dports      => 1234,
-              :apply_to    => 'ipv6'
-            }}
+            let(:title) { 'allow_tcp_1234' }
+            let(:params) do
+              {
+                trusted_nets: ['fe80::/64'],
+             dports: 1234,
+             apply_to: 'ipv6'
+              }
+            end
 
             it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_1234').with_dports(1234) }
 
             if os_facts[:os][:release][:major].to_i < 8
-             it { is_expected.to create_iptables_rule("tcp_#{title}") }
+              it { is_expected.to create_iptables_rule("tcp_#{title}") }
             else
               it { is_expected.to create_simp_firewalld__rule("tcp_#{title}") }
             end
@@ -49,32 +53,40 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
 
           # This tests for the bug reported in SIMP-263
           context 'with more than 10 ports' do
-            let( :title  ){ 'allow_tcp_more_than_10_ports' }
-            let( :params ){{
-              :trusted_nets => ['10.0.2.0/24'],
-              :dports      => (101..111).to_a
-            }}
+            let(:title) { 'allow_tcp_more_than_10_ports' }
+            let(:params) do
+              {
+                trusted_nets: ['10.0.2.0/24'],
+             dports: (101..111).to_a
+              }
+            end
+
             # does the catalog accept it?
-            it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_more_than_10_ports').with_dports((101..111).to_a)
+            it {
+              is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_more_than_10_ports').with_dports((101..111).to_a)
             }
 
             if os_facts[:os][:release][:major].to_i < 8
               # does it create the correct rule?
               it {
-                is_expected.to create_iptables_rule("tcp_#{title}").with_content(/ --dports 101,102,103,104,105,106,107,108,109,110,111 -j ACCEPT/) }
+                is_expected.to create_iptables_rule("tcp_#{title}").with_content(%r{ --dports 101,102,103,104,105,106,107,108,109,110,111 -j ACCEPT})
+              }
             else
               it { is_expected.to create_simp_firewalld__rule("tcp_#{title}") }
             end
           end
 
           context 'with more than 15 individual ports' do
-            let( :title  ){ 'allow_tcp_more_than_15_ports' }
-            let( :params ){{
-              :trusted_nets => ['10.0.2.0/24'],
-              :dports      => (101..121).to_a
-            }}
+            let(:title) { 'allow_tcp_more_than_15_ports' }
+            let(:params) do
+              {
+                trusted_nets: ['10.0.2.0/24'],
+             dports: (101..121).to_a
+              }
+            end
 
-            it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_more_than_15_ports').with_dports((101..121).to_a)
+            it {
+              is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_more_than_15_ports').with_dports((101..121).to_a)
             }
 
             if os_facts[:os][:release][:major].to_i < 8
@@ -91,13 +103,16 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
           end
 
           context 'single port ranges' do
-            let( :title  ){ 'allow_port_range' }
-            let( :params ){{
-              :trusted_nets => ['10.0.2.0/24'],
-              :dports      => '150:300'
-            }}
+            let(:title) { 'allow_port_range' }
+            let(:params) do
+              {
+                trusted_nets: ['10.0.2.0/24'],
+             dports: '150:300'
+              }
+            end
 
-            it { is_expected.to create_iptables__listen__tcp_stateful('allow_port_range').with_dports('150:300')
+            it {
+              is_expected.to create_iptables__listen__tcp_stateful('allow_port_range').with_dports('150:300')
             }
 
             if os_facts[:os][:release][:major].to_i < 8
@@ -114,12 +129,14 @@ describe 'iptables::listen::tcp_stateful', :type => :define do
         end
 
         context 'when explicitly using firewalld' do
-          let( :hieradata ) { 'firewall__firewalld' }
-          let( :title  ){ 'allow_tcp_1234' }
-          let( :params ){{
-            :trusted_nets => ['10.0.2.0/24'],
-            :dports      => [1234, '234:567']
-          }}
+          let(:hieradata) { 'firewall__firewalld' }
+          let(:title) { 'allow_tcp_1234' }
+          let(:params) do
+            {
+              trusted_nets: ['10.0.2.0/24'],
+           dports: [1234, '234:567']
+            }
+          end
 
           it { is_expected.to create_iptables__listen__tcp_stateful('allow_tcp_1234').with_dports(params[:dports]) }
           it { is_expected.to create_simp_firewalld__rule("tcp_#{title}") }

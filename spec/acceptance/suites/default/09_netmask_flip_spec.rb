@@ -5,13 +5,13 @@ test_name 'iptables netmask flip'
 hosts.each do |host|
   next unless host[:roles].include?('iptables')
 
-  describe "iptables::listen::tcp_stateful" do
+  describe 'iptables::listen::tcp_stateful' do
     context 'precise matching' do
       context 'disabled' do
-        let(:hieradata) {{ 'iptables::precise_match' => false }}
+        let(:hieradata) { { 'iptables::precise_match' => false } }
 
         context 'origin' do
-          let(:manifest) {
+          let(:manifest) do
             <<-EOS
               class { 'iptables': }
 
@@ -26,12 +26,12 @@ hosts.each do |host|
                 content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT'
               }
             EOS
-          }
+          end
 
           context 'prep' do
-            it 'should work without errors' do
+            it 'works without errors' do
               set_hieradata_on(host, hieradata)
-              apply_manifest_on(host, manifest, :catch_failures => true)
+              apply_manifest_on(host, manifest, catch_failures: true)
             end
           end
 
@@ -40,14 +40,14 @@ hosts.each do |host|
               @iptables_save = on(host, 'iptables-save').output.lines
             end
 
-            it 'should have comment Test1' do
+            it 'has comment Test1' do
               expect(@iptables_save.grep(%r{Test1})).not_to be_empty
             end
           end
         end
 
         context 'updated comment' do
-          let(:manifest) {
+          let(:manifest) do
             <<-EOS
               class { 'iptables': }
 
@@ -62,11 +62,11 @@ hosts.each do |host|
                 content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT'
               }
             EOS
-          }
+          end
 
           context 'prep' do
-            it 'should work without errors' do
-              apply_manifest_on(host, manifest, :catch_failures => true)
+            it 'works without errors' do
+              apply_manifest_on(host, manifest, catch_failures: true)
             end
           end
 
@@ -75,19 +75,19 @@ hosts.each do |host|
               @iptables_save = on(host, 'iptables-save').output.lines
             end
 
-            it 'should not have updated comment Test1' do
+            it 'does not have updated comment Test1' do
               expect(@iptables_save.grep(%r{Test1})).not_to be_empty
             end
 
-            it 'should have original netmask 24' do
+            it 'has original netmask 24' do
               expect(@iptables_save.grep(%r{10.0.2.0/24})).not_to be_empty
             end
 
-            it 'should not have comment Test2' do
+            it 'does not have comment Test2' do
               expect(@iptables_save.grep(%r{Test2})).to be_empty
             end
 
-            it 'should not have updated netmask 23' do
+            it 'does not have updated netmask 23' do
               expect(@iptables_save.grep(%r{10.0.2.0/23})).to be_empty
             end
           end
@@ -95,10 +95,10 @@ hosts.each do |host|
       end
 
       context 'enabled' do
-        let(:hieradata) {{ 'iptables::precise_match' => true }}
+        let(:hieradata) { { 'iptables::precise_match' => true } }
 
         context 'origin' do
-          let(:manifest) {
+          let(:manifest) do
             <<-EOS
               class { 'iptables': }
 
@@ -113,12 +113,12 @@ hosts.each do |host|
                 content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT'
               }
             EOS
-          }
+          end
 
           context 'prep' do
-            it 'should work without errors' do
+            it 'works without errors' do
               set_hieradata_on(host, hieradata)
-              apply_manifest_on(host, manifest, :catch_failures => true)
+              apply_manifest_on(host, manifest, catch_failures: true)
             end
           end
 
@@ -127,14 +127,14 @@ hosts.each do |host|
               @iptables_save = on(host, 'iptables-save').output.lines
             end
 
-            it 'should have comment Test3' do
+            it 'has comment Test3' do
               expect(@iptables_save.grep(%r{Test3})).not_to be_empty
             end
           end
         end
 
         context 'updated comment' do
-          let(:manifest) {
+          let(:manifest) do
             <<-EOS
               class { 'iptables': }
 
@@ -149,11 +149,11 @@ hosts.each do |host|
                 content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT'
               }
             EOS
-          }
+          end
 
           context 'prep' do
-            it 'should work without errors' do
-              apply_manifest_on(host, manifest, :catch_failures => true)
+            it 'works without errors' do
+              apply_manifest_on(host, manifest, catch_failures: true)
             end
           end
 
@@ -162,12 +162,12 @@ hosts.each do |host|
               @iptables_save = on(host, 'iptables-save').output.lines
             end
 
-            it 'should have updated comment Test3' do
+            it 'has updated comment Test3' do
               expect(@iptables_save.grep(%r{Test4})).not_to be_empty
               expect(@iptables_save.grep(%r{Test3})).to be_empty
             end
 
-            it 'should have updated netmask /23' do
+            it 'has updated netmask /23' do
               expect(@iptables_save.grep(%r{10.0.2.0/23})).not_to be_empty
               expect(@iptables_save.grep(%r{10.0.2.0/24})).to be_empty
             end
