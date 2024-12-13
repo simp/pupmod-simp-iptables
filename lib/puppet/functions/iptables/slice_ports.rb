@@ -1,7 +1,6 @@
 # Split a stringified Iptables::DestPort into an Array that contain groupings
 # of `max_length` size.
 Puppet::Functions.create_function(:'iptables::slice_ports') do
-
   # @param input One or more ports or port ranges, all represented
   #   as strings.
   #
@@ -19,7 +18,7 @@ Puppet::Functions.create_function(:'iptables::slice_ports') do
 
     if max_length == 1 && to_slice.any? { |entry| entry.include?(split_char) }
       err_msg = 'iptables::slice_port: max_length must be >=2 when input has a port range'
-      fail(err_msg)
+      raise(err_msg)
     end
 
     retval = []

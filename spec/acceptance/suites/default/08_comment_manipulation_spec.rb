@@ -6,7 +6,7 @@ hosts.each do |host|
   next unless host[:roles].include?('iptables')
 
   describe 'iptables::listen::udp' do
-    let(:manifest) {
+    let(:manifest) do
       <<-EOS
         class { 'iptables': }
 
@@ -38,33 +38,33 @@ hosts.each do |host|
           content        => '-A FORWARD -s 3.4.5.6/32 -j ACCEPT'
         }
       EOS
-    }
+    end
 
-    it 'should work without errors' do
-      apply_manifest_on(host, manifest, :catch_failures => true)
+    it 'works without errors' do
+      apply_manifest_on(host, manifest, catch_failures: true)
       on(host, 'iptables-save')
       on(host, 'ip6tables-save')
     end
 
-    it 'should be idempotent' do
-      apply_manifest_on(host, manifest, :catch_changes => true)
+    it 'is idempotent' do
+      apply_manifest_on(host, manifest, catch_changes: true)
     end
 
-    it 'should have a comment for 1.2.3.4' do
+    it 'has a comment for 1.2.3.4' do
       expect(on(host, 'iptables-save   | grep "1.2.3.4"').output.strip).to eq(
-        '-A FORWARD -s 1.2.3.4/32 -m comment --comment "SIMP:" -j ACCEPT'
+        '-A FORWARD -s 1.2.3.4/32 -m comment --comment "SIMP:" -j ACCEPT',
       )
     end
 
-    it 'should not have a comment for 2.3.4.5' do
+    it 'does not have a comment for 2.3.4.5' do
       expect(on(host, 'iptables-save   | grep "2.3.4.5"').output.strip).to eq(
-        '-A FORWARD -s 2.3.4.5/32 -j ACCEPT'
+        '-A FORWARD -s 2.3.4.5/32 -j ACCEPT',
       )
     end
 
-    it 'should not have a comment for 3.4.5.6' do
+    it 'does not have a comment for 3.4.5.6' do
       expect(on(host, 'iptables-save   | grep "3.4.5.6"').output.strip).to eq(
-        '-A FORWARD -s 3.4.5.6/32 -j ACCEPT'
+        '-A FORWARD -s 3.4.5.6/32 -j ACCEPT',
       )
     end
   end

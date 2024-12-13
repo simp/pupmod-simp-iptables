@@ -11,20 +11,20 @@ describe iptables_default_policy_type do
   end
 
   context ':name' do
-    it 'should accept valid values' do
+    it 'accepts valid values' do
       valid_values = {
         'ipv4' => {
           'filter' => [
             'INPUT',
             'FORWARD',
-            'OUTPUT'
+            'OUTPUT',
           ]
         },
         'ipv6' => {
           'filter' => [
             'INPUT',
             'FORWARD',
-            'OUTPUT'
+            'OUTPUT',
           ]
         }
       }
@@ -33,10 +33,9 @@ describe iptables_default_policy_type do
         data.each do |tmp_table, chains|
           [tmp_table, tmp_table.upcase].each do |table|
             (chains + chains.map(&:downcase)).each do |chain|
-
               resource = iptables_default_policy_type.new(
-                :name     => "#{table}:#{chain}",
-                :apply_to => proto
+                name: "#{table}:#{chain}",
+                apply_to: proto,
               )
 
               expect(resource[:table].downcase).to eq(table.downcase)
@@ -48,33 +47,33 @@ describe iptables_default_policy_type do
       end
     end
 
-    it 'should not allow conflicting resources' do
-      resource1 = iptables_default_policy_type.new( :name => 'filter:INPUT' )
-      resource2 = iptables_default_policy_type.new( :name => 'filter:input' )
-      resource3 = iptables_default_policy_type.new( :name => 'filter:output' )
+    it 'does not allow conflicting resources' do
+      resource1 = iptables_default_policy_type.new(name: 'filter:INPUT')
+      resource2 = iptables_default_policy_type.new(name: 'filter:input')
+      resource3 = iptables_default_policy_type.new(name: 'filter:output')
 
       @catalog.add_resource(resource1)
 
-      expect { @catalog.add_resource(resource2) }.to raise_error(/already declared/)
+      expect { @catalog.add_resource(resource2) }.to raise_error(%r{already declared})
 
       @catalog.add_resource(resource3)
     end
 
-    it 'should not accept invalid title patterns' do
-      expect { iptables_default_policy_type.new(:name => 'foo') }.to raise_error(/No set of title patterns/)
-      expect { iptables_default_policy_type.new(:name => '') }.to raise_error(/No set of title patterns/)
+    it 'does not accept invalid title patterns' do
+      expect { iptables_default_policy_type.new(name: 'foo') }.to raise_error(%r{No set of title patterns})
+      expect { iptables_default_policy_type.new(name: '') }.to raise_error(%r{No set of title patterns})
     end
 
-    it 'should not accept invalid tables' do
-      expect { iptables_default_policy_type.new(:name => 'foo:INPUT') }.to raise_error(/Invalid table 'foo'/)
-      expect { iptables_default_policy_type.new(:name => ' :INPUT') }.to raise_error(/Invalid table ' '/)
-      expect { iptables_default_policy_type.new(:name => ':INPUT') }.to raise_error(/Invalid table ''/)
+    it 'does not accept invalid tables' do
+      expect { iptables_default_policy_type.new(name: 'foo:INPUT') }.to raise_error(%r{Invalid table 'foo'})
+      expect { iptables_default_policy_type.new(name: ' :INPUT') }.to raise_error(%r{Invalid table ' '})
+      expect { iptables_default_policy_type.new(name: ':INPUT') }.to raise_error(%r{Invalid table ''})
     end
 
-    it 'should not accept invalid chains' do
-      expect { iptables_default_policy_type.new(:name => 'filter:BOB') }.to raise_error(/Invalid chain 'BOB'/)
-      expect { iptables_default_policy_type.new(:name => 'filter: ') }.to raise_error(/Invalid chain ' '/)
-      expect { iptables_default_policy_type.new(:name => 'filter:') }.to raise_error(/Invalid chain ''/)
+    it 'does not accept invalid chains' do
+      expect { iptables_default_policy_type.new(name: 'filter:BOB') }.to raise_error(%r{Invalid chain 'BOB'})
+      expect { iptables_default_policy_type.new(name: 'filter: ') }.to raise_error(%r{Invalid chain ' '})
+      expect { iptables_default_policy_type.new(name: 'filter:') }.to raise_error(%r{Invalid chain ''})
     end
   end
 end

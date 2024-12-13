@@ -2,9 +2,9 @@ Puppet::Type.newtype(:iptables_default_policy) do
   @doc = 'Manage the default policy on iptables tables built-in chains'
 
   def initialize(*args)
-    super(*args)
+    super
 
-    self[:tag] = ['iptables','ip6tables']
+    self[:tag] = ['iptables', 'ip6tables']
   end
 
   newparam(:name) do
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:iptables_default_policy) do
     end
   end
 
-  newparam(:apply_to, :array_matching => :all) do
+  newparam(:apply_to, array_matching: :all) do
     desc "What version(s) of iptables to which to apply this rule.
           'all' is equivalent to ['ipv4', 'ipv6'] as appropriate."
 
@@ -58,17 +58,17 @@ Puppet::Type.newtype(:iptables_default_policy) do
       value.upcase
     end
 
-    def insync?(is)
+    def insync?(_is)
       provider.policy_insync?
     end
 
-    def change_to_s(from,to)
-      return %{Default policy changed to '#{to}' for '#{provider.needs_sync.join(', ')}'}
+    def change_to_s(_from, to)
+      %(Default policy changed to '#{to}' for '#{provider.needs_sync.join(', ')}')
     end
   end
 
   autorequire(:iptables_optimize) do
-    catalog.resources.find_all { |r|
+    catalog.resources.select { |r|
       r.is_a?(Puppet::Type.type(:iptables_optimize))
     }.flatten
   end
@@ -78,7 +78,7 @@ Puppet::Type.newtype(:iptables_default_policy) do
       'filter' => [
         'INPUT',
         'FORWARD',
-        'OUTPUT'
+        'OUTPUT',
       ],
     }
 
@@ -86,7 +86,7 @@ Puppet::Type.newtype(:iptables_default_policy) do
       'filter' => [
         'INPUT',
         'FORWARD',
-        'OUTPUT'
+        'OUTPUT',
       ]
     }
 
@@ -120,18 +120,18 @@ Puppet::Type.newtype(:iptables_default_policy) do
       end
     end
 
-    fail(Puppet::Error, errmsg.join("\n")) unless errmsg.empty?
+    raise(Puppet::Error, errmsg.join("\n")) unless errmsg.empty?
   end
 
   def self.title_patterns
     [
       [
-        /^(.*):(.*)$/,
+        %r{^(.*):(.*)$},
         [
           [:table],
-          [:chain]
-        ]
-      ]
+          [:chain],
+        ],
+      ],
     ]
   end
 end
