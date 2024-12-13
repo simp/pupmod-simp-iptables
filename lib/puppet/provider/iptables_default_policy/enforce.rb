@@ -1,12 +1,11 @@
 Puppet::Type.type(:iptables_default_policy).provide(:enforce) do
-
   desc 'Provider for manging the default iptables policies'
 
-  commands :iptables      => 'iptables'
-  commands :iptables_save => 'iptables-save'
+  commands iptables: 'iptables'
+  commands iptables_save: 'iptables-save'
 
-  optional_commands :ip6tables      => 'ip6tables'
-  optional_commands :ip6tables_save => 'ip6tables-save'
+  optional_commands ip6tables: 'ip6tables'
+  optional_commands ip6tables_save: 'ip6tables-save'
 
   mk_resource_methods
 
@@ -19,7 +18,7 @@ Puppet::Type.type(:iptables_default_policy).provide(:enforce) do
 
   def self.prefetch(resources)
     instances.each do |prov|
-      if resource = resources[prov.name]
+      if (resource = resources[prov.name])
         resource.provider = prov
       end
     end
@@ -29,16 +28,14 @@ Puppet::Type.type(:iptables_default_policy).provide(:enforce) do
     @needs_sync = []
 
     self.class.instances.each do |inst|
-      if inst.policy != resource[:policy]
-        if (inst.table == resource[:table]) && (inst.chain == resource[:chain])
-          if Array(resource[:apply_to]).include?(inst.apply_to)
-            @needs_sync << inst.apply_to
-          end
-        end
+      next unless inst.policy != resource[:policy]
+      next unless (inst.table == resource[:table]) && (inst.chain == resource[:chain])
+      if Array(resource[:apply_to]).include?(inst.apply_to)
+        @needs_sync << inst.apply_to
       end
     end
 
-    return @needs_sync.empty?
+    @needs_sync.empty?
   end
 
   def flush
@@ -46,9 +43,8 @@ Puppet::Type.type(:iptables_default_policy).provide(:enforce) do
       iptables(['-t', @resource[:table], '-P', @resource[:chain], @resource[:policy]])
     end
 
-    if needs_sync.include?('ipv6')
-      ip6tables(['-t', @resource[:table], '-P', @resource[:chain], @resource[:policy]])
-    end
+    return unless needs_sync.include?('ipv6')
+    ip6tables(['-t', @resource[:table], '-P', @resource[:chain], @resource[:policy]])
   end
 
   private
@@ -72,30 +68,28 @@ Puppet::Type.type(:iptables_default_policy).provide(:enforce) do
 
     current_table = nil
     rules.each do |rule|
-      if rule =~ /^\*(.*)/
-        current_table = $1.strip
+      if rule =~ %r{^\*(.*)}
+        current_table = Regexp.last_match(1).strip
         next
       end
 
-      if valid_tables.include?(current_table)
-        chain, policy = rule.split(/\s+/)
+      next unless valid_tables.include?(current_table)
+      chain, policy = rule.split(%r{\s+})
 
-        if ['ACCEPT', 'DROP'].include?(policy)
-          chain.delete!(':')
+      next unless ['ACCEPT', 'DROP'].include?(policy)
+      chain.delete!(':')
 
-          resource = {
-            :name     => "#{current_table}:#{chain}",
-            :table    => current_table,
-            :chain    => chain,
-            :policy   => policy,
-            :apply_to => rule_type
-          }
+      resource = {
+        name: "#{current_table}:#{chain}",
+        table: current_table,
+        chain: chain,
+        policy: policy,
+        apply_to: rule_type
+      }
 
-          resources << new(resource)
-        end
-      end
+      resources << new(resource)
     end
 
-    return resources
+    resources
   end
 end
