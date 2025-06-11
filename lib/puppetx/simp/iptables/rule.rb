@@ -1,3 +1,4 @@
+#
 class PuppetX::SIMP::IPTables::Rule
   attr_reader :rule
   attr_reader :rule_type
@@ -27,9 +28,11 @@ class PuppetX::SIMP::IPTables::Rule
           test_netmask = item.split('/')[1] || ((test_addr.family == 2) ? '32' : '128')
 
           normalized_array << "#{test_addr}/#{test_netmask}"
+        # rubocop:disable Lint/ShadowedException
         rescue ArgumentError, NoMethodError, IPAddr::InvalidAddressError
           normalized_array << item
         end
+        # rubocop:enable Lint/ShadowedException
       else
         normalized_array << item
       end

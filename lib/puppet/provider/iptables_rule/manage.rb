@@ -164,7 +164,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
             rescue Resolv::ResolvTimeout => e
               Puppet.warning("Timeout when resolving #{to_check}, commenting out: #{e}")
               content_line = "# DNS Timeout Failure: #{content_line}"
-            rescue Exception => e
+            rescue e
               Puppet.warning("Unknown DNS issue for #{to_check}, commenting out: #{e}")
               content_line = "# Unknown DNS issue: #{content_line}"
             end
@@ -302,7 +302,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
     ipaddr = nil
     begin
       ipaddr = IPAddr.new(to_check)
-    rescue Exception
+    rescue
       # Not an IP address, ignore.
     end
 
@@ -397,11 +397,13 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       }.join("\n")
 
       # Properly sort our rules.
+      # rubocop:disable Style/MultilineBlockChain
       output << iptables_rules[rule_type][:new_content][table][:rules].keys.sort_by { |x|
         PuppetX::SIMP::Simplib.human_sort(x)
       }.map { |x|
         iptables_rules[rule_type][:new_content][table][:rules][x]
       }.join("\n")
+      # rubocop:enable Style/MultilineBlockChain
 
       # Make sure we have a commit for each table
       output << 'COMMIT'

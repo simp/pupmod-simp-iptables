@@ -5,9 +5,12 @@ require 'spec_helper'
 iptables_default_policy_type = Puppet::Type.type(:iptables_default_policy)
 
 describe iptables_default_policy_type do
+  let(:catalog) { Puppet::Resource::Catalog.new }
+
   before(:each) do
-    @catalog = Puppet::Resource::Catalog.new
-    allow_any_instance_of(Puppet::Type::Iptables_default_policy).to receive(:catalog).and_return(@catalog)
+    # rubocop:disable RSpec/AnyInstance
+    allow_any_instance_of(Puppet::Type::Iptables_default_policy).to receive(:catalog).and_return(catalog)
+    # rubocop:enable RSpec/AnyInstance
   end
 
   context ':name' do
@@ -52,11 +55,11 @@ describe iptables_default_policy_type do
       resource2 = iptables_default_policy_type.new(name: 'filter:input')
       resource3 = iptables_default_policy_type.new(name: 'filter:output')
 
-      @catalog.add_resource(resource1)
+      catalog.add_resource(resource1)
 
-      expect { @catalog.add_resource(resource2) }.to raise_error(%r{already declared})
+      expect { catalog.add_resource(resource2) }.to raise_error(%r{already declared})
 
-      @catalog.add_resource(resource3)
+      catalog.add_resource(resource3)
     end
 
     it 'does not accept invalid title patterns' do

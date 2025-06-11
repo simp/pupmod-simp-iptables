@@ -45,8 +45,10 @@ RSpec.configure do |c|
     # add PKI keys
     copy_keydist_to(server)
   rescue StandardError, ScriptError => e
+    # rubocop:disable Lint/Debugger
     raise e unless ENV['PRY']
     require 'pry'
     binding.pry
+    # rubocop:enable Lint/Debugger
   end
 end

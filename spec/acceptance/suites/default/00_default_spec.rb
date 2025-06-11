@@ -59,6 +59,7 @@ hosts.each do |host|
     end
 
     context 'with scanblock enabled' do
+      # rubocop:disable RSpec/RepeatedDescription, RSpec/RepeatedExample
       let(:manifest_with_scanblock_enabled) do
         <<-EOS
         class { 'iptables': scanblock => true}
@@ -159,6 +160,7 @@ EOM
       it 'configures xt_recent kernel module using hieradata overrides' do
         set_hieradata_on(host, hieradata_with_overrides)
 
+        # rubocop:disable Layout/LineLength
         # FIXME: On at least Amazon Linux 2, this will fail with a number of errors:
         # Error: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_tot
         # Error: /Stage[main]/Iptables::Rules::Mod_recent/Xt_recent[/sys/module/xt_recent/parameters]/ip_list_tot: change from '200' to 400 failed: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_tot
@@ -166,6 +168,7 @@ EOM
         # Error: /Stage[main]/Iptables::Rules::Mod_recent/Xt_recent[/sys/module/xt_recent/parameters]/ip_pkt_list_tot: change from '20' to 40 failed: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_pkt_list_tot
         # Error: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_perms
         # Error: /Stage[main]/Iptables::Rules::Mod_recent/Xt_recent[/sys/module/xt_recent/parameters]/ip_list_perms: change from '0640' to '0644' failed: Input/output error @ fptr_finalize_flush - /sys/module/xt_recent/parameters/ip_list_perms
+        # rubocop:enable Layout/LineLength
         pending 'https://github.com/simp/pupmod-simp-iptables/issues/129'
         apply_manifest_on(host, manifest_with_scanblock_enabled, catch_failures: false)
 
@@ -206,6 +209,7 @@ EOM
       end
 
       # TODO: verify iptables electric fence rules do what is expected!
+      # rubocop:enable RSpec/RepeatedDescription, RSpec/RepeatedExample
     end
 
     context 'with default parameters after scan block had been enabled' do

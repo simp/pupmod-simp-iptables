@@ -1,3 +1,4 @@
+#
 class PuppetX::SIMP::IPTables
   require 'puppetx/simp/iptables/rule'
 
@@ -176,10 +177,8 @@ class PuppetX::SIMP::IPTables
 
   # Remove any chains from the tables that do not have a matching rule
   def prune_chains!
-    all_chains = @tables.map { |key, _value|
-      @tables[key][:rules]
-    }
-                 .flatten.map { |rule|
+    all_chains = @tables.map { |key, _value| @tables[key][:rules] }
+                        .flatten.map { |rule|
       new_rule = [rule.chain]
       new_rule << rule.jump if rule.jump
     }.flatten.uniq
