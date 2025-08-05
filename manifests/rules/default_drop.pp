@@ -20,29 +20,29 @@ class iptables::rules::default_drop (
   Optional[Boolean] $filter_input   = undef,
   Optional[Boolean] $filter_forward = undef,
   Optional[Boolean] $filter_output  = undef
-){
+) {
   assert_private()
 
   $_xlat = {
     true  => 'DROP',
-    false => 'ACCEPT'
+    false => 'ACCEPT',
   }
 
   if $filter_input =~ NotUndef {
     iptables_default_policy { 'filter:INPUT':
-      policy   => $_xlat[$filter_input]
+      policy   => $_xlat[$filter_input],
     }
   }
 
   if $filter_forward =~ NotUndef {
     iptables_default_policy { 'filter:FORWARD':
-      policy => $_xlat[$filter_forward]
+      policy => $_xlat[$filter_forward],
     }
   }
 
   if $filter_output =~ NotUndef {
     iptables_default_policy { 'filter:OUTPUT':
-      policy => $_xlat[$filter_output]
+      policy => $_xlat[$filter_output],
     }
   }
 }

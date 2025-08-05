@@ -16,8 +16,11 @@ hosts.each do |host|
       EOS
     }
 
+    let(:hieradata) {{ 'simp_firewalld::enable' => true }}
+
     context 'default parameters' do
       it 'should work with no errors' do
+        set_hieradata_on(host, hieradata)
         apply_manifest_on(host, default_manifest, :catch_failures => true)
       end
 
@@ -56,6 +59,7 @@ hosts.each do |host|
       }
 
       it 'should work with no errors' do
+        set_hieradata_on(host, hieradata)
         apply_manifest_on(host, manifest, :catch_failures => true)
       end
 

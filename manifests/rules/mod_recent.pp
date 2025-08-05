@@ -39,7 +39,7 @@ class iptables::rules::mod_recent (
   String     $ip_list_perms     = '0640',
   Integer[0] $ip_list_uid       = 0,
   Integer[0] $ip_list_gid       = 0
-){
+) {
   file { '/etc/modprobe.d/xt_recent.conf':
     ensure  => 'file',
     owner   => 'root',

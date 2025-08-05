@@ -88,7 +88,7 @@ define iptables::listen::icmp (
       protocol     => 'icmp',
       icmp_blocks  => $icmp_types,
       order        => $order,
-      apply_to     => $apply_to
+      apply_to     => $apply_to,
     }
   }
   else {
@@ -97,7 +97,7 @@ define iptables::listen::icmp (
       absolute => $absolute,
       order    => $order,
       apply_to => $apply_to,
-      content  => template("${module_name}/allow_icmp_services.erb")
+      content  => template("${module_name}/allow_icmp_services.erb"),
     }
   }
 }

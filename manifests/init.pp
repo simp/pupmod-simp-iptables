@@ -129,8 +129,8 @@ class iptables (
       include 'simp_firewalld'
 
       if $ports {
-        iptables::ports {'firewalld':
-          ports => $ports
+        iptables::ports { 'firewalld':
+          ports => $ports,
         }
       }
     } else {
@@ -179,9 +179,9 @@ class iptables (
       }
 
       if $ports {
-        iptables::ports {'iptables':
+        iptables::ports { 'iptables':
           ports   => $ports,
-          require => Class['iptables::install']
+          require => Class['iptables::install'],
         }
       }
     }

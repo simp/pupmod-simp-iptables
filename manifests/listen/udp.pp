@@ -85,7 +85,7 @@ define iptables::listen::udp (
       protocol     => 'udp',
       dports       => $dports,
       order        => $order,
-      apply_to     => $apply_to
+      apply_to     => $apply_to,
     }
   }
   else {
@@ -97,7 +97,7 @@ define iptables::listen::udp (
       absolute => $absolute,
       order    => $order,
       apply_to => $apply_to,
-      content  => template("${module_name}/allow_tcp_udp_services.erb")
+      content  => template("${module_name}/allow_tcp_udp_services.erb"),
     }
   }
 }
