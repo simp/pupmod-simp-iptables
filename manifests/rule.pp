@@ -99,7 +99,7 @@ define iptables::rule (
       order    => $order,
       header   => $header,
       content  => $content,
-      apply_to => $apply_to
+      apply_to => $apply_to,
     }
   }
 }

@@ -85,7 +85,7 @@ define iptables::listen::tcp_stateful (
       protocol     => 'tcp',
       dports       => $dports,
       order        => $order,
-      apply_to     => $apply_to
+      apply_to     => $apply_to,
     }
   }
   else {
@@ -97,7 +97,7 @@ define iptables::listen::tcp_stateful (
       absolute => $absolute,
       order    => $order,
       apply_to => $apply_to,
-      content  => template("${module_name}/allow_tcp_udp_services.erb")
+      content  => template("${module_name}/allow_tcp_udp_services.erb"),
     }
   }
 }

@@ -67,7 +67,7 @@ define iptables::listen::all (
   Integer[0]        $order        = 11,
   Iptables::ApplyTo $apply_to     = 'auto',
   Simplib::Netlist  $trusted_nets = simplib::lookup('simp_options::trusted_nets', { 'default_value' => ['127.0.0.1'] })
-){
+) {
   include 'iptables'
 
   if $iptables::use_firewalld {
@@ -77,7 +77,7 @@ define iptables::listen::all (
       trusted_nets => $trusted_nets,
       protocol     => 'all',
       order        => $order,
-      apply_to     => $apply_to
+      apply_to     => $apply_to,
     }
   }
   else {
@@ -86,7 +86,7 @@ define iptables::listen::all (
       absolute => $absolute,
       order    => $order,
       apply_to => $apply_to,
-      content  => template("${module_name}/allow_all_services.erb")
+      content  => template("${module_name}/allow_all_services.erb"),
     }
   }
 }

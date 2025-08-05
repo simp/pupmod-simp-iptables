@@ -116,7 +116,7 @@ class iptables::rules::scanblock (
   if $enable {
     $_v4mask = '--mask 255.255.255.255'
 
-    iptables_rule{'attk_check':
+    iptables_rule { 'attk_check':
       order    => 28,
       header   => false,
       apply_to => 'ipv4',
@@ -131,16 +131,16 @@ class iptables::rules::scanblock (
     }
     # lint:endignore
 
-    iptables_rule{'ban_check':
+    iptables_rule { 'ban_check':
       order    => 7,
       apply_to => 'ipv4',
-      content  => "-m recent --update --seconds ${update_interval} --name BANNED ${_v4mask} --rsource -j DROP"
+      content  => "-m recent --update --seconds ${update_interval} --name BANNED ${_v4mask} --rsource -j DROP",
     }
 
     if $facts['ipv6_enabled'] {
       $_v6mask = '--mask ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'
 
-      iptables_rule{'attk_check_v6':
+      iptables_rule { 'attk_check_v6':
         order    => 28,
         header   => false,
         apply_to => 'ipv6',
@@ -155,10 +155,10 @@ class iptables::rules::scanblock (
       }
       # lint:endignore
 
-      iptables_rule{'ban_check_v6':
+      iptables_rule { 'ban_check_v6':
         order    => 7,
         apply_to => 'ipv6',
-        content  => "-m recent --update --seconds ${update_interval} --name BANNED ${_v6mask} --rsource -j DROP"
+        content  => "-m recent --update --seconds ${update_interval} --name BANNED ${_v6mask} --rsource -j DROP",
       }
     }
   }
@@ -170,6 +170,6 @@ class iptables::rules::scanblock (
     ip_list_perms     => $ip_list_perms,
     ip_list_uid       => $ip_list_uid,
     ip_list_gid       => $ip_list_gid,
-    notify_iptables   => true
+    notify_iptables   => true,
   }
 }

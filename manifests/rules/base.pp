@@ -39,7 +39,7 @@ class iptables::rules::base (
   Boolean $drop_loopback     = true,
   Boolean $drop_multicast    = true,
   Boolean $force_local_input = true
-){
+) {
   assert_private()
 
   iptables_rule { 'global':
@@ -49,14 +49,14 @@ class iptables::rules::base (
     header   => false,
     content  => '-A INPUT -j LOCAL-INPUT
                   -A FORWARD -j LOCAL-INPUT',
-    apply_to =>  'all'
+    apply_to => 'all',
   }
 
   iptables_rule { 'allow_lo_input':
     table    => 'filter',
     order    => '2',
     content  => '-i lo -j ACCEPT',
-    apply_to => 'all'
+    apply_to => 'all',
   }
 
   iptables_rule { 'allow_lo_output':
@@ -64,14 +64,14 @@ class iptables::rules::base (
     order    => '2',
     header   => false,
     content  => '-A OUTPUT -o lo -j ACCEPT',
-    apply_to => 'all'
+    apply_to => 'all',
   }
 
   iptables_rule { 'established_related':
     table    => 'filter',
     order    => '1',
     content  => '-m state --state ESTABLISHED,RELATED -j ACCEPT',
-    apply_to => 'all'
+    apply_to => 'all',
   }
 
   if $allow_ping {
@@ -80,7 +80,7 @@ class iptables::rules::base (
       table    => 'filter',
       order    => '11',
       content  => '-p icmp --icmp-type 8 -j ACCEPT',
-      apply_to => 'ipv4'
+      apply_to => 'ipv4',
     }
 
     if ( defined('$::ipv6_enabled') and getvar('::ipv6_enabled') ) {
@@ -88,7 +88,7 @@ class iptables::rules::base (
         table    => 'filter',
         order    => '11',
         content  => '-p ipv6-icmp -m icmp6 --icmpv6-type 8 -j ACCEPT',
-        apply_to => 'ipv6'
+        apply_to => 'ipv6',
       }
     }
   }
@@ -99,7 +99,7 @@ class iptables::rules::base (
       table    => 'filter',
       order    => '22',
       content  => '-s 127.0.0.0/8 -j DROP',
-      apply_to => 'ipv4'
+      apply_to => 'ipv4',
     }
   }
 
@@ -108,14 +108,14 @@ class iptables::rules::base (
       table    => 'filter',
       order    => '27',
       content  => '-m pkttype --pkt-type broadcast -j DROP',
-      apply_to => 'ipv4'
+      apply_to => 'ipv4',
     }
 
     iptables_rule { 'drop_v6_broadcast':
       table    => 'filter',
       order    => '27',
       content  => '-m pkttype --pkt-type broadcast -j DROP',
-      apply_to => 'ipv6'
+      apply_to => 'ipv6',
     }
   }
 
@@ -124,14 +124,14 @@ class iptables::rules::base (
       table    => 'filter',
       order    => '27',
       content  => '-m pkttype --pkt-type multicast -j DROP',
-      apply_to => 'ipv6'
+      apply_to => 'ipv6',
     }
 
     iptables_rule { 'drop_v4_multicast':
       table    => 'filter',
       order    => '27',
       content  => '-m addrtype --src-type MULTICAST -j DROP',
-      apply_to => 'ipv4'
+      apply_to => 'ipv4',
     }
   }
 
@@ -140,7 +140,7 @@ class iptables::rules::base (
     table    => 'filter',
     order    => '29',
     content  => '-m state --state NEW -j LOG --log-prefix "IPT:"',
-    apply_to => 'all'
+    apply_to => 'all',
   }
 
   # Drop All
@@ -148,6 +148,6 @@ class iptables::rules::base (
     table    => 'filter',
     absolute => true,
     content  => '-j DROP',
-    apply_to => 'all'
+    apply_to => 'all',
   }
 }

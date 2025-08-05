@@ -13,9 +13,9 @@
 #   Also manage IP6Tables
 #
 class iptables::service (
-  $enable = pick(getvar('iptables::enable'),true),
-  $ipv6   = pick(getvar('iptables::ipv6'),true)
-){
+  Variant[Enum['ignore','firewalld'],Boolean] $enable = pick(getvar('iptables::enable'),true),
+  Boolean                                     $ipv6   = pick(getvar('iptables::ipv6'),true)
+) {
   simplib::assert_metadata($module_name)
 
   if $enable != 'ignore' {
@@ -34,7 +34,7 @@ class iptables::service (
       group   => 'root',
       mode    => '0755',
       content => file("${module_name}/iptables"),
-      seltype => 'iptables_initrc_exec_t'
+      seltype => 'iptables_initrc_exec_t',
     }
 
     # --------------------------------------------------
@@ -46,7 +46,7 @@ class iptables::service (
       group   => 'root',
       mode    => '0744',
       content => file("${module_name}/iptables-retry"),
-      seltype => 'iptables_initrc_exec_t'
+      seltype => 'iptables_initrc_exec_t',
     }
 
     service { 'iptables':
@@ -56,13 +56,13 @@ class iptables::service (
       restart    => '/sbin/iptables-restore /etc/sysconfig/iptables || ( /sbin/iptables-restore /etc/sysconfig/iptables.bak && exit 3 )',
       hasstatus  => true,
       require    => File['/etc/init.d/iptables'],
-      provider   => 'redhat'
+      provider   => 'redhat',
     }
 
     service { 'iptables-retry':
       enable   => $_enable,
       require  => File['/etc/init.d/iptables-retry'],
-      provider => 'redhat'
+      provider => 'redhat',
     }
 
     if $ipv6 and $facts['ipv6_enabled'] {
@@ -90,20 +90,20 @@ class iptables::service (
         restart    => '/sbin/ip6tables-restore /etc/sysconfig/ip6tables || ( /sbin/ip6tables-restore /etc/sysconfig/ip6tables.bak && exit 3 )',
         hasstatus  => true,
         require    => File['/etc/init.d/ip6tables'],
-        provider   => 'redhat'
+        provider   => 'redhat',
       }
 
       service { 'ip6tables-retry':
         enable   => true,
         require  => File['/etc/init.d/ip6tables-retry'],
-        provider => 'redhat'
+        provider => 'redhat',
       }
     }
 
     # firewalld should be disabled
-    service{ 'firewalld':
+    service { 'firewalld':
       ensure => 'stopped',
-      enable => false
+      enable => false,
     }
 
     exec { 'fully stop firewalld':
@@ -111,9 +111,9 @@ class iptables::service (
       onlyif  => 'pgrep firewalld',
       path    => [
         '/bin',
-        '/usr/bin'
+        '/usr/bin',
       ],
-      require => Service['firewalld']
+      require => Service['firewalld'],
     }
   }
 }

@@ -1,3 +1,7 @@
+* Mon Aug 04 2025 Mike Riddle <mike@sicura.us> - 7.1.0
+- Added el10 support
+- Fixed puppet style issues
+
 * Mon Aug 19 2024 Steven Pritchard <steve@sicura.us> - 7.0.0
 - Use firewalld by default
   - Drop use of `iptables::use_firewalld` function
