@@ -30,7 +30,7 @@ class iptables::rules::default_drop (
 
   if $filter_input =~ NotUndef {
     iptables_default_policy { 'filter:INPUT':
-      policy   => $_xlat[$filter_input],
+      policy => $_xlat[$filter_input],
     }
   }
 
