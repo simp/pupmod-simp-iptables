@@ -80,13 +80,13 @@ describe 'iptables' do
         context "iptables class with 'firewalld' enabled" do
           let(:facts) do
             os_facts.merge({
-                             simplib__firewalls: ['iptables', 'firewalld']
+                             simplib__firewalls: ['iptables', 'firewalld'],
                            })
           end
 
           let(:params) do
             {
-              enable: 'firewalld'
+              enable: 'firewalld',
             }
           end
 

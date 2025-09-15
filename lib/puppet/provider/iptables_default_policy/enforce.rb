@@ -84,7 +84,7 @@ Puppet::Type.type(:iptables_default_policy).provide(:enforce) do
         table: current_table,
         chain: chain,
         policy: policy,
-        apply_to: rule_type
+        apply_to: rule_type,
       }
 
       resources << new(resource)

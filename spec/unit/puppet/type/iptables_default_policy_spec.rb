@@ -21,15 +21,15 @@ describe iptables_default_policy_type do
             'INPUT',
             'FORWARD',
             'OUTPUT',
-          ]
+          ],
         },
         'ipv6' => {
           'filter' => [
             'INPUT',
             'FORWARD',
             'OUTPUT',
-          ]
-        }
+          ],
+        },
       }
 
       valid_values.each_pair do |proto, data|

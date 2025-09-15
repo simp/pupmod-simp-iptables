@@ -15,7 +15,7 @@ describe 'iptables::rule', type: :define do
 
       let(:params) do
         {
-          content: 'foo'
+          content: 'foo',
         }
       end
 

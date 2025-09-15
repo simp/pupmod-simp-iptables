@@ -75,13 +75,13 @@ hosts.each do |host|
       end
 
       let(:hieradata_with_overrides) do
-        <<-EOM
----
-iptables::rules::scanblock::ip_list_tot : 400
-iptables::rules::scanblock::ip_pkt_list_tot : 40
-iptables::rules::scanblock::ip_list_hash_size : 256
-iptables::rules::scanblock::ip_list_perms : '0644'
-EOM
+        <<~EOM
+          ---
+          iptables::rules::scanblock::ip_list_tot : 400
+          iptables::rules::scanblock::ip_pkt_list_tot : 40
+          iptables::rules::scanblock::ip_list_hash_size : 256
+          iptables::rules::scanblock::ip_list_perms : '0644'
+        EOM
       end
 
       it 'works with no errors' do

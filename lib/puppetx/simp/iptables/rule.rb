@@ -90,7 +90,7 @@ class PuppetX::SIMP::IPTables::Rule
       chain: nil,
       jump: nil,
       input_interface: nil,
-      output_interface: nil
+      output_interface: nil,
     }
 
     rule_hash = PuppetX::SIMP::IPTables::Rule.to_hash(rule)

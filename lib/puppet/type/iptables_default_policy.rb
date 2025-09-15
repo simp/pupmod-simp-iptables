@@ -87,7 +87,7 @@ Puppet::Type.newtype(:iptables_default_policy) do
         'INPUT',
         'FORWARD',
         'OUTPUT',
-      ]
+      ],
     }
 
     errmsg = []

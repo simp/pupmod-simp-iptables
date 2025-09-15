@@ -15,7 +15,7 @@ describe 'iptables::listen::all', type: :define do
             let(:title) { 'allow_all_1234' }
             let(:params) do
               {
-                trusted_nets: ['10.0.2.0/24']
+                trusted_nets: ['10.0.2.0/24'],
               }
             end
 
@@ -33,7 +33,7 @@ describe 'iptables::listen::all', type: :define do
             let(:params) do
               {
                 trusted_nets: ['fe80::/64'],
-             apply_to: 'ipv6'
+             apply_to: 'ipv6',
               }
             end
 
@@ -52,7 +52,7 @@ describe 'iptables::listen::all', type: :define do
           let(:title) { 'allow_all_1234' }
           let(:params) do
             {
-              trusted_nets: ['10.0.2.0/24']
+              trusted_nets: ['10.0.2.0/24'],
             }
           end
 

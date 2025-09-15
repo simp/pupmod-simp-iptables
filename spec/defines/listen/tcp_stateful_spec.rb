@@ -16,7 +16,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: [1234, '234:567']
+             dports: [1234, '234:567'],
               }
             end
 
@@ -38,7 +38,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
               {
                 trusted_nets: ['fe80::/64'],
              dports: 1234,
-             apply_to: 'ipv6'
+             apply_to: 'ipv6',
               }
             end
 
@@ -57,7 +57,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: (101..111).to_a
+             dports: (101..111).to_a,
               }
             end
 
@@ -81,7 +81,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: (101..121).to_a
+             dports: (101..121).to_a,
               }
             end
 
@@ -91,9 +91,9 @@ describe 'iptables::listen::tcp_stateful', type: :define do
 
             if os_facts[:os][:release][:major].to_i < 8
               it do
-                expected = <<-EOM
--m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 101,102,103,104,105,106,107,108,109,110,111,112,113,114,115 -j ACCEPT
--m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 116,117,118,119,120,121 -j ACCEPT
+                expected = <<~EOM
+                  -m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 101,102,103,104,105,106,107,108,109,110,111,112,113,114,115 -j ACCEPT
+                  -m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 116,117,118,119,120,121 -j ACCEPT
                 EOM
                 is_expected.to create_iptables_rule("tcp_#{title}").with_content(expected)
               end
@@ -107,7 +107,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: '150:300'
+             dports: '150:300',
               }
             end
 
@@ -117,8 +117,8 @@ describe 'iptables::listen::tcp_stateful', type: :define do
 
             if os_facts[:os][:release][:major].to_i < 8
               it do
-                expected = <<-EOM
--m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 150:300 -j ACCEPT
+                expected = <<~EOM
+                  -m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 150:300 -j ACCEPT
                 EOM
                 is_expected.to create_iptables_rule("tcp_#{title}").with_content(expected)
               end
@@ -134,7 +134,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
           let(:params) do
             {
               trusted_nets: ['10.0.2.0/24'],
-           dports: [1234, '234:567']
+           dports: [1234, '234:567'],
             }
           end
 

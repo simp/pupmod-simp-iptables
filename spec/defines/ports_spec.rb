@@ -17,16 +17,16 @@ describe 'iptables::ports', type: :define do
                 'proto' => 'udp',
               },
               '443' => {
-                'apply_to' => 'ipv6'
+                'apply_to' => 'ipv6',
               },
               '88' => {
-                'proto' => ['udp', 'tcp']
+                'proto' => ['udp', 'tcp'],
               },
               '1234' => {
                 'proto' => 'tcp',
-                'trusted_nets' => ['1.2.3.4']
-              }
-            }
+                'trusted_nets' => ['1.2.3.4'],
+              },
+            },
           }
         end
 
@@ -44,16 +44,16 @@ describe 'iptables::ports', type: :define do
             'ports' => {
               'defaults' => {
                 'apply_to' => 'ipv4',
-                'proto'    => 'tcp'
+                'proto'    => 'tcp',
               },
               '80' => nil,
               '53' => {
-                'proto' => 'udp'
+                'proto' => 'udp',
               },
               '443' => {
-                'apply_to' => 'ipv6'
-              }
-            }
+                'apply_to' => 'ipv6',
+              },
+            },
           }
         end
 
@@ -67,16 +67,16 @@ describe 'iptables::ports', type: :define do
           {
             'ports' => {
               'defaults' => {
-                'apply_to' => 'ipv4'
+                'apply_to' => 'ipv4',
               },
               '80' => nil,
               '53' => {
-                'param' => 'udp'
+                'param' => 'udp',
               },
               '443' => {
-                'apply_to' => 'ipv6'
-              }
-            }
+                'apply_to' => 'ipv6',
+              },
+            },
           }
         end
 

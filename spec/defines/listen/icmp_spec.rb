@@ -16,7 +16,7 @@ describe 'iptables::listen::icmp', type: :define do
             let(:params) do
               {
                 icmp_types: '8',
-             trusted_nets: ['10.0.2.0/24']
+             trusted_nets: ['10.0.2.0/24'],
               }
             end
 
@@ -35,7 +35,7 @@ describe 'iptables::listen::icmp', type: :define do
               {
                 icmp_types: '8',
              trusted_nets: ['fe80::/64'],
-             apply_to: 'ipv6'
+             apply_to: 'ipv6',
               }
             end
 
@@ -55,7 +55,7 @@ describe 'iptables::listen::icmp', type: :define do
           let(:params) do
             {
               icmp_types: '8',
-           trusted_nets: ['10.0.2.0/24']
+           trusted_nets: ['10.0.2.0/24'],
             }
           end
 

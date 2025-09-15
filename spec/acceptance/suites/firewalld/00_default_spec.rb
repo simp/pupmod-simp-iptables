@@ -16,7 +16,7 @@ hosts.each do |host|
       EOS
     end
 
-    let(:hieradata) {{ 'simp_firewalld::enable' => true }}
+    let(:hieradata) { { 'simp_firewalld::enable' => true } }
 
     context 'default parameters' do
       it 'works with no errors' do

@@ -18,9 +18,9 @@ hosts.each do |host|
      # Allow beaker back in.
      'iptables::ports' => {
        22 => {
-         'trusted_nets' => ['0.0.0.0/0']
-       }
-     }
+         'trusted_nets' => ['0.0.0.0/0'],
+       },
+     },
       }
     end
 

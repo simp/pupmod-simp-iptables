@@ -20,7 +20,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
       target_config: nil,
       changed: false,
       enabled: !Facter.value('ipaddress').nil?,
-      default_config: <<-EOM.gsub(%r{^\s+}, '')
+      default_config: <<-EOM.gsub(%r{^\s+}, ''),
         *filter
         :INPUT DROP [0:0]
         :FORWARD DROP [0:0]

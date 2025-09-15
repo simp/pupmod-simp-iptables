@@ -27,16 +27,16 @@ hosts.each do |host|
       end
 
       let(:hieradata_nic_only) do
-        <<-EOS
----
-iptables::ignore: ['#{nic_regex}']
-      EOS
+        <<~EOS
+          ---
+          iptables::ignore: ['#{nic_regex}']
+        EOS
       end
       let(:hieradata_nic_lo) do
-        <<-EOS
----
-iptables::ignore: ['#{nic_regex}','lo']
-      EOS
+        <<~EOS
+          ---
+          iptables::ignore: ['#{nic_regex}','lo']
+        EOS
       end
 
       it 'applies ignore => [] with no errors' do

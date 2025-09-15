@@ -39,14 +39,14 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
         old_content: '',
         old_content_hash: {},
         new_content: {},
-        valid_tables: [:nat, :filter, :mangle, :raw]
+        valid_tables: [:nat, :filter, :mangle, :raw],
       },
       ip6tables: {
         target_file: '/etc/sysconfig/.ip6tables_puppet',
         old_content: '',
         old_content_hash: {},
         new_content: {},
-        valid_tables: [:filter, :mangle, :raw]
+        valid_tables: [:filter, :mangle, :raw],
       },
       # The types of tables that we can handle. Mostly for iteration.
       table_types: [
@@ -55,7 +55,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       ],
       initialized: false,
       num_resources: 0,
-      num_runs: 0
+      num_runs: 0,
     }
 
     kernel_version = Facter.value(:kernelversion)
@@ -203,7 +203,7 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
 
       iptables_rules[key][:new_content][table] ||= {
         chains: {},
-        rules: {}
+        rules: {},
       }
       # The following pulls out the chain lines and auto-detects any
       # chains such that we can put the rules together properly
