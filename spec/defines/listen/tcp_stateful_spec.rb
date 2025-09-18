@@ -16,7 +16,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: [1234, '234:567'],
+                dports: [1234, '234:567'],
               }
             end
 
@@ -37,8 +37,8 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['fe80::/64'],
-             dports: 1234,
-             apply_to: 'ipv6',
+                dports: 1234,
+                apply_to: 'ipv6',
               }
             end
 
@@ -57,7 +57,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: (101..111).to_a,
+                dports: (101..111).to_a,
               }
             end
 
@@ -81,7 +81,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: (101..121).to_a,
+                dports: (101..121).to_a,
               }
             end
 
@@ -107,7 +107,7 @@ describe 'iptables::listen::tcp_stateful', type: :define do
             let(:params) do
               {
                 trusted_nets: ['10.0.2.0/24'],
-             dports: '150:300',
+                dports: '150:300',
               }
             end
 

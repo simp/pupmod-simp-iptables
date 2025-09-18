@@ -7,7 +7,7 @@ hosts.each do |host|
 
   describe 'iptables::listen::tcp_stateful' do
     let(:manifest) do
-      <<-EOS
+      <<~EOS
         class { 'iptables': }
 
         # Ironically, if iptables applies correctly, its default settings will
@@ -15,25 +15,25 @@ hosts.each do |host|
         # define a rule that permit SSH access from the standard Vagrant subnets:
         iptables::listen::tcp_stateful { 'allow_sshd':
           trusted_nets => ['0.0.0.0/0'],
-          dports       => 22
+          dports       => 22,
         }
 
         iptables::listen::tcp_stateful { 'test_tcp_on_both':
           trusted_nets => ['10.0.2.0/16', 'fe80::/64'],  # Standard Beaker/Vagrant subnet
           dports      => 2222,
-          apply_to    => 'all'
+          apply_to    => 'all',
         }
 
         iptables::listen::tcp_stateful { 'test_tcp_on_ipv4':
           trusted_nets => ['10.0.2.0/16'],  # Standard Beaker/Vagrant subnet
           dports      => 4444,
-          apply_to    => 'ipv4'
+          apply_to    => 'ipv4',
         }
 
         iptables::listen::tcp_stateful { 'test_tcp_on_ipv6':
           trusted_nets => ['fe80::/64'],  # Standard Beaker/Vagrant subnet
           dports      => 6666,
-          apply_to    => 'ipv6'
+          apply_to    => 'ipv6',
         }
       EOS
     end

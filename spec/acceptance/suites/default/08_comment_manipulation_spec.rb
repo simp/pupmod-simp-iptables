@@ -7,7 +7,7 @@ hosts.each do |host|
 
   describe 'iptables::listen::udp' do
     let(:manifest) do
-      <<-EOS
+      <<~EOS
         class { 'iptables': }
 
         # Ironically, if iptables applies correctly, its default settings will
@@ -15,27 +15,27 @@ hosts.each do |host|
         # define a rule that permit SSH access from the standard Vagrant subnets:
         iptables::listen::tcp_stateful { 'allow_sshd':
           trusted_nets => ['0.0.0.0/0'],
-          dports       => 22
+          dports       => 22,
         }
 
         iptables_rule { 'keep comment':
           table   => 'filter',
           header  => false,
-          content => '-A FORWARD -s 1.2.3.4/32 -j ACCEPT'
+          content => '-A FORWARD -s 1.2.3.4/32 -j ACCEPT',
         }
 
         iptables_rule { 'drop comment with param':
           include_comment => false,
           table           => 'filter',
           header          => false,
-          content         => '-A FORWARD -s 2.3.4.5/32 -j ACCEPT'
+          content         => '-A FORWARD -s 2.3.4.5/32 -j ACCEPT',
         }
 
         iptables_rule { 'drop comment with empty header':
           table          => 'filter',
           header         => false,
           comment_header => '',
-          content        => '-A FORWARD -s 3.4.5.6/32 -j ACCEPT'
+          content        => '-A FORWARD -s 3.4.5.6/32 -j ACCEPT',
         }
       EOS
     end

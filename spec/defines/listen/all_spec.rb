@@ -33,7 +33,7 @@ describe 'iptables::listen::all', type: :define do
             let(:params) do
               {
                 trusted_nets: ['fe80::/64'],
-             apply_to: 'ipv6',
+                apply_to: 'ipv6',
               }
             end
 

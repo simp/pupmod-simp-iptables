@@ -12,18 +12,18 @@ hosts.each do |host|
 
         context 'origin' do
           let(:manifest) do
-            <<-EOS
+            <<~EOS
               class { 'iptables': }
 
               iptables::listen::tcp_stateful { 'allow_sshd':
                 trusted_nets => ['0.0.0.0/0'],
-                dports       => 22
+                dports       => 22,
               }
 
               iptables_rule { 'tcp_test':
                 table   => 'filter',
                 comment => 'Test1',
-                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT'
+                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT',
               }
             EOS
           end
@@ -48,18 +48,18 @@ hosts.each do |host|
 
         context 'updated comment' do
           let(:manifest) do
-            <<-EOS
+            <<~EOS
               class { 'iptables': }
 
               iptables::listen::tcp_stateful { 'allow_sshd':
                 trusted_nets => ['0.0.0.0/0'],
-                dports       => 22
+                dports       => 22,
               }
 
               iptables_rule { 'tcp_test':
                 table   => 'filter',
                 comment => 'Test2',
-                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT'
+                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT',
               }
             EOS
           end
@@ -99,18 +99,18 @@ hosts.each do |host|
 
         context 'origin' do
           let(:manifest) do
-            <<-EOS
+            <<~EOS
               class { 'iptables': }
 
               iptables::listen::tcp_stateful { 'allow_sshd':
                 trusted_nets => ['0.0.0.0/0'],
-                dports       => 22
+                dports       => 22,
               }
 
               iptables_rule { 'tcp_test':
                 table   => 'filter',
                 comment => 'Test3',
-                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT'
+                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/24 -m multiport --dports 1234 -j ACCEPT',
               }
             EOS
           end
@@ -135,18 +135,18 @@ hosts.each do |host|
 
         context 'updated comment' do
           let(:manifest) do
-            <<-EOS
+            <<~EOS
               class { 'iptables': }
 
               iptables::listen::tcp_stateful { 'allow_sshd':
                 trusted_nets => ['0.0.0.0/0'],
-                dports       => 22
+                dports       => 22,
               }
 
               iptables_rule { 'tcp_test':
                 table   => 'filter',
                 comment => 'Test4',
-                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT'
+                content => '-m state --state NEW -m tcp -p tcp -s 10.0.2.0/23 -m multiport --dports 1234 -j ACCEPT',
               }
             EOS
           end

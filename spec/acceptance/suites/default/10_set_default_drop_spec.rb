@@ -12,15 +12,15 @@ hosts.each do |host|
       {
         # We're not setting 'output' rules to drop deliberately.
         'iptables::rules::default_drop::filter_input' => true,
-     'iptables::rules::default_drop::filter_forward' => true,
-     'iptables::rules::default_drop::filter_output'  => false,
+        'iptables::rules::default_drop::filter_forward' => true,
+        'iptables::rules::default_drop::filter_output'  => false,
 
-     # Allow beaker back in.
-     'iptables::ports' => {
-       22 => {
-         'trusted_nets' => ['0.0.0.0/0'],
-       },
-     },
+        # Allow beaker back in.
+        'iptables::ports' => {
+          22 => {
+            'trusted_nets' => ['0.0.0.0/0'],
+          },
+        },
       }
     end
 

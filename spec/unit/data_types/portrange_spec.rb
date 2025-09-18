@@ -5,14 +5,14 @@ if Puppet.version.to_f >= 4.5
     describe 'valid handling' do
       let(:pre_condition) do
         %(
-        class #{class_name} (
-          Iptables::PortRange $param
-        ){ }
+          class #{class_name} (
+            Iptables::PortRange $param
+          ){ }
 
-        class { '#{class_name}':
-          param => '#{param}'
-        }
-      )
+          class { '#{class_name}':
+            param => '#{param}'
+          }
+        )
       end
 
       context 'with valid ranges' do

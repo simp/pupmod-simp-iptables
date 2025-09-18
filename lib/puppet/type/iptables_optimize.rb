@@ -6,7 +6,7 @@ Puppet::Type.newtype(:iptables_optimize) do
   end
 
   newparam(:disable) do
-    desc <<-EOM
+    desc <<~EOM
       This is a way to authoritatively disable the application of the
       iptables module.
     EOM
@@ -16,7 +16,7 @@ Puppet::Type.newtype(:iptables_optimize) do
   end
 
   newparam(:precise_match) do
-    desc <<-EOM
+    desc <<~EOM
       Instead of matching rule counts, perform a more precise match against the
       running and to-be-applied rules. You may find that minor changes, such as
       a simple netmask change will not be enforced without enabling this option.
@@ -34,7 +34,7 @@ Puppet::Type.newtype(:iptables_optimize) do
   end
 
   newparam(:ignore) do
-    desc <<-EOM
+    desc <<~EOM
       Ignore all *running* iptables rules matching one or more provided Ruby
       regexes. The regexes are compared against the jump and chain options, as
       well as the interface name of the running rules and excluded from the

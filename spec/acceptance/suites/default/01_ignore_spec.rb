@@ -13,17 +13,17 @@ hosts.each do |host|
       nic_regex = "#{nic.chop}.*"
 
       let(:manifest) do
-        <<-EOS
-        include 'iptables'
+        <<~EOS
+          include 'iptables'
 
-        # Ironically, if iptables applies correctly, its default settings will
-        # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
-        # define a rule that permit SSH access from the standard Vagrant subnets:
-        iptables::listen::tcp_stateful { 'allow_sshd':
-          trusted_nets => ['0.0.0.0/0'],
-          dports       => 22,
-        }
-      EOS
+          # Ironically, if iptables applies correctly, its default settings will
+          # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
+          # define a rule that permit SSH access from the standard Vagrant subnets:
+          iptables::listen::tcp_stateful { 'allow_sshd':
+            trusted_nets => ['0.0.0.0/0'],
+            dports       => 22,
+          }
+        EOS
       end
 
       let(:hieradata_nic_only) do

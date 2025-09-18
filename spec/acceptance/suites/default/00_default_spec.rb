@@ -21,7 +21,7 @@ hosts.each do |host|
     end
 
     let(:default_manifest) do
-      <<-EOS
+      <<~EOS
         class { 'iptables': }
 
         iptables::listen::tcp_stateful { 'allow_sshd':
@@ -61,17 +61,17 @@ hosts.each do |host|
     context 'with scanblock enabled' do
       # rubocop:disable RSpec/RepeatedDescription, RSpec/RepeatedExample
       let(:manifest_with_scanblock_enabled) do
-        <<-EOS
-        class { 'iptables': scanblock => true}
+        <<~EOS
+          class { 'iptables': scanblock => true}
 
-        # Ironically, if iptables applies correctly, its default settings will
-        # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
-        # define a rule that permit SSH access from the standard Vagrant subnets:
-        iptables::listen::tcp_stateful { 'allow_sshd':
-          trusted_nets => ['0.0.0.0/0'],  # Standard Beaker/Vagrant subnet
-          dports       => 22
-        }
-      EOS
+          # Ironically, if iptables applies correctly, its default settings will
+          # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
+          # define a rule that permit SSH access from the standard Vagrant subnets:
+          iptables::listen::tcp_stateful { 'allow_sshd':
+            trusted_nets => ['0.0.0.0/0'],  # Standard Beaker/Vagrant subnet
+            dports       => 22,
+          }
+        EOS
       end
 
       let(:hieradata_with_overrides) do

@@ -1,5 +1,5 @@
 Puppet::Type.type(:iptables_optimize).provide(:optimize) do
-  desc <<-EOM
+  desc <<~EOM
     Run through all of the proposed IPTables rules and optimize them where
     possible.
 
@@ -20,7 +20,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
       target_config: nil,
       changed: false,
       enabled: !Facter.value('ipaddress').nil?,
-      default_config: <<-EOM.gsub(%r{^\s+}, ''),
+      default_config: <<~EOM,
         *filter
         :INPUT DROP [0:0]
         :FORWARD DROP [0:0]
@@ -35,7 +35,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
         -A LOCAL-INPUT -m state --state NEW -j LOG --log-prefix "IPT:"
         -A LOCAL-INPUT -j DROP
         COMMIT
-        EOM
+      EOM
     }
 
     @ipt_config[:optimized_config] = @ipt_config[:default_config]

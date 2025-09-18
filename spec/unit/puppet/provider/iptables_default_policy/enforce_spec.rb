@@ -50,7 +50,7 @@ describe provider_class do
       :TEST - [0:0]
       -A IN_public_allow -p tcp -m tcp --dport 22 -m conntrack --ctstate NEW,UNTRACKED -j ACCEPT
       COMMIT
-        EOM
+    EOM
   end
 
   before(:each) do
@@ -129,11 +129,11 @@ describe provider_class do
         chain = 'INPUT'
         policy = 'DROP'
 
-        resource = provider_type.new({
-                                       name: table + ':' + chain,
+        resource = provider_type.new(
+          name: table + ':' + chain,
           policy: policy,
           apply_to: 'ipv4',
-                                     })
+        )
 
         provider = provider_class.new(resource)
 
@@ -161,11 +161,11 @@ describe provider_class do
         chain = 'INPUT'
         policy = 'DROP'
 
-        resource = provider_type.new({
-                                       name: table + ':' + chain,
+        resource = provider_type.new(
+          name: table + ':' + chain,
           policy: policy,
           apply_to: 'ipv6',
-                                     })
+        )
 
         provider = provider_class.new(resource)
 
@@ -193,11 +193,11 @@ describe provider_class do
         chain = 'INPUT'
         policy = 'DROP'
 
-        resource = provider_type.new({
-                                       name: table + ':' + chain,
+        resource = provider_type.new(
+          name: table + ':' + chain,
           policy: policy,
           apply_to: 'all',
-                                     })
+        )
 
         provider = provider_class.new(resource)
 

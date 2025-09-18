@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), '..', 'iptables_optimize', 'optimize')
 Puppet::Type.type(:ip6tables_optimize).provide(:optimize, parent: Puppet::Type::Iptables_optimize::ProviderOptimize) do
-  desc <<-EOM
+  desc <<~EOM
     Run through all of the proposed IP6Tables rules and optimize them where
     possible.
 

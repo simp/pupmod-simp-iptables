@@ -1,5 +1,5 @@
 Puppet::Type.type(:xt_recent).provide(:set) do
-  desc <<-EOM
+  desc <<~EOM
     Set parameters on the xt_recent kernel module and ensure that the module is
     loaded.
   EOM

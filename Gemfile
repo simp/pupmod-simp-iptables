@@ -13,17 +13,16 @@ gem_sources.each { |gem_source| source gem_source }
 group :syntax do
   gem 'metadata-json-lint'
   gem 'puppet-lint-trailing_comma-check', require: false
-  gem 'rubocop', '~> 1.68.0'
-  gem 'rubocop-performance', '~> 1.23.0'
-  gem 'rubocop-rake', '~> 0.6.0'
-  gem 'rubocop-rspec', '~> 3.2.0'
+  gem 'rubocop', '~> 1.80.2'
+  gem 'rubocop-performance', '~> 1.26.0'
+  gem 'rubocop-rake', '~> 0.7.1'
+  gem 'rubocop-rspec', '~> 3.7.0'
 end
 
 group :test do
   puppet_version = ENV.fetch('PUPPET_VERSION', ['>= 7', '< 9'])
   major_puppet_version = Array(puppet_version).first.scan(%r{(\d+)(?:\.|\Z)}).flatten.first.to_i
   gem 'hiera-puppet-helper'
-  gem 'pathspec', '~> 0.2' if Gem::Requirement.create('< 2.6').satisfied_by?(Gem::Version.new(RUBY_VERSION.dup))
   gem('pdk', ENV.fetch('PDK_VERSION', ['>= 2.0', '< 4.0']), require: false) if major_puppet_version > 5
   gem 'puppet', puppet_version
   gem 'puppetlabs_spec_helper'

@@ -29,7 +29,7 @@ Puppet::Type.newtype(:iptables_rule) do
   end
 
   newparam(:comment) do
-    desc <<-EOM
+    desc <<~EOM
       A comment to add to the rule.
 
       The value of $comment_header will be prepended.

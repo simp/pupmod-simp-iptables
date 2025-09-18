@@ -5,7 +5,7 @@ test_name 'iptables class in firewalld mode'
 hosts.each do |host|
   describe "iptables class #{host} in firewalld mode" do
     let(:default_manifest) do
-      <<-EOS
+      <<~EOS
         # Ironically, if iptables applies correctly, its default settings will
         # deny Vagrant access via SSH.  So, it is neccessary for beaker to also
         # define a rule that permit SSH access from the standard Vagrant subnets:
@@ -48,12 +48,12 @@ hosts.each do |host|
 
     context 'TCP listen' do
       let(:manifest) do
-        <<-EOM
+        <<~EOM
           #{default_manifest}
 
           iptables::listen::tcp_stateful { 'allow_tcp_listen':
             trusted_nets => ['1.2.3.4/24', '3.4.5.6', '5.6.7.8/32'],
-            dports       => 1234
+            dports       => 1234,
           }
         EOM
       end
@@ -70,12 +70,12 @@ hosts.each do |host|
 
     context 'UDP listen' do
       let(:manifest) do
-        <<-EOM
+        <<~EOM
           #{default_manifest}
 
           iptables::listen::udp { 'allow_udp_listen':
             trusted_nets => ['2.3.4.5/8', '3.4.5.6', '5.6.7.8/32'],
-            dports       => 2345
+            dports       => 2345,
           }
         EOM
       end
