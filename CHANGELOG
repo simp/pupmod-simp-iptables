@@ -1,3 +1,6 @@
+* Wed Jun 11 2025 Chris Tessmer <chris.tessmer@onyxpoint.com> - 7.1.1
+- Fix rubocop issues
+
 * Mon Aug 04 2025 Mike Riddle <mike@sicura.us> - 7.1.0
 - Added el10 support
 - Fixed puppet style issues

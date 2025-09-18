@@ -1,22 +1,22 @@
 Puppet::Type.newtype(:iptables_optimize) do
-  @desc="Optimize managed iptables rules."
+  @desc = 'Optimize managed iptables rules.'
 
-  newparam(:name, :namevar => true) do
+  newparam(:name, namevar: true) do
     desc 'The path to the target file to be optimized. Mainly used for ensuring that the file comes after the optimization.'
   end
 
   newparam(:disable) do
-    desc <<-EOM
+    desc <<~EOM
       This is a way to authoritatively disable the application of the
       iptables module.
     EOM
 
-    newvalues(:true,:false)
+    newvalues(:true, :false)
     defaultto(:false)
   end
 
   newparam(:precise_match) do
-    desc <<-EOM
+    desc <<~EOM
       Instead of matching rule counts, perform a more precise match against the
       running and to-be-applied rules. You may find that minor changes, such as
       a simple netmask change will not be enforced without enabling this option.
@@ -34,7 +34,7 @@ Puppet::Type.newtype(:iptables_optimize) do
   end
 
   newparam(:ignore) do
-    desc <<-EOM
+    desc <<~EOM
       Ignore all *running* iptables rules matching one or more provided Ruby
       regexes. The regexes are compared against the jump and chain options, as
       well as the interface name of the running rules and excluded from the
@@ -61,9 +61,9 @@ Puppet::Type.newtype(:iptables_optimize) do
         value = []
       else
         begin
-          value = Array(value).map{|x| x = Regexp.new(x) }
+          value = Array(value).map { |x| Regexp.new(x) }
         rescue RegexpError
-          raise Puppet::ParseError.new("Regex: '#{value[key]}' has an invalid regex at key '#{key}'")
+          raise Puppet::ParseError, "Regex: '#{value[key]}' has an invalid regex at key '#{key}'"
         end
       end
 
@@ -73,12 +73,12 @@ Puppet::Type.newtype(:iptables_optimize) do
 
   newproperty(:optimize) do
     desc 'Whether or not to optimize'
-    newvalues(:true,:false)
+    newvalues(:true, :false)
     defaultto :true
 
     def insync?(is)
       if resource[:disable] == :true
-        debug("IPTables administratively disabled due to setting $disable in iptables_optimize")
+        debug('IPTables administratively disabled due to setting $disable in iptables_optimize')
         return true
       end
 
@@ -91,23 +91,23 @@ Puppet::Type.newtype(:iptables_optimize) do
         @running_rules_out_of_sync = true
       end
 
-      ( @rules_differ || @running_rules_out_of_sync ) ? false : true
+      (@rules_differ || @running_rules_out_of_sync) ? false : true
     end
 
-    def change_to_s(from,to)
+    def change_to_s(_from, _to)
       if @rules_differ
-        return "System rules have changed"
+        'System rules have changed'
       elsif @running_rules_out_of_sync
-        return "Active rules do not match configured rules"
+        'Active rules do not match configured rules'
       end
     end
   end
 
   autorequire(:iptables_rule) do
     req = []
-    resource = catalog.resources.find_all { |r|
+    resource = catalog.resources.select do |r|
       r.is_a?(Puppet::Type.type(:iptables_rule))
-    }
+    end
     unless resource.empty?
       req << resource
     end
