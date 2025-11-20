@@ -1,3 +1,8 @@
+* Thu Nov 20 2025 Steven Pritchard <steve@sicura.us> - 7.1.2
+- Drop unmaintained `.gitlab-ci.yml`
+- Update gem dependencies
+- Various minor fixes for EL10
+
 * Wed Jun 11 2025 Chris Tessmer <chris.tessmer@onyxpoint.com> - 7.1.1
 - Fix rubocop issues
 
