@@ -15,17 +15,17 @@ function iptables::use_firewalld (
   deprecation('iptables::use_firewalld', 'iptables::use_firewalld is deprecated')
 
   $_firewalld_os_list = {
-    'RedHat'      => '8',
-    'CentOS'      => '8',
-    'OracleLinux' => '8',
-    'Rocky'       => '8',
-    'AlmaLinux'   => '8',
+    'RedHat'      => 8,
+    'CentOS'      => 8,
+    'OracleLinux' => 8,
+    'Rocky'       => 8,
+    'AlmaLinux'   => 8,
   }
 
   if $enable {
     $_simplib_firewalls = fact('simplib__firewalls')
     $_os_name = fact('os.name')
-    $_os_maj_rel = fact('os.release.major')
+    $_os_maj_rel = Integer(fact('os.release.major'))
 
     if $_simplib_firewalls and ('firewalld' in $_simplib_firewalls) {
       if ($enable == 'firewalld') or

@@ -22,7 +22,7 @@ describe 'iptables' do
           it { is_expected.to create_class('iptables').with_enable(true) }
 
           # rubocop:disable RSpec/RepeatedExample
-          if os_facts[:os][:release][:major] < '8'
+          if os_facts[:os][:release][:major].to_i < 8
             if os_facts[:os][:name] == 'Amazon'
               it { is_expected.to contain_package('iptables-services').with_ensure(%r{\A(present|installed)\Z}) }
             else
