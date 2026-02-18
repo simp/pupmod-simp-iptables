@@ -1,17 +1,17 @@
 ---
 HOSTS:
-  rocky9:
+  rocky10:
     roles:
       - default
       - firewalld
-    platform: el-9-x86_64
-    box: generic/rocky9
+    platform: el-10-x86_64
+    box: generic/rocky10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: rocky-linux-cloud/rocky-linux-9
+    family: rocky-linux-cloud/rocky-linux-10
     gce_machine_type: n1-standard-1
 CONFIG:
   type: aio
   vagrant_memsize: 1024
   log_level: verbose
   synced_folder: disabled
-  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
+  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>"
