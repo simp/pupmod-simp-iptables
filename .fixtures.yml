@@ -2,7 +2,6 @@
 fixtures:
   repositories:
     augeas_core: https://github.com/simp/pupmod-puppetlabs-augeas_core.git
-    compliance_markup: https://github.com/simp/pupmod-simp-compliance_markup.git
     firewalld: https://github.com/simp/pupmod-voxpupuli-firewalld.git
     simp_firewalld: https://github.com/simp/pupmod-simp-simp_firewalld.git
     simp_options: https://github.com/simp/pupmod-simp-simp_options.git

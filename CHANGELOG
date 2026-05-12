@@ -1,3 +1,6 @@
+* Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
+- Remove unmaintained Compliance Engine data
+
 * Thu Nov 20 2025 Steven Pritchard <steve@sicura.us> - 7.1.2
 - Drop unmaintained `.gitlab-ci.yml`
 - Update gem dependencies
