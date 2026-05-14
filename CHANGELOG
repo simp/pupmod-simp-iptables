@@ -1,5 +1,7 @@
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
 - Remove unmaintained Compliance Engine data
+- Drop support for end-of-life Amazon Linux 2
+- Drop Puppet 7 support; require openvox >= 8 < 9
 
 * Thu Nov 20 2025 Steven Pritchard <steve@sicura.us> - 7.1.2
 - Drop unmaintained `.gitlab-ci.yml`

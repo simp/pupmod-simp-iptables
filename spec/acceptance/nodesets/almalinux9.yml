@@ -12,4 +12,4 @@ CONFIG:
   vagrant_memsize: 2048
   log_level: verbose
   synced_folder: disabled
-  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
+  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>"
