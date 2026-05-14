@@ -5,7 +5,8 @@ HOSTS:
       - default
       - firewalld
     platform: el-9-x86_64
-    box: generic/oracle9
+    box: oraclelinux/9
+    box_url: https://oracle.github.io/vagrant-projects/boxes/oraclelinux/9.json
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
     family: sicura-image-build/oracle-linux-9
     gce_machine_type: n1-standard-1
@@ -14,4 +15,4 @@ CONFIG:
   vagrant_memsize: 1024
   log_level: verbose
   synced_folder: disabled
-  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
+  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'openvox8') %>"

@@ -5,10 +5,11 @@ HOSTS:
       - default
       - firewalld
     platform: el-10-x86_64
-    box: generic/rocky10
+    box: rockylinux/10
     hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
-    family: rocky-linux-cloud/rocky-linux-10
-    gce_machine_type: n1-standard-1
+    # There are not currently any el10 images available on google cloud
+    # family: rocky-linux-cloud/rocky-linux-10
+    # gce_machine_type: n1-standard-1
 CONFIG:
   type: aio
   vagrant_memsize: 1024
