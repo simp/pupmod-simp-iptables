@@ -107,7 +107,7 @@ Puppet::Type.type(:iptables_optimize).provide(:optimize) do
     return unless @ipt_config[:changed]
     debug("Backing up original config for #{resource[:name]}")
 
-    File.open("#{resource[:name]}.bak", 'w').puts(@ipt_config[:target_config])
+    File.open("#{resource[:name]}.bak", 'w') { |fh| fh.puts(@ipt_config[:target_config]) }
 
     debug("Writing new #{@ipt_config[:id]} config file #{resource[:name]}")
 

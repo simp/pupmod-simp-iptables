@@ -68,9 +68,7 @@ Puppet::Type.newtype(:iptables_default_policy) do
   end
 
   autorequire(:iptables_optimize) do
-    catalog.resources.select { |r|
-      r.is_a?(Puppet::Type.type(:iptables_optimize))
-    }.flatten
+    catalog.resources.grep(Puppet::Type.type(:iptables_optimize)).flatten
   end
 
   validate do
