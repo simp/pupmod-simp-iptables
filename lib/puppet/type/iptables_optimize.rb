@@ -105,9 +105,7 @@ Puppet::Type.newtype(:iptables_optimize) do
 
   autorequire(:iptables_rule) do
     req = []
-    resource = catalog.resources.select do |r|
-      r.is_a?(Puppet::Type.type(:iptables_rule))
-    end
+    resource = catalog.resources.grep(Puppet::Type.type(:iptables_rule))
     unless resource.empty?
       req << resource
     end
