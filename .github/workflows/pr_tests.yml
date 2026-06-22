@@ -150,4 +150,4 @@ jobs:
           echo "DOCKER_HOST=unix:///run/user/$(id -u)/podman/podman.sock" >> "$GITHUB_ENV"
       - name: beaker
         run: |
-          bundle exec rake beaker:suites[default,${{ matrix.node }}]
+          bundle exec rake beaker:suites[firewalld,${{ matrix.node }}]
