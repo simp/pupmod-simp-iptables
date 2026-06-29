@@ -10,9 +10,9 @@
 #
 # https://docs.github.com/en/actions/reference/events-that-trigger-workflows
 #
-
+---
 name: PR Tests
-on:
+'on':
   pull_request:
     types: [opened, reopened, synchronize]
 

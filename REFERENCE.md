@@ -644,7 +644,7 @@ The following parameters are available in the `iptables::service` class:
 
 ##### <a name="-iptables--service--enable"></a>`enable`
 
-Data type: `Any`
+Data type: `Variant[Enum['ignore','firewalld'],Boolean]`
 
 Enable IPTables
 
@@ -655,7 +655,7 @@ Default value: `pick(getvar('iptables::enable'),true)`
 
 ##### <a name="-iptables--service--ipv6"></a>`ipv6`
 
-Data type: `Any`
+Data type: `Boolean`
 
 Also manage IP6Tables
 
@@ -1514,7 +1514,7 @@ The following properties are available in the `iptables_rule` type.
 
 ##### `content`
 
-Valid values: `/\w+/`
+Valid values: `%r{\w+}`
 
 The content of the rule that should be added
 
@@ -1616,7 +1616,7 @@ The name of the rule. Simply used for creating the unique fragments.
 
 ##### <a name="-iptables_rule--order"></a>`order`
 
-Valid values: `/\d+/`
+Valid values: `%r{\d+}`
 
 The order in which the rule should appear. 1 is the
 minimum and 999 is the max.
@@ -1662,7 +1662,7 @@ The following properties are available in the `xt_recent` type.
 
 ##### `ip_list_gid`
 
-Valid values: `/^\d+$/`
+Valid values: `%r{^\d+$}`
 
 Numerical GID for ownership of /proc/net/xt_recent/* files.
 
@@ -1670,7 +1670,7 @@ Default value: `0`
 
 ##### `ip_list_hash_size`
 
-Valid values: `/^\d+$/`
+Valid values: `%r{^\d+$}`
 
 Hash table size. 0 means to calculate it based on ip_list_tot.
 
@@ -1678,7 +1678,7 @@ Default value: `0`
 
 ##### `ip_list_perms`
 
-Valid values: `/^[0-7]{4}$/`
+Valid values: `%r{^[0-7]{4}$}`
 
 Permissions for /proc/net/xt_recent/* files.
 
@@ -1686,7 +1686,7 @@ Default value: `0640`
 
 ##### `ip_list_tot`
 
-Valid values: `/^\d+$/`
+Valid values: `%r{^\d+$}`
 
 The number of addresses remembered per table. This effectively
 becomes the maximum size of your block list. Be aware that
@@ -1696,7 +1696,7 @@ Default value: `100`
 
 ##### `ip_list_uid`
 
-Valid values: `/^\d+$/`
+Valid values: `%r{^\d+$}`
 
 Numerical UID for ownership of /proc/net/xt_recent/* files.
 
@@ -1704,7 +1704,7 @@ Default value: `0`
 
 ##### `ip_pkt_list_tot`
 
-Valid values: `/^\d+$/`
+Valid values: `%r{^\d+$}`
 
 The number of packets per address remembered.
 
