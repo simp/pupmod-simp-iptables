@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-provider_type = Puppet::Type.type(:iptables_default_policy)
-provider_class = provider_type.provider(:enforce)
+describe Puppet::Type.type(:iptables_default_policy).provider(:enforce) do
+  let(:provider_class) { described_class }
+  let(:provider_type) { Puppet::Type.type(:iptables_default_policy) }
 
-describe provider_class do
   let(:first_path_dir) { ENV['PATH'].split(':').first }
   let(:iptables_rules) do
     <<~EOM

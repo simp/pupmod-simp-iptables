@@ -8,9 +8,9 @@ hosts.each do |host|
   describe "ignore iptables rules on #{host}" do
     # rubocop:disable RSpec/RepeatedExample
     context 'apply rules and toggle iptables::ignore' do
-      nic = fact_on(host, 'networking.primary').strip
+      let(:nic) { fact_on(host, 'networking.primary').strip }
       # Remove last character and add universal matcher to test regex
-      nic_regex = "#{nic.chop}.*"
+      let(:nic_regex) { "#{nic.chop}.*" }
 
       let(:manifest) do
         <<~EOS
@@ -68,15 +68,15 @@ hosts.each do |host|
         on(host, "iptables-save | grep ' -p tcp' | grep lo | grep -w 6969", acceptable_exit_codes: 0)
       end
 
-      it "applies ignore => #{nic_regex},lo with no errors" do
+      it 'applies ignore => primary nic and lo with no errors' do
         apply_manifest_on(host, manifest, catch_failures: true)
       end
 
-      it "applies ignore => #{nic_regex},lo and be idempotent" do
+      it 'applies ignore => primary nic and lo and be idempotent' do
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
-      it "contains manually created rules on ignored interfaces: #{nic},lo" do
+      it 'contains manually created rules on ignored interfaces: primary nic and lo' do
         on(host, "iptables-save | grep ' -p tcp' | grep #{nic} | grep -w 6969", acceptable_exit_codes: 0)
         on(host, "iptables-save | grep ' -p tcp' | grep lo | grep -w 6969", acceptable_exit_codes: 0)
       end
@@ -85,16 +85,16 @@ hosts.each do |host|
         set_hieradata_on(host, hieradata_nic_only)
       end
 
-      it "applies ignore => #{nic_regex} with no errors" do
+      it 'applies ignore => primary nic with no errors' do
         apply_manifest_on(host, manifest, catch_failures: true)
         on(host, 'iptables-save')
       end
 
-      it "applies ignore => #{nic_regex} and be idempotent" do
+      it 'applies ignore => primary nic and be idempotent' do
         apply_manifest_on(host, manifest, catch_changes: true)
       end
 
-      it "onlies contain manually created rules on ignored interface: #{nic}" do
+      it 'onlies contain manually created rules on ignored interface: primary nic' do
         on(host, "iptables-save | grep ' -p tcp' | grep #{nic} | grep -w 6969", acceptable_exit_codes: 0)
         on(host, "iptables-save | grep ' -p tcp' | grep lo | grep -w 6969", acceptable_exit_codes: 1)
       end

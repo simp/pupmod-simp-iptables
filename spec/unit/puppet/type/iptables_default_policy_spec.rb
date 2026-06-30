@@ -2,9 +2,8 @@
 
 require 'spec_helper'
 
-iptables_default_policy_type = Puppet::Type.type(:iptables_default_policy)
-
-describe iptables_default_policy_type do
+describe Puppet::Type.type(:iptables_default_policy) do
+  let(:iptables_default_policy_type) { described_class }
   let(:catalog) { Puppet::Resource::Catalog.new }
 
   before(:each) do
