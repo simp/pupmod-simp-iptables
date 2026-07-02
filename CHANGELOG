@@ -1,3 +1,6 @@
+* Thu Jul 02 2026 Steven Pritchard <steve@sicura.us> - 8.0.1
+- Allow simp-simp_firewalld 2.x
+
 * Mon May 11 2026 Steven Pritchard <steve@sicura.us> - 8.0.0
 - Remove unmaintained Compliance Engine data
 - Drop support for end-of-life Amazon Linux 2
