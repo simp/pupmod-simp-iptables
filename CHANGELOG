@@ -1,6 +1,7 @@
 * Fri Jul 03 2026 Steven Pritchard <steve@sicura.us> - 8.0.2
-- Fix duplicate declaration of the firewalld-mode warning in `iptables::rule`
-  by making the notify title unique per rule instance
+- Fix the firewalld-mode warning in `iptables::rule`: the static-titled
+  notify resource caused duplicate-declaration failures with multiple rules
+  and broke idempotency on every run; use a compile-time warning() instead
 
 * Thu Jul 02 2026 Steven Pritchard <steve@sicura.us> - 8.0.1
 - Allow simp-simp_firewalld 2.x

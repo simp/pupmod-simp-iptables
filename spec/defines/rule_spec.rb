@@ -23,22 +23,18 @@ describe 'iptables::rule', type: :define do
         if os_facts[:os][:release][:major].to_i < 8
           it { is_expected.to create_iptables_rule(title) }
         else
-          it {
-            is_expected.to create_notify('iptables::rule with firewalld')
-              .with_message(%r{cannot be used.+Called from})
-              .with_loglevel('warning')
-          }
+          # In firewalld mode iptables::rule is a warned no-op
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.not_to create_iptables_rule(title) }
         end
       end
 
       context 'when explicitly using firewalld' do
         let(:hieradata) { 'firewall__firewalld' }
 
-        it {
-          is_expected.to create_notify('iptables::rule with firewalld')
-            .with_message(%r{cannot be used.+Called from})
-            .with_loglevel('warning')
-        }
+        # In firewalld mode iptables::rule is a warned no-op
+        it { is_expected.to compile.with_all_deps }
+        it { is_expected.not_to create_iptables_rule(title) }
       end
     end
   end
