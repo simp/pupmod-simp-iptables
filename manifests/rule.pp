@@ -86,10 +86,12 @@ define iptables::rule (
   if $iptables::use_firewalld {
     $_caller = simplib::caller()
 
-    # Use a compile-time warning rather than a notify resource: a notify
-    # reports a change on every run, which breaks idempotency for any
-    # catalog using iptables::rule in firewalld mode
-    warning("iptables::rule cannot be used directly in firewalld mode, please use simp_firewalld::rule => Called from ${_caller}")
+    # Include the rule name in the title so that multiple iptables::rule
+    # declarations do not collide on a duplicate Notify declaration
+    notify { "iptables::rule with firewalld (${name})":
+      message  => "iptables::rule cannot be used directly in firewalld mode, please use simp_firewalld::rule => Called from ${_caller}",
+      loglevel => 'warning'
+    }
   }
   else {
     iptables_rule { $name:
