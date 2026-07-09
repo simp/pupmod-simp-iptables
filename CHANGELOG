@@ -243,7 +243,7 @@
 - Update puppet dependency in metadata.json
 - Remove OBE pe dependency in metadata.json
 
-* Thu Jan 13 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.0.1-0
+* Fri Jan 13 2017 Nick Miller <nick.miller@onyxpoint.com> - 6.0.1-0
 - Added a feature to add resources via hiera
 
 * Wed Jan 11 2017 Trevor Vaughan <tvaughan@onyxpoint.com> - 6.0.0-0
