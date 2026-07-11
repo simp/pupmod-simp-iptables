@@ -73,10 +73,13 @@ systems based on regular expression matches.
 
 ### What iptables affects
 
-The module manages the ``iptables`` package, service, and rules.
+By default (``iptables::backend: firewalld``), the module acts as a
+pass-through to the ``simp_firewalld`` module and does not manage the legacy
+iptables tooling at all.
 
-On systems containing the ``firewalld`` service, it is ensured to be stopped
-unless ``iptables::use_firewalld`` is set to ``true``.
+When ``iptables::backend`` is set to ``iptables``, the module manages the
+``iptables`` package, service, and rules directly, and the ``firewalld``
+service is ensured to be stopped.
 
 ### Beginning with iptables
 
@@ -165,8 +168,8 @@ iptables::rule { 'example':
 
 ### Firewalld Mode
 
-This module has preliminary support for acting as a pass-through to various
-``firewalld`` capabilities using the ``simp/simp_firewalld`` module.
+This module acts, by default, as a pass-through to various ``firewalld``
+capabilities using the ``simp/simp_firewalld`` module.
 
 Using any of the ``iptables::listen::*`` defined types will work seamlessly in
 ``firewalld`` mode but direct calls to ``iptables::rule`` will emit a warning
@@ -175,12 +178,20 @@ letting the user know that they must switch over to ``simp_firewalld::rule``.
 Additionally, calls to any of the native types included in this module will
 result in undefined behavior and is not advised.
 
-#### Enabling Firewalld Mode
+#### Selecting the Backend
 
-To enable ``firewalld`` mode on supported operating systems, simply set
-``iptables::use_firewalld`` to ``true`` via Hiera.
+The backend is selected **only** by the ``iptables::backend`` class parameter
+(equivalently, the ``iptables::backend`` Hiera key) — the module performs no
+autodetection. All supported platforms default to ``firewalld``.
 
-**NOTE: EL 8 systems enable ``firewalld`` mode by default.**
+To manage legacy iptables directly instead, set the following via Hiera:
+
+```yaml
+iptables::backend: iptables
+```
+
+**NOTE:** the legacy iptables tooling (``iptables-services``) no longer
+exists on EL10+, so the ``iptables`` backend cannot be used there.
 
 ## Reference
 

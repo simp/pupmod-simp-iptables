@@ -1,3 +1,14 @@
+* Sat Jul 11 2026 Steven Pritchard <steve@sicura.us> - 9.0.0
+- Select the firewall backend exclusively via the new `iptables::backend`
+  parameter (`firewalld` or `iptables`, default `firewalld`); no system
+  autodetection is performed
+- Deprecate `iptables::use_firewalld`; if set, it still selects the backend
+  (with a deprecation warning) so existing Hiera data keeps working
+- Remove the `iptables::use_firewalld` Puppet function (deprecated since 8.0.0)
+- Remove the Amazon Linux 2 `use_firewalld: false` module data override
+- No longer install the legacy `iptables-services` package in firewalld mode
+  (the package no longer exists on EL10+)
+
 * Fri Jul 03 2026 Steven Pritchard <steve@sicura.us> - 8.0.2
 - Fix duplicate declaration of the firewalld-mode warning in `iptables::rule`
   by including the rule name in the notify title
