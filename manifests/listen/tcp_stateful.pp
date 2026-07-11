@@ -77,7 +77,7 @@ define iptables::listen::tcp_stateful (
 ) {
   include 'iptables'
 
-  if $iptables::use_firewalld {
+  if $iptables::active_backend == 'firewalld' {
     simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
     simp_firewalld::rule { "tcp_${name}":
