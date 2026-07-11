@@ -83,7 +83,7 @@ define iptables::rule (
 ) {
   include iptables
 
-  if $iptables::use_firewalld {
+  if $iptables::active_backend == 'firewalld' {
     $_caller = simplib::caller()
 
     # Include the rule name in the title so that multiple iptables::rule

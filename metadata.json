@@ -1,6 +1,6 @@
 {
   "name": "simp-iptables",
-  "version": "8.0.2",
+  "version": "9.0.0",
   "author": "SIMP Team",
   "summary": "Safely manages IPTables firewall rules",
   "license": "Apache-2.0",
@@ -78,7 +78,7 @@
     "optional_dependencies": [
       {
         "name": "simp/simp_firewalld",
-        "version_requirement": ">= 0.1.3 < 3.0.0"
+        "version_requirement": ">= 2.0.0 < 4.0.0"
       }
     ]
   }
