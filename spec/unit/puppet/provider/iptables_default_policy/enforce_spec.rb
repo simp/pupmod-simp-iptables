@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-provider_type = Puppet::Type.type(:iptables_default_policy)
-provider_class = provider_type.provider(:enforce)
+describe Puppet::Type.type(:iptables_default_policy).provider(:enforce) do
+  let(:resource_type) { Puppet::Type.type(:iptables_default_policy) }
 
-describe provider_class do
   let(:first_path_dir) { ENV['PATH'].split(':').first }
   let(:iptables_rules) do
     <<~EOM
@@ -74,11 +73,11 @@ describe provider_class do
     allow(FileTest).to receive(:exist?).with(File.join(first_path_dir, 'ip6tables-save')).and_return true
     allow(FileTest).to receive(:executable?).with(File.join(first_path_dir, 'ip6tables-save')).and_return true
 
-    allow(provider_class).to receive_messages(iptables_rules: iptables_rules.lines.map(&:strip), ip6tables_rules: iptables_rules.lines.map(&:strip))
+    allow(described_class).to receive_messages(iptables_rules: iptables_rules.lines.map(&:strip), ip6tables_rules: iptables_rules.lines.map(&:strip))
   end
 
   it 'lists valid instances' do
-    inst = provider_class.instances.map do |p|
+    inst = described_class.instances.map do |p|
       {
         name: p.get(:name),
         table: p.get(:table),
@@ -129,13 +128,13 @@ describe provider_class do
         chain = 'INPUT'
         policy = 'DROP'
 
-        resource = provider_type.new(
+        resource = resource_type.new(
           name: table + ':' + chain,
           policy: policy,
           apply_to: 'ipv4',
         )
 
-        provider = provider_class.new(resource)
+        provider = described_class.new(resource)
 
         allow(provider.class).to receive(:iptables).with(
           [
@@ -161,13 +160,13 @@ describe provider_class do
         chain = 'INPUT'
         policy = 'DROP'
 
-        resource = provider_type.new(
+        resource = resource_type.new(
           name: table + ':' + chain,
           policy: policy,
           apply_to: 'ipv6',
         )
 
-        provider = provider_class.new(resource)
+        provider = described_class.new(resource)
 
         allow(provider.class).to receive(:ip6tables).with(
           [
@@ -193,13 +192,13 @@ describe provider_class do
         chain = 'INPUT'
         policy = 'DROP'
 
-        resource = provider_type.new(
+        resource = resource_type.new(
           name: table + ':' + chain,
           policy: policy,
           apply_to: 'all',
         )
 
-        provider = provider_class.new(resource)
+        provider = described_class.new(resource)
 
         allow(provider.class).to receive(:ip6tables).with(
           [

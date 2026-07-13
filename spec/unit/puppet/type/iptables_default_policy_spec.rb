@@ -2,9 +2,7 @@
 
 require 'spec_helper'
 
-iptables_default_policy_type = Puppet::Type.type(:iptables_default_policy)
-
-describe iptables_default_policy_type do
+describe Puppet::Type.type(:iptables_default_policy) do
   let(:catalog) { Puppet::Resource::Catalog.new }
 
   before(:each) do
@@ -36,7 +34,7 @@ describe iptables_default_policy_type do
         data.each do |tmp_table, chains|
           [tmp_table, tmp_table.upcase].each do |table|
             (chains + chains.map(&:downcase)).each do |chain|
-              resource = iptables_default_policy_type.new(
+              resource = described_class.new(
                 name: "#{table}:#{chain}",
                 apply_to: proto,
               )
@@ -51,9 +49,9 @@ describe iptables_default_policy_type do
     end
 
     it 'does not allow conflicting resources' do
-      resource1 = iptables_default_policy_type.new(name: 'filter:INPUT')
-      resource2 = iptables_default_policy_type.new(name: 'filter:input')
-      resource3 = iptables_default_policy_type.new(name: 'filter:output')
+      resource1 = described_class.new(name: 'filter:INPUT')
+      resource2 = described_class.new(name: 'filter:input')
+      resource3 = described_class.new(name: 'filter:output')
 
       catalog.add_resource(resource1)
 
@@ -63,20 +61,20 @@ describe iptables_default_policy_type do
     end
 
     it 'does not accept invalid title patterns' do
-      expect { iptables_default_policy_type.new(name: 'foo') }.to raise_error(%r{No set of title patterns})
-      expect { iptables_default_policy_type.new(name: '') }.to raise_error(%r{No set of title patterns})
+      expect { described_class.new(name: 'foo') }.to raise_error(%r{No set of title patterns})
+      expect { described_class.new(name: '') }.to raise_error(%r{No set of title patterns})
     end
 
     it 'does not accept invalid tables' do
-      expect { iptables_default_policy_type.new(name: 'foo:INPUT') }.to raise_error(%r{Invalid table 'foo'})
-      expect { iptables_default_policy_type.new(name: ' :INPUT') }.to raise_error(%r{Invalid table ' '})
-      expect { iptables_default_policy_type.new(name: ':INPUT') }.to raise_error(%r{Invalid table ''})
+      expect { described_class.new(name: 'foo:INPUT') }.to raise_error(%r{Invalid table 'foo'})
+      expect { described_class.new(name: ' :INPUT') }.to raise_error(%r{Invalid table ' '})
+      expect { described_class.new(name: ':INPUT') }.to raise_error(%r{Invalid table ''})
     end
 
     it 'does not accept invalid chains' do
-      expect { iptables_default_policy_type.new(name: 'filter:BOB') }.to raise_error(%r{Invalid chain 'BOB'})
-      expect { iptables_default_policy_type.new(name: 'filter: ') }.to raise_error(%r{Invalid chain ' '})
-      expect { iptables_default_policy_type.new(name: 'filter:') }.to raise_error(%r{Invalid chain ''})
+      expect { described_class.new(name: 'filter:BOB') }.to raise_error(%r{Invalid chain 'BOB'})
+      expect { described_class.new(name: 'filter: ') }.to raise_error(%r{Invalid chain ' '})
+      expect { described_class.new(name: 'filter:') }.to raise_error(%r{Invalid chain ''})
     end
   end
 end
