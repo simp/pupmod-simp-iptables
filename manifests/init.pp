@@ -1,24 +1,8 @@
-# @summary Manage iptables with default rule optimization and a failsafe fallback mode
+# @summary Manage firewall rules via a `firewalld` (default) or legacy `iptables` backend
 #
-# ----------
-#
-# > It is **highly recommended** that you place this module in ``firewalld``
-# > mode if the underlying system supports it.
-# >
-# > You can do this by setting ``iptables::use_firewalld: true`` in Hiera
-#
-# ----------
-#
-# This class will detect conflicts with the SIMP option
-# ``simp_options::firewall`` and, if necessary, cease management of IPTables in
-# the case of a conflict.
-#
-# In particular, this means that if ``simp_options::firewall`` is ``false``,
-# but you have included this class, it will refuse to manage IPTables and will
-# instead raise a warning.
-#
-# If the ``simp_options::firewall`` variable is not present, the module will
-# manage IPTables as expected.
+# The backend is selected **exclusively** by the ``backend`` parameter (or the
+# ``iptables::backend`` Hiera key). No autodetection of the underlying system
+# is performed.
 #
 # @param enable
 #   Enable IPTables
@@ -26,11 +10,27 @@
 #   * If set to ``true`` will **enable** management of IPTables
 #   * If set to ``false`` will **disable** IPTables completely
 #   * If set to ``ignore`` will stop managing IPTables
+#   * The legacy value ``firewalld`` is equivalent to ``true``; it no longer
+#     selects the backend — use the ``backend`` parameter for that
+#
+# @param backend
+#   The firewall management backend
+#
+#   * ``firewalld`` => Delegate all rules to the ``simp_firewalld`` module.
+#     This is the default, and the only backend that current supported
+#     platforms (EL8+) actually use. The legacy iptables tooling is neither
+#     installed nor managed in this mode.
+#   * ``iptables``  => Manage rules and services with the legacy iptables
+#     tooling directly. Retained for systems that cannot run ``firewalld``;
+#     note that the required ``iptables-services`` package no longer exists
+#     on EL10+.
 #
 # @param use_firewalld
-#   Explicitly enable management via ``simp_firewalld``
+#   **Deprecated** — set ``backend`` instead
 #
-#   * Systems that do not have ``firewalld`` installed will fall back to ``iptables``
+#   * If set, this takes precedence over ``backend`` (with a deprecation
+#     warning) so that existing Hiera data keeps selecting the same backend
+#     it selected before ``backend`` existed
 #
 # @param ensure
 #   The state that the ``package`` resources should target
@@ -105,7 +105,8 @@
 #
 class iptables (
   Variant[Enum['ignore','firewalld'],Boolean] $enable         = simplib::lookup('simp_options::firewall', { 'default_value' => true }),
-  Boolean                         $use_firewalld              = true,
+  Enum['firewalld','iptables']    $backend                    = 'firewalld',
+  Optional[Boolean]               $use_firewalld              = undef,
   String                          $ensure                     = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),
   Boolean                         $ipv6                       = true,
   Boolean                         $class_debug                = false,
@@ -119,11 +120,17 @@ class iptables (
 ) {
   simplib::assert_metadata($module_name)
 
-  if $enable != 'ignore' {
-    # This is required in case you want to put firewalld in iptables mode
-    contain 'iptables::install'
+  if $use_firewalld =~ NotUndef {
+    # `use_strict_setting => false` keeps this a warning even under `strict = error`
+    deprecation('iptables::use_firewalld', 'The `iptables::use_firewalld` parameter is deprecated; set `iptables::backend` instead', false)
+    $active_backend = $use_firewalld ? { true => 'firewalld', default => 'iptables' }
+  }
+  else {
+    $active_backend = $backend
+  }
 
-    if $use_firewalld {
+  if $enable != 'ignore' {
+    if $active_backend == 'firewalld' {
       simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
       include 'simp_firewalld'
@@ -134,6 +141,7 @@ class iptables (
         }
       }
     } else {
+      contain 'iptables::install'
       contain 'iptables::service'
 
       if $default_rules { contain 'iptables::rules::base' }

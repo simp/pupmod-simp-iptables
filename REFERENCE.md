@@ -6,7 +6,7 @@
 
 ### Classes
 
-* [`iptables`](#iptables): Manage iptables with default rule optimization and a failsafe fallback mode
+* [`iptables`](#iptables): Manage firewall rules via a `firewalld` (default) or legacy `iptables` backend
 * [`iptables::install`](#iptables--install): Install the IPTables and IP6Tables components
 * [`iptables::rules::base`](#iptables--rules--base): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Set up the basic iptables rules pertinen
 * [`iptables::rules::default_drop`](#iptables--rules--default_drop): **NOTE: THIS IS A [PRIVATE](https://github.com/puppetlabs/puppetlabs-stdlib#assert_private) CLASS**  Manage the default policy settings of th
@@ -35,7 +35,6 @@
 ### Functions
 
 * [`iptables::slice_ports`](#iptables--slice_ports): Split a stringified Iptables::DestPort into an Array that contain groupings of `max_length` size.
-* [`iptables::use_firewalld`](#iptables--use_firewalld): **DEPRECATED** Returns ``true`` if the client can/should use firewalld
 
 ### Data types
 
@@ -47,31 +46,16 @@
 
 ### <a name="iptables"></a>`iptables`
 
-----------
-
-> It is **highly recommended** that you place this module in ``firewalld``
-> mode if the underlying system supports it.
->
-> You can do this by setting ``iptables::use_firewalld: true`` in Hiera
-
-----------
-
-This class will detect conflicts with the SIMP option
-``simp_options::firewall`` and, if necessary, cease management of IPTables in
-the case of a conflict.
-
-In particular, this means that if ``simp_options::firewall`` is ``false``,
-but you have included this class, it will refuse to manage IPTables and will
-instead raise a warning.
-
-If the ``simp_options::firewall`` variable is not present, the module will
-manage IPTables as expected.
+The backend is selected **exclusively** by the ``backend`` parameter (or the
+``iptables::backend`` Hiera key). No autodetection of the underlying system
+is performed.
 
 #### Parameters
 
 The following parameters are available in the `iptables` class:
 
 * [`enable`](#-iptables--enable)
+* [`backend`](#-iptables--backend)
 * [`use_firewalld`](#-iptables--use_firewalld)
 * [`ensure`](#-iptables--ensure)
 * [`ipv6`](#-iptables--ipv6)
@@ -93,18 +77,39 @@ Enable IPTables
 * If set to ``true`` will **enable** management of IPTables
 * If set to ``false`` will **disable** IPTables completely
 * If set to ``ignore`` will stop managing IPTables
+* The legacy value ``firewalld`` is equivalent to ``true``; it no longer
+  selects the backend — use the ``backend`` parameter for that
 
 Default value: `simplib::lookup('simp_options::firewall', { 'default_value' => true })`
 
+##### <a name="-iptables--backend"></a>`backend`
+
+Data type: `Enum['firewalld','iptables']`
+
+The firewall management backend
+
+* ``firewalld`` => Delegate all rules to the ``simp_firewalld`` module.
+  This is the default, and the only backend that current supported
+  platforms (EL8+) actually use. The legacy iptables tooling is neither
+  installed nor managed in this mode.
+* ``iptables``  => Manage rules and services with the legacy iptables
+  tooling directly. Retained for systems that cannot run ``firewalld``;
+  note that the required ``iptables-services`` package no longer exists
+  on EL10+.
+
+Default value: `'firewalld'`
+
 ##### <a name="-iptables--use_firewalld"></a>`use_firewalld`
 
-Data type: `Boolean`
+Data type: `Optional[Boolean]`
 
-Explicitly enable management via ``simp_firewalld``
+**Deprecated** — set ``backend`` instead
 
-* Systems that do not have ``firewalld`` installed will fall back to ``iptables``
+* If set, this takes precedence over ``backend`` (with a deprecation
+  warning) so that existing Hiera data keeps selecting the same backend
+  it selected before ``backend`` existed
 
-Default value: `true`
+Default value: `undef`
 
 ##### <a name="-iptables--ensure"></a>`ensure`
 
@@ -1756,28 +1761,6 @@ as strings.
 Data type: `Integer[1]`
 
 The maximum length of each group.
-
-### <a name="iptables--use_firewalld"></a>`iptables::use_firewalld`
-
-Type: Puppet Language
-
-**DEPRECATED** Returns ``true`` if the client can/should use firewalld
-
-#### `iptables::use_firewalld(Variant[String[1], Boolean] $enable = true)`
-
-**DEPRECATED** Returns ``true`` if the client can/should use firewalld
-
-Returns: `Boolean`
-
-##### `enable`
-
-Data type: `Variant[String[1], Boolean]`
-
-The type of enablement to use
-
-* true      => Do the right thing based on the underlying OS
-* false     => Return `false`
-* firewalld => Force `firewalld` if available
 
 ## Data types
 

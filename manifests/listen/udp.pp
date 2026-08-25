@@ -77,7 +77,7 @@ define iptables::listen::udp (
 ) {
   include 'iptables'
 
-  if $iptables::use_firewalld {
+  if $iptables::active_backend == 'firewalld' {
     simplib::assert_optional_dependency($module_name, 'simp/simp_firewalld')
 
     simp_firewalld::rule { "udp_${name}":

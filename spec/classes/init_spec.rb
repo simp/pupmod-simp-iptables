@@ -12,62 +12,63 @@ describe 'iptables' do
 
       context "on #{os}" do
         context 'iptables class without any parameters' do
-          let(:facts) do
-            facts = os_facts.dup
-            facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-            facts
-          end
-
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
+          it { is_expected.to create_class('iptables').with_backend('firewalld') }
 
-          # rubocop:disable RSpec/RepeatedExample
-          if os_facts[:os][:release][:major].to_i < 8
-            if os_facts[:os][:name] == 'Amazon'
-              it { is_expected.to contain_package('iptables-services').with_ensure(%r{\A(present|installed)\Z}) }
-            else
-              it { is_expected.to contain_package('iptables').with_ensure(%r{\A(present|installed)\Z}) }
-            end
-
-            it { is_expected.to contain_service('iptables').with_ensure('running') }
-            it { is_expected.to contain_service('iptables-retry').with_enable(true) }
-            it { is_expected.to create_class('iptables::rules::base').with_allow_ping(true) }
-            it { is_expected.to create_class('iptables::rules::prevent_localhost_spoofing') }
-            it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(false) }
-            it { is_expected.to create_file('/etc/init.d/iptables').with_ensure('file') }
-            it { is_expected.to create_file('/etc/init.d/iptables-retry').with_ensure('file') }
-            it { is_expected.to create_file('/etc/sysconfig/iptables') }
-            it { is_expected.to contain_service('firewalld').with_ensure('stopped') }
-            it { is_expected.not_to create_class('simp_firewalld') }
-          else
-            it { is_expected.to create_class('simp_firewalld') }
-            it { is_expected.not_to create_iptables__ports('firewalld') }
-            it { is_expected.not_to contain_package('iptables') }
-            it { is_expected.not_to contain_package('iptables-ipv6') }
-            it { is_expected.to contain_package('iptables-services').with_ensure(%r{\A(present|installed)\Z}) }
-            it { is_expected.not_to create_class('iptables::service') }
-            it { is_expected.not_to create_class('iptables::rules::default_drop') }
-            it { is_expected.not_to create_file('/etc/sysconfig/iptables') }
-            it { is_expected.not_to create_iptables_optimize('/etc/sysconfig/iptables') }
-          end
+          it { is_expected.to create_class('simp_firewalld') }
+          it { is_expected.not_to create_iptables__ports('firewalld') }
+          it { is_expected.not_to contain_package('iptables') }
+          it { is_expected.not_to contain_package('iptables-services') }
+          it { is_expected.not_to create_class('iptables::install') }
+          it { is_expected.not_to create_class('iptables::service') }
+          it { is_expected.not_to create_class('iptables::rules::default_drop') }
+          it { is_expected.not_to create_file('/etc/sysconfig/iptables') }
+          it { is_expected.not_to create_iptables_optimize('/etc/sysconfig/iptables') }
         end
-        # rubocop:enable RSpec/RepeatedExample
 
-        context 'iptables class with use_firewalld=true' do
-          let(:facts) do
-            facts = os_facts.dup
-            facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-            facts
-          end
+        context 'iptables class with backend=iptables' do
+          let(:params) { { backend: 'iptables' } }
 
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_package('iptables-services').with_ensure(%r{\A(present|installed)\Z}) }
+          it { is_expected.to contain_service('iptables').with_ensure('running') }
+          it { is_expected.to contain_service('iptables-retry').with_enable(true) }
+          it { is_expected.to create_class('iptables::rules::base').with_allow_ping(true) }
+          it { is_expected.to create_class('iptables::rules::prevent_localhost_spoofing') }
+          it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(false) }
+          it { is_expected.to create_file('/etc/init.d/iptables').with_ensure('file') }
+          it { is_expected.to create_file('/etc/init.d/iptables-retry').with_ensure('file') }
+          it { is_expected.to create_file('/etc/sysconfig/iptables') }
+          it { is_expected.to contain_service('firewalld').with_ensure('stopped') }
+          it { is_expected.not_to create_class('simp_firewalld') }
+        end
+
+        context 'iptables class with deprecated use_firewalld=true' do
           let(:params) { { use_firewalld: true } }
 
           it { is_expected.to compile.with_all_deps }
-          it { is_expected.to create_class('iptables').with_enable(true) }
-
           it { is_expected.to create_class('simp_firewalld') }
-          it { is_expected.to create_class('iptables::install') }
+          it { is_expected.not_to create_class('iptables::install') }
           it { is_expected.not_to create_class('iptables::service') }
+        end
+
+        context 'iptables class with deprecated use_firewalld=false' do
+          let(:params) { { use_firewalld: false } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.not_to create_class('simp_firewalld') }
+          it { is_expected.to create_class('iptables::install') }
+          it { is_expected.to create_class('iptables::service') }
+        end
+
+        context 'iptables class with deprecated use_firewalld=false overriding backend=firewalld' do
+          let(:params) { { use_firewalld: false, backend: 'firewalld' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.not_to create_class('simp_firewalld') }
+          it { is_expected.to create_class('iptables::install') }
+          it { is_expected.to create_class('iptables::service') }
         end
 
         context "iptables class with firewall enabled from hiera via 'simp_options::firewall: true'" do
@@ -78,12 +79,6 @@ describe 'iptables' do
         end
 
         context "iptables class with 'firewalld' enabled" do
-          let(:facts) do
-            os_facts.merge({
-                             simplib__firewalls: ['iptables', 'firewalld'],
-                           })
-          end
-
           let(:params) do
             {
               enable: 'firewalld',
@@ -91,17 +86,11 @@ describe 'iptables' do
           end
 
           it { is_expected.to compile.with_all_deps }
-          it do
-            if facts[:os][:name] == 'Amazon' && facts[:os][:release][:major] == '2'
-              is_expected.not_to contain_class('simp_firewalld')
-            else
-              is_expected.to contain_class('simp_firewalld')
-            end
-          end
+          it { is_expected.to contain_class('simp_firewalld') }
         end
 
         context 'iptables::rules::base' do
-          let(:params) { { use_firewalld: false } }
+          let(:params) { { backend: 'iptables' } }
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables::rules::base') }
@@ -120,7 +109,7 @@ describe 'iptables' do
 
         context 'default spoofing prevention when not using firewalld' do
           let(:facts) { os_facts.merge(ipv6_enabled: true) }
-          let(:params) { { use_firewalld: false } }
+          let(:params) { { backend: 'iptables' } }
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_iptables_rule('prevent_ipv6_localhost_spoofing').with_apply_to('ipv6') }
