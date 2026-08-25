@@ -67,6 +67,7 @@ describe 'iptables' do
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.not_to create_class('simp_firewalld') }
+          it { is_expected.to create_class('iptables::install') }
           it { is_expected.to create_class('iptables::service') }
         end
 

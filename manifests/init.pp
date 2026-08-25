@@ -10,6 +10,8 @@
 #   * If set to ``true`` will **enable** management of IPTables
 #   * If set to ``false`` will **disable** IPTables completely
 #   * If set to ``ignore`` will stop managing IPTables
+#   * The legacy value ``firewalld`` is equivalent to ``true``; it no longer
+#     selects the backend — use the ``backend`` parameter for that
 #
 # @param backend
 #   The firewall management backend

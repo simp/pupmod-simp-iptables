@@ -4,11 +4,7 @@ describe 'iptables::listen::udp', type: :define do
   context 'supported operating systems' do
     on_supported_os.each do |os, os_facts|
       context "on #{os}" do
-        let(:facts) do
-          facts = os_facts.dup
-          facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-          facts
-        end
+        let(:facts) { os_facts }
 
         context 'with default firewall settings' do
           describe 'with IPv4 trusted_nets' do
@@ -148,6 +144,39 @@ describe 'iptables::listen::udp', type: :define do
 
           it { is_expected.to create_iptables__listen__udp('allow_udp_range').with_dports(params[:dports]) }
           it { is_expected.to create_simp_firewalld__rule("udp_#{title}") }
+        end
+
+        context 'with backend => iptables' do
+          let(:hieradata) { 'firewall__iptables' }
+          let(:title) { 'allow_udp_range' }
+          let(:params) do
+            {
+              trusted_nets: ['10.0.2.0'],
+              dports: [1234, '9999:20000'],
+            }
+          end
+
+          it { is_expected.to compile.with_all_deps }
+          it {
+            expected = "-m state --state NEW -p udp -s 10.0.2.0 -m multiport --dports 1234,9999:20000 -j ACCEPT\n"
+            is_expected.to create_iptables_rule("udp_#{title}").with_content(expected)
+          }
+          it { is_expected.not_to create_simp_firewalld__rule("udp_#{title}") }
+        end
+
+        context 'with deprecated use_firewalld => false' do
+          let(:hieradata) { 'firewall__use_firewalld_false' }
+          let(:title) { 'allow_udp_range' }
+          let(:params) do
+            {
+              trusted_nets: ['10.0.2.0'],
+              dports: [1234, '9999:20000'],
+            }
+          end
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to create_iptables_rule("udp_#{title}") }
+          it { is_expected.not_to create_simp_firewalld__rule("udp_#{title}") }
         end
       end
     end

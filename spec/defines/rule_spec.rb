@@ -5,11 +5,7 @@ require 'spec_helper.rb'
 describe 'iptables::rule', type: :define do
   on_supported_os.each do |os, os_facts|
     context "on #{os}" do
-      let(:facts) do
-        facts = os_facts.dup
-        facts[:simplib__firewalls] = [ 'firewalld', 'iptables' ]
-        facts
-      end
+      let(:facts) { os_facts }
 
       let(:title) { 'iptables_firewalld' }
 
