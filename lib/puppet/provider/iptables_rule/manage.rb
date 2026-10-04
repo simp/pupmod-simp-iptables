@@ -397,13 +397,12 @@ Puppet::Type.type(:iptables_rule).provide(:manage) do
       }.join("\n")
 
       # Properly sort our rules.
-      # rubocop:disable Style/MultilineBlockChain
+      # rubocop:disable-next Style/MultilineBlockChain
       output << iptables_rules[rule_type][:new_content][table][:rules].keys.sort_by { |x|
         PuppetX::SIMP::Simplib.human_sort(x)
       }.map { |x|
         iptables_rules[rule_type][:new_content][table][:rules][x]
       }.join("\n")
-      # rubocop:enable Style/MultilineBlockChain
 
       # Make sure we have a commit for each table
       output << 'COMMIT'
