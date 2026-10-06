@@ -6,7 +6,7 @@ hosts.each do |host|
   next unless host[:roles].include?('iptables')
 
   describe "ignore iptables rules on #{host}" do
-    # rubocop:disable RSpec/RepeatedExample
+    # rubocop:disable-next RSpec/RepeatedExample
     context 'apply rules and toggle iptables::ignore' do
       let(:nic) { fact_on(host, 'networking.primary').strip }
       # Remove last character and add universal matcher to test regex
@@ -99,6 +99,5 @@ hosts.each do |host|
         on(host, "iptables-save | grep ' -p tcp' | grep lo | grep -w 6969", acceptable_exit_codes: 1)
       end
     end
-    # rubocop:enable RSpec/RepeatedExample
   end
 end
