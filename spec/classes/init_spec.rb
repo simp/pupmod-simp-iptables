@@ -71,8 +71,8 @@ describe 'iptables' do
           it { is_expected.to create_class('iptables::service') }
         end
 
-        context "iptables class with firewall enabled from hiera via 'simp_options::firewall: true'" do
-          let(:hieradata) { 'firewall__enable' }
+        context "iptables class ignores 'simp_options::firewall: false'" do
+          let(:hieradata) { 'firewall__simp_options_false' }
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }

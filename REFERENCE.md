@@ -79,8 +79,10 @@ Enable IPTables
 * If set to ``ignore`` will stop managing IPTables
 * The legacy value ``firewalld`` is equivalent to ``true``; it no longer
   selects the backend — use the ``backend`` parameter for that
+* Does not follow ``simp_options::firewall``; consumers decide whether to
+  include this class from their own ``firewall`` parameter
 
-Default value: `simplib::lookup('simp_options::firewall', { 'default_value' => true })`
+Default value: `true`
 
 ##### <a name="-iptables--backend"></a>`backend`
 

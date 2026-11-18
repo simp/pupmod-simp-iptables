@@ -1,3 +1,10 @@
+* Wed Nov 18 2026 Hazel Caballero <hazel@sicura.us> - 10.0.0
+- `iptables::enable` now defaults to `true` instead of following
+  `simp_options::firewall` (#190). Sites on the `iptables` backend that set
+  `simp_options::firewall: false` and still include `iptables` must set
+  `iptables::enable: false` to keep the firewall disabled. The `firewalld`
+  backend never used `enable` beyond `ignore`, so it is unaffected.
+
 * Thu Oct 08 2026 Steven Pritchard <steve@sicura.us> - 9.1.0
 - Add support for OpenVox 9
 - Update metadata.json dependency ranges from the Forge

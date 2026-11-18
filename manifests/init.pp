@@ -12,6 +12,8 @@
 #   * If set to ``ignore`` will stop managing IPTables
 #   * The legacy value ``firewalld`` is equivalent to ``true``; it no longer
 #     selects the backend — use the ``backend`` parameter for that
+#   * Does not follow ``simp_options::firewall``; consumers decide whether to
+#     include this class from their own ``firewall`` parameter
 #
 # @param backend
 #   The firewall management backend
@@ -104,7 +106,7 @@
 # @author https://github.com/simp/pupmod-simp-iptables/graphs/contributors
 #
 class iptables (
-  Variant[Enum['ignore','firewalld'],Boolean] $enable         = simplib::lookup('simp_options::firewall', { 'default_value' => true }),
+  Variant[Enum['ignore','firewalld'],Boolean] $enable         = true,
   Enum['firewalld','iptables']    $backend                    = 'firewalld',
   Optional[Boolean]               $use_firewalld              = undef,
   String                          $ensure                     = simplib::lookup('simp_options::package_ensure', { 'default_value' => 'installed' }),

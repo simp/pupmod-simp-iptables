@@ -1,5 +1,4 @@
 ---
-simp_options::firewall: firewalld
 iptables::backend: firewalld
 
 simp_firewalld::firewall_backend: iptables
