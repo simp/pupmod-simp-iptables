@@ -75,12 +75,14 @@ Data type: `Variant[Enum['ignore','firewalld'],Boolean]`
 Enable IPTables
 
 * If set to ``true`` will **enable** management of IPTables
-* If set to ``false`` will **disable** IPTables completely
+* If set to ``false`` will **disable** IPTables completely on the
+  ``iptables`` backend. It has no effect on the ``firewalld`` backend; set
+  ``simp_firewalld::enable: false`` to turn firewalld management off there
 * If set to ``ignore`` will stop managing IPTables
 * The legacy value ``firewalld`` is equivalent to ``true``; it no longer
   selects the backend — use the ``backend`` parameter for that
-* Does not follow ``simp_options::firewall``; consumers decide whether to
-  include this class from their own ``firewall`` parameter
+* Does not follow ``simp_options::firewall``. Declaring this class, or any
+  ``iptables::*`` defined type (which include it), turns management on
 
 Default value: `true`
 

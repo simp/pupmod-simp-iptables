@@ -23,8 +23,9 @@ module docstring "highly recommends" firewalld mode where supported
 (`manifests/init.pp`).
 
 `iptables::enable` defaults to `true` and does not follow
-`simp_options::firewall`; consuming modules decide whether to include the class.
-If `enable` is `'ignore'` it stops managing IPTables entirely
+`simp_options::firewall`. Declaring the class, or any `iptables::*` defined type
+(each includes it), turns management on. `false` only affects the `iptables`
+backend; if `enable` is `'ignore'` it stops managing IPTables entirely
 (`manifests/init.pp`).
 
 ### Business logic
