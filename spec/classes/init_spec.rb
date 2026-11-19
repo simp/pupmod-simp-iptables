@@ -71,11 +71,24 @@ describe 'iptables' do
           it { is_expected.to create_class('iptables::service') }
         end
 
-        context "iptables class with firewall enabled from hiera via 'simp_options::firewall: true'" do
-          let(:hieradata) { 'firewall__enable' }
+        context "iptables class ignores 'simp_options::firewall: false'" do
+          let(:hieradata) { 'firewall__simp_options_false' }
+          let(:params) { { backend: 'iptables' } }
 
           it { is_expected.to compile.with_all_deps }
           it { is_expected.to create_class('iptables').with_enable(true) }
+          it { is_expected.to contain_service('iptables').with_ensure('running').with_enable(true) }
+          it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(false) }
+        end
+
+        context 'iptables class with enable=false and backend=iptables' do
+          let(:facts) { super().merge(ipv6_enabled: true) }
+          let(:params) { { enable: false, backend: 'iptables' } }
+
+          it { is_expected.to compile.with_all_deps }
+          it { is_expected.to contain_service('iptables').with_ensure('stopped').with_enable(false) }
+          it { is_expected.to create_iptables_optimize('/etc/sysconfig/iptables').with_disable(true) }
+          it { is_expected.to create_ip6tables_optimize('/etc/sysconfig/ip6tables').with_disable(true) }
         end
 
         context "iptables class with 'firewalld' enabled" do

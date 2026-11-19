@@ -11,6 +11,7 @@
 * [Overview](#overview)
 * [This is a SIMP module](#this-is-a-simp-module)
 * [Module Description](#module-description)
+* [Breaking changes in 10.0.0](#breaking-changes-in-1000)
 * [Setup](#setup)
   * [What iptables affects](#what-iptables-affects)
   * [Beginning with iptables](#beginning-with-iptables)
@@ -68,6 +69,14 @@ Finally, the module works to ensure that services such as OpenStack, Docker,
 VirtualBox, etc... can apply their rules without being affected by this module.
 The module provides mechanisms to preserve these rules as managed by external
 systems based on regular expression matches.
+
+## Breaking changes in 10.0.0
+
+`iptables::enable` defaults to `true` and no longer follows
+`simp_options::firewall`. On the `iptables` backend, a site that set
+`simp_options::firewall: false` and still declares `iptables` (directly or
+through an `iptables::*` defined type) must set `iptables::enable: false` to
+keep the firewall disabled. The `firewalld` backend is unaffected.
 
 ## Setup
 

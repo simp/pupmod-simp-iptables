@@ -22,10 +22,11 @@ module). This is the **default** behavior: `iptables::use_firewalld` defaults to
 module docstring "highly recommends" firewalld mode where supported
 (`manifests/init.pp`).
 
-The module is also conflict-aware: `iptables::enable` defaults to the SIMP
-option `simp_options::firewall`. If that option is `false` the class refuses to
-manage IPTables and warns; if `enable` is `'ignore'` it stops managing IPTables
-entirely (`manifests/init.pp`).
+`iptables::enable` defaults to `true` and does not follow
+`simp_options::firewall`. Declaring the class, or any `iptables::*` defined type
+(each includes it), turns management on. `false` only affects the `iptables`
+backend; if `enable` is `'ignore'` it stops managing IPTables entirely
+(`manifests/init.pp`).
 
 ### Business logic
 
@@ -35,8 +36,7 @@ function. Everything under `iptables::install`, `iptables::service`, and
 `iptables::rules::*` is `assert_private()`'d.
 
 - **`iptables` (`manifests/init.pp`)** — public class. Key parameters:
-  - `$enable` (`Variant[Enum['ignore','firewalld'],Boolean]`) — defaults to
-    `simplib::lookup('simp_options::firewall', {'default_value' => true})`
+  - `$enable` (`Variant[Enum['ignore','firewalld'],Boolean]`) — defaults to `true`
     (`init.pp`). `'ignore'` short-circuits the whole class body
     (`init.pp`).
   - `$use_firewalld` (`Boolean`, default `true`, `init.pp`) — the master
@@ -179,7 +179,6 @@ This module does route SIMP feature toggles through the `simp_options` seam via
 
 | Location | Key | `default_value` |
 |----------|-----|-----------------|
-| `manifests/init.pp` | `simp_options::firewall` | `true` |
 | `manifests/init.pp` | `simp_options::package_ensure` | `'installed'` |
 | `manifests/listen/tcp_stateful.pp` | `simp_options::trusted_nets` | `['127.0.0.1']` |
 | `manifests/listen/udp.pp` | `simp_options::trusted_nets` | `['127.0.0.1']` |
